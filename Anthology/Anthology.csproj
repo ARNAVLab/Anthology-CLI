@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="MongoDB.Driver" Version="2.19.2" />
+    <PackageReference Include="SimSharp" Version="3.4.2" />
   </ItemGroup>
 
 </Project>
