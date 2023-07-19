@@ -74,6 +74,7 @@ namespace Anthology.SimulationManager
             }
             else 
                 throw new InvalidCastException("Failed to recognize history logger");
+
         }
 
         /**
@@ -82,10 +83,11 @@ namespace Anthology.SimulationManager
          */
         public static void GetIteration(int steps = 1)
         {
-            for (int i = 0; i < steps; i++)
+            while(steps-- > 0)
             {
                 NumIterations++;
                 Reality?.Run();
+
                 foreach (NPC npc in NPCs.Values)
                 {
                     Reality?.UpdateNpc(npc);

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using SimSharp;
+using System.Collections;
 using System.Text.Json;
 
 namespace Anthology.Models
@@ -280,6 +281,39 @@ namespace Anthology.Models
             foreach(string m in Motives.Keys)
             {
                 Motives[m] = Math.Clamp(Motives[m] - 1, Motive.MIN, Motive.MAX);
+            }
+        }
+
+        public IEnumerable<Event> Turn()
+        {
+            while(true)
+            {
+                if (OccupiedCounter > 0)
+                {
+                    OccupiedCounter--;
+
+                    if (CurrentAction.First().Name == "travel_action" && XDestination != -1)
+                    {
+                        MoveCloserToDestination();
+                    }
+                }
+                else
+                {
+                    ExecuteAction();
+                    if (!IsContent())
+                    {
+                        if (CurrentAction.Count == 0)
+                        {
+                            SelectNextAction();
+                        }
+                        else
+                        {
+                            StartAction();
+                        }
+                    }
+                }
+
+                yield return World.Env.Timeout(TimeSpan.FromMinutes(1));
             }
         }
     }

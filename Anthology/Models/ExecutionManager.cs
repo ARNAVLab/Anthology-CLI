@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using SimSharp;
+using System.Text.Json;
 
 namespace Anthology.Models
 {
@@ -10,25 +11,27 @@ namespace Anthology.Models
             World.ReadWrite.InitWorldFromPaths(pathToFiles);
         }
 
+        private static IEnumerable<Event> Source()
+        {
+            while(true)
+                foreach(Agent a in AgentManager.Agents)
+                {
+                    var agent = a.Turn();
+                    yield return World.Env.Process(agent);
+                }
+        }
+
         /**
          * Executes a turn for each agent every tick.
          * Executes a single turn and then must be called again
          */
         public static void RunSim(int steps = 1)
         {
-            for (int i = 0; i < steps; i++)
+            if(ToContinue())
             {
-                if (ToContinue())
-                {
-                    foreach (Agent agent in AgentManager.Agents)
-                        Turn(agent);
-
-                    World.IncrementTime();
-                }
-                else if(!UI.Paused)
-                {
-                    Console.WriteLine("Simulation ended.");
-                }
+                World.Env.Process(Source());
+                World.Env.Run(TimeSpan.FromMinutes(steps));
+                World.IncrementTime();
             }
 
             UI.Update();
@@ -50,43 +53,6 @@ namespace Anthology.Models
                 return false;
             }
             return true;
-        }
-
-        /**
-         * Updates movement and occupation counters for an agent
-         * May decrement the motives of an agent once every 10 hours. Chooses or executes an action when necessary.
-         */
-        public static bool Turn(Agent agent)
-        {
-            bool movement = false;
-/*            Console.WriteLine(agent.Name);*/
-            if (agent.OccupiedCounter > 0)
-            {
-                agent.OccupiedCounter--;
-
-                if (agent.CurrentAction.First().Name == "travel_action" && agent.XDestination != -1)
-                {
-                    movement = true;
-                    agent.MoveCloserToDestination();
-                }
-            }
-            // If not travelling (i.e. arrived at destination), and end of occupied, execute planned action effects, select/start next.
-            else
-            {
-                agent.ExecuteAction();
-                if (!agent.IsContent())
-                {
-                    if (agent.CurrentAction.Count == 0)
-                    {
-                        agent.SelectNextAction();
-                    }
-                    else
-                    {
-                        agent.StartAction();
-                    }
-                }
-            }
-            return movement;
         }
 
         /**

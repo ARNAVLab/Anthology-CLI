@@ -1,9 +1,15 @@
-﻿namespace Anthology.Models
+﻿using SimSharp;
+
+namespace Anthology.Models
 {
     public static class World
     {
         /** World time, or ticks */
         public static int Time { get; set; } = 0;
+
+
+        /** Simulation environment */
+        public static Simulation? Env { get; set; }
 
         /** Json parser to use for file I/O, can be swapped from compatibility */
         public static JsonRW ReadWrite { get; set; } = new NetJson();
@@ -15,6 +21,7 @@
             ActionManager.Init(actionPath);
             AgentManager.Init(agentPath);
             LocationManager.Init(UI.GridSize, locationPath);
+            Env = new Simulation(randomSeed: DateTime.Now.Millisecond);
         }
 
         /** Increment simulation time by one tick */

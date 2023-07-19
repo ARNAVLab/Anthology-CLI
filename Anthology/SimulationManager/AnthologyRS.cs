@@ -1,6 +1,4 @@
 ﻿using Anthology.Models;
-using static SimSharp.Distributions;
-using SimSharp;
 using System.Numerics;
 
 namespace Anthology.SimulationManager
@@ -118,42 +116,9 @@ namespace Anthology.SimulationManager
             }
         }
 
-        ExponentialTime ARRIVAL = EXP(TimeSpan.FromSeconds(2));
-        ExponentialTime PROCESSING = EXP(TimeSpan.FromSeconds(5));
-        TimeSpan SIMULATION_TIME = TimeSpan.FromHours(4);
-
-        IEnumerable<Event> MM1Q(Simulation env, Resource server)
-        {
-            while (true)
-            {
-                yield return env.Timeout(ARRIVAL);
-                env.Process(Item(env, server));
-            }
-        }
-
-        IEnumerable<Event> Item(Simulation env, Resource server)
-        {
-            using (var s = server.Request())
-            {
-                yield return s;
-                yield return env.Timeout(PROCESSING);
-                Console.WriteLine("Duration {0}", env.Now - s.Time);
-            }
-        }
-
         public override void Run(int steps = 1)
         {
-            //ExecutionManager.RunSim(steps);
-
-            var env = new Simulation(randomSeed: 42);
-            var server = new Resource(env, capacity: 1)
-            {
-                QueueLength = new TimeSeriesMonitor(env, collect: true)
-            };
-            env.Process(MM1Q(env, server));
-            env.Run(SIMULATION_TIME);
-            string s = server.QueueLength.Summarize();
-            Console.WriteLine(s);
+            ExecutionManager.RunSim(steps);
         }
     }
 }
