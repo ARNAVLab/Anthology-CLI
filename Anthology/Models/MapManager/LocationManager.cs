@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using MongoDB.Bson.Serialization.IdGenerators;
+using System.Numerics;
 using System.Text.Json.Serialization;
 
 namespace Anthology.Models.MapManager
@@ -10,6 +11,11 @@ namespace Anthology.Models.MapManager
         [JsonIgnore]
         public static Dictionary<Vector2, LocationNode> LocationsByPosition { get; set; } = new();
 
+        [JsonIgnore]
+        public static Dictionary<string, HashSet<LocationNode>> LocationsByTag { get; set; } = new();
+
+        [JsonIgnore]
+        public static Dictionary<string, Dictionary<string, float>> DistanceMatrix { get; set; } = new();
         public static void Init(string path)
         {
             // TODO
@@ -19,6 +25,14 @@ namespace Anthology.Models.MapManager
         {
             LocationsByName.Add(node.Name, node);
             LocationsByPosition.Add(node.Position, node);
+            DistanceMatrix.Add(node.Name, new());
+
+            foreach (string tag in node.Tags)
+            {
+                if (!LocationsByTag.ContainsKey(tag))
+                    LocationsByTag.Add(tag, new());
+                LocationsByTag[tag].Add(node);
+            }
 
             foreach (Agent a in AgentManager.Agents)
             {
@@ -47,6 +61,44 @@ namespace Anthology.Models.MapManager
             foreach (LocationNode loc in LocationsByName.Values)
             {
                 loc.UpdateClosestLocationsByTags(tags);
+            }
+        }
+
+        public static void UpdateDistanceMatrix()
+        {
+            foreach (string loc1 in LocationsByName.Keys)
+            {
+                foreach (string loc2 in LocationsByName.Keys)
+                {
+                    if (loc1 == loc2)
+                    {
+                        DistanceMatrix[loc1][loc2] = 0;
+                    }
+                    else
+                    {
+                        DistanceMatrix[loc1][loc2] = float.MaxValue;
+                    }
+                }
+            }
+
+            foreach (KeyValuePair<string, LocationNode> loc in LocationsByName)
+            {
+                foreach (KeyValuePair<string, float> con in loc.Value.ConnectedLocations)
+                {
+                    DistanceMatrix[loc.Key][con.Key] = con.Value;
+                }
+            }
+
+            foreach (string loc1 in LocationsByName.Keys)
+            {
+                foreach (string loc2 in LocationsByName.Keys)
+                {
+                    foreach (string loc3 in LocationsByName.Keys)
+                    {
+                        if (DistanceMatrix[loc1][loc2] > DistanceMatrix[loc1][loc3] + DistanceMatrix[loc3][loc2])
+                            DistanceMatrix[loc1][loc2] = DistanceMatrix[loc1][loc3] + DistanceMatrix[loc3][loc2];
+                    }
+                }
             }
         }
     }

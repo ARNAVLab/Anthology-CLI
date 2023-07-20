@@ -13,8 +13,6 @@ namespace Anthology.Models.MapManager
 
         public HashSet<string> Tags { get; set; } = new();
 
-        public HashSet<LocationNode> Nodes { get; set; } = new();
-
         public Dictionary<string, float> ConnectedLocations { get; set; } = new();
 
         [JsonIgnore]
