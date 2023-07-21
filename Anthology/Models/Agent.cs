@@ -40,8 +40,7 @@
         public HashSet<Relationship> Relationships { get; set; } = new HashSet<Relationship>();
 
         /** Current location of the agent */
-        public float XLocation { get; set; }
-        public float YLocation { get; set; }
+        public string CurrentLocation { get; set; } = string.Empty;
 
         /** How long the agent will be occupied with the current action they are executing */
         public int OccupiedCounter { get; set; }
@@ -63,7 +62,7 @@
         public void StartTravelToLocation(LocationNode destination, float time)
         {
             Destination = destination.Name;
-            LocationNode currentLoc = LocationManager.LocationsByPosition[new(XLocation, YLocation)];
+            LocationNode currentLoc = LocationManager.LocationsByName[CurrentLocation];
             OccupiedCounter = (int)Math.Ceiling(LocationManager.DistanceMatrix[currentLoc.Name][destination.Name]);
             Console.WriteLine("time: " + time.ToString() + " | " + Name + ": Started " + CurrentAction.First().Name + "; Destination: " + destination.Name);
         }
@@ -76,15 +75,13 @@
         {
             if (Destination == "") return;
 
-            LocationManager.LocationsByPosition[new(XLocation,YLocation)].AgentsPresent.Remove(Name);
+            LocationManager.LocationsByName[CurrentLocation].AgentsPresent.Remove(Name);
 
             if (OccupiedCounter == 0)
             {
-                LocationNode dest = LocationManager.LocationsByName[Destination];
-                XLocation = dest.X;
-                YLocation = dest.Y;
+                CurrentLocation = Destination;
                 Destination = string.Empty;
-                dest.AgentsPresent.Add(Name);
+                LocationManager.LocationsByName[CurrentLocation].AgentsPresent.Add(Name);
             }
         }
 
@@ -145,7 +142,7 @@
             if (action is ScheduleAction)
             {
                 CurrentTargets.Clear();
-                LocationNode currentLoc = LocationManager.LocationsByPosition[new(XLocation, YLocation)];
+                LocationNode currentLoc = LocationManager.LocationsByName[CurrentLocation];
                 foreach (string name in currentLoc.AgentsPresent)
                 {
                     CurrentTargets.Add(AgentManager.GetAgentByName(name));
@@ -163,7 +160,7 @@
             List<Action> currentChoice = new();
             List<LocationNode> currentDest = new();
             List<string> actionSelectLog = new();
-            LocationNode currentLoc = LocationManager.LocationsByPosition[new(XLocation, YLocation)];
+            LocationNode currentLoc = LocationManager.LocationsByName[CurrentLocation];
             HashSet<Action> actionOptions = new();
             actionOptions.UnionWith(ActionManager.Actions.ScheduleActions);
             actionOptions.UnionWith(ActionManager.Actions.PrimaryActions);
@@ -285,11 +282,8 @@
         /** motives intiailized with values for the agent */
         public Dictionary<string, float> Motives { get; set; } = new();
 
-        /** starting X coordinate */
-        public float XLocation { get; set; }
-
-        /** starting Y coordinate */
-        public float YLocation { get; set; }
+        /** starting location */
+        public string CurrentLocation { get; set; } = string.Empty;
 
         /** describes whether the agent is currently occupied */
         public int OccupiedCounter { get; set; }
@@ -313,8 +307,7 @@
             {
                 Name = agent.Name,
                 Motives = new(),
-                XLocation = agent.XLocation,
-                YLocation = agent.YLocation,
+                CurrentLocation = agent.CurrentLocation,
                 OccupiedCounter = agent.OccupiedCounter,
                 CurrentAction = string.Empty,
                 Destination = agent.Destination,
@@ -349,8 +342,7 @@
             Agent agent = new()
             {
                 Name = sAgent.Name,
-                XLocation = sAgent.XLocation,
-                YLocation = sAgent.YLocation,
+                CurrentLocation = sAgent.CurrentLocation,
                 OccupiedCounter = sAgent.OccupiedCounter,
                 Destination = sAgent.Destination
             };

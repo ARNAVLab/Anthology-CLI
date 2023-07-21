@@ -17,7 +17,7 @@ namespace SimManagerUnitTest
             }
             catch (Exception e)
             {
-                Assert.Fail("Failed to initialize Sim Manager: " + e.Message);
+                Assert.Fail("Failed to initialize Sim Manager: " + e.ToString());
             }
         }
 
@@ -78,7 +78,7 @@ namespace SimManagerUnitTest
         {
             Assert.AreEqual("wait_action", SimManager.NPCs["Norma"].CurrentAction.Name);
             SimManager.GetIteration();
-            Assert.AreEqual("travel_action", SimManager.NPCs["Norma"].CurrentAction.Name);
+            Assert.AreEqual("eat_alone", SimManager.NPCs["Norma"].CurrentAction.Name);
             SimManager.GetIteration(20);
             Assert.AreNotEqual("travel_action", SimManager.NPCs["Norma"].CurrentAction.Name);
         }

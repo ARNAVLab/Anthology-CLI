@@ -16,8 +16,8 @@ namespace Anthology.SimulationManager
 
         public struct Coords
         {
-            public int X { get; set; }
-            public int Y { get; set; }
+            public float X { get; set; }
+            public float Y { get; set; }
 
             public Coords()
             {
@@ -26,7 +26,7 @@ namespace Anthology.SimulationManager
             }
 
             [BsonConstructor]
-            public Coords(int x, int y)
+            public Coords(float x, float y)
             {
                 X = x;
                 Y = y;
@@ -39,5 +39,11 @@ namespace Anthology.SimulationManager
 
         /** Arbitrary set of tags associated with the location */
         public HashSet<string> Tags { get; set; } = new();
+
+        /// <summary>
+        /// Directly pathable connections between locations and their distances
+        /// Effectively out-edges in graph theory
+        /// </summary>
+        public Dictionary<string, float> Connections { get; set; } = new();
     }
 }

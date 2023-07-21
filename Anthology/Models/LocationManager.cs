@@ -18,11 +18,17 @@ namespace Anthology.Models
         public static Dictionary<string, Dictionary<string, float>> DistanceMatrix { get; set; } = new();
         public static void Init(string path)
         {
+            Reset();
+            World.ReadWrite.LoadLocationsFromFile(path);
+            UpdateDistanceMatrix();
+        }
+
+        public static void Reset()
+        {
             LocationsByName.Clear();
             LocationsByPosition.Clear();
             LocationsByTag.Clear();
-            World.ReadWrite.LoadLocationsFromFile(path);
-            UpdateDistanceMatrix();
+            DistanceMatrix.Clear();
         }
 
         public static void AddLocation(LocationNode node)
@@ -40,7 +46,7 @@ namespace Anthology.Models
 
             foreach (Agent a in AgentManager.Agents)
             {
-                if (a.XLocation == node.X && a.YLocation == node.Y)
+                if (a.CurrentLocation == node.Name)
                 {
                     node.AgentsPresent.Add(a.Name);
                 }

@@ -30,7 +30,7 @@
         {
             foreach (Agent a in AgentManager.Agents)
             {
-                if (a.XLocation == location.X && a.YLocation == location.Y)
+                if (a.CurrentLocation == location.Name)
                 {
                     location.AgentsPresent.Add(a.Name);
                 }
@@ -160,7 +160,7 @@
         /** Returns the SimLocation nearest the given Agent, or null if one does not exist */
         public static SimLocation? FindNearestLocationFrom(HashSet<SimLocation> locations, Agent from)
         {
-            SimLocation locFrom = LocationGrid[(int)from.XLocation][(int)from.YLocation];
+            SimLocation locFrom = GetSimLocationByName(from.CurrentLocation);
             return FindNearestLocationFrom(locations, locFrom);
         }
 

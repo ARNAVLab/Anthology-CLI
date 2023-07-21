@@ -1,4 +1,5 @@
 ﻿using Anthology.Models;
+using System.Numerics;
 
 namespace Anthology.SimulationManager
 {
@@ -18,7 +19,7 @@ namespace Anthology.SimulationManager
                 if (!npcs.TryGetValue(a.Name, out NPC? npc))
                     npc = new NPC();
                 npc.Name = a.Name;
-                npc.SetCoordinates(a.XLocation, a.YLocation);
+                npc.Location = a.CurrentLocation;
                 if (a.CurrentAction != null && a.CurrentAction.Count > 0)
                 {
                     npc.CurrentAction.Name = a.CurrentAction.First().Name;
@@ -39,19 +40,22 @@ namespace Anthology.SimulationManager
 
         public override void LoadLocations(Dictionary<Location.Coords, Location> locations)
         {
-            /*locations.Clear();
-            HashSet<SimLocation> simLocations = LocationManager.LocationSet;
-            foreach(SimLocation s in simLocations)
+            locations.Clear();
+            IEnumerable<LocationNode> locNodes = LocationManager.LocationsByName.Values;
+            foreach(LocationNode locNode in locNodes)
             {
                 Location loc = new()
                 {
-                    Name = s.Name,
-                    Coordinates = new(s.X, s.Y),
-                    Tags = new()
+                    Name = locNode.Name,
+                    Coordinates = new(locNode.X, locNode.Y),
                 };
-                loc.Tags.UnionWith(s.Tags);
+                loc.Tags.UnionWith(locNode.Tags);
+                foreach(KeyValuePair<string, float> con in locNode.Connections)
+                {
+                    loc.Connections.Add(con.Key, con.Value);
+                }
                 locations.Add(loc.Coordinates, loc);
-            }*/
+            }
         }
 
         public override void PushLocations()
@@ -69,7 +73,7 @@ namespace Anthology.SimulationManager
         {
             bool shouldLog = false;
             Agent agent = AgentManager.GetAgentByName(npc.Name);
-            npc.SetCoordinates(agent.XLocation, agent.YLocation);
+            npc.Location = agent.CurrentLocation;
 
             if (agent.Destination != string.Empty)
             {
@@ -106,8 +110,7 @@ namespace Anthology.SimulationManager
         public override void PushUpdatedNpc(NPC npc)
         {
             Agent agent = AgentManager.GetAgentByName(npc.Name);
-            agent.XLocation = (int)npc.Coordinates.X;
-            agent.YLocation = (int)npc.Coordinates.Y;
+            agent.CurrentLocation = npc.Location;
             Dictionary<string, float> motives = npc.Motives;
             foreach (string mote in motives.Keys)
             {

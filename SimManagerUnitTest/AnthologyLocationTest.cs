@@ -17,6 +17,7 @@ namespace SimManagerUnitTest
         [TestInitialize] 
         public void MapLocations()
         {
+            LocationManager.Reset();
             TestLocations.Clear();
             TestLocations.Add(new()
             {

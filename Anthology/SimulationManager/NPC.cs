@@ -18,27 +18,12 @@ namespace Anthology.SimulationManager
             set { Dirty = true; name = value; }
         }
 
-        /** The (X,Y) coordinate location of the NPC */
-        private Vector2 coordinates;
-        public Vector2 Coordinates
+        /** The current location of the NPC */
+        private string location = string.Empty;
+        public string Location
         {
-            get { return coordinates; }
-        }
-
-        /** Move the NPC from their current coordinates by the given amounts */
-        public void MoveByAmount(float x, float y)
-        {
-            coordinates.X += x;
-            coordinates.Y += y;
-            Dirty = true;
-        } 
-
-        /** Set the NPC's coordinates to the given coordinates */
-        public void SetCoordinates(float x, float y)
-        {
-            coordinates.X = x;
-            coordinates.Y = y;
-            Dirty = true;
+            get { return location; }
+            set { Dirty = true; location = value; }
         }
 
         /** Data representing the knowledge/beliefs/opinions of the NPC */
@@ -123,7 +108,7 @@ namespace Anthology.SimulationManager
         {
             StringBuilder sb = new();
             sb.AppendFormat("Name: {0}, ", Name);
-            sb.AppendFormat("X: {0}, Y: {1}, ", Coordinates.X, Coordinates.Y);
+            sb.AppendFormat("Current Location: ", Location);
             sb.AppendFormat("Motives: ", Motives.ToString());
             sb.AppendFormat("Current Action: {0}", CurrentAction.Name);
             sb.AppendFormat("Current Destination: {0}", Destination);
