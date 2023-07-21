@@ -1,5 +1,4 @@
 ﻿using Anthology.Models;
-using System.Numerics;
 
 namespace Anthology.SimulationManager
 {
@@ -25,9 +24,9 @@ namespace Anthology.SimulationManager
                     npc.CurrentAction.Name = a.CurrentAction.First().Name;
                 }
                 npc.ActionCounter = a.OccupiedCounter;
-                if (a.XDestination != -1)
+                if (a.Destination != string.Empty)
                 {
-                    npc.Destination = LocationManager.LocationGrid[a.XDestination][a.YDestination].Name;
+                    npc.Destination = a.Destination;
                 }
                 Dictionary<string, float> motives = a.Motives;
                 foreach (string mote in motives.Keys)
@@ -40,7 +39,7 @@ namespace Anthology.SimulationManager
 
         public override void LoadLocations(Dictionary<Location.Coords, Location> locations)
         {
-            locations.Clear();
+            /*locations.Clear();
             HashSet<SimLocation> simLocations = LocationManager.LocationSet;
             foreach(SimLocation s in simLocations)
             {
@@ -52,18 +51,18 @@ namespace Anthology.SimulationManager
                 };
                 loc.Tags.UnionWith(s.Tags);
                 locations.Add(loc.Coordinates, loc);
-            }
+            }*/
         }
 
         public override void PushLocations()
         {
-            LocationManager.LocationSet.Clear();
+            /*LocationManager.LocationSet.Clear();
             LocationManager.LocationGrid.Clear();
             UI.GridSize = 0;
             foreach (Location loc in SimManager.Locations.Values)
             {
                 LocationManager.AddLocation(loc.Name, loc.Coordinates.X, loc.Coordinates.Y, loc.Tags);
-            }
+            }*/
         }
 
         public override void UpdateNpc(NPC npc)
@@ -72,9 +71,9 @@ namespace Anthology.SimulationManager
             Agent agent = AgentManager.GetAgentByName(npc.Name);
             npc.SetCoordinates(agent.XLocation, agent.YLocation);
 
-            if (agent.XDestination != -1)
+            if (agent.Destination != string.Empty)
             {
-                npc.Destination = LocationManager.LocationGrid[agent.XDestination][agent.YDestination].Name;
+                npc.Destination = agent.Destination;
             }
             else
             {

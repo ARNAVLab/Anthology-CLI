@@ -64,7 +64,7 @@ namespace Anthology.Models
             {
                 agent.OccupiedCounter--;
 
-                if (agent.CurrentAction.First().Name == "travel_action" && agent.XDestination != -1)
+                if (agent.CurrentAction.First().Name == "travel_action" && agent.Destination != string.Empty)
                 {
                     movement = true;
                     agent.MoveCloserToDestination();
@@ -96,8 +96,7 @@ namespace Anthology.Models
         public static void Interrupt(Agent agent)
         {
             agent.OccupiedCounter = 0;
-            agent.XDestination = -1;
-            agent.YDestination = -1;
+            agent.Destination = string.Empty;
             Action interrupted = agent.CurrentAction.First();
             agent.CurrentAction.RemoveFirst();
             Console.WriteLine("Agent: " + agent.Name + " was interrupted from action: " + interrupted.Name);

@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Text.Json;
-
-namespace Anthology.Models
+﻿namespace Anthology.Models
 {
     /**
      * Relationship class
@@ -43,8 +40,8 @@ namespace Anthology.Models
         public HashSet<Relationship> Relationships { get; set; } = new HashSet<Relationship>();
 
         /** Current location of the agent */
-        public int XLocation { get; set; }
-        public int YLocation { get; set; }
+        public float XLocation { get; set; }
+        public float YLocation { get; set; }
 
         /** How long the agent will be occupied with the current action they are executing */
         public int OccupiedCounter { get; set; }
@@ -54,23 +51,21 @@ namespace Anthology.Models
 
         /**
          * The destination that the agent is heading to
-         * Can be -1 if the agent has reached their previous destination and is 
+         * Can be empty if the agent has reached their previous destination and is 
          * executing an action at that location.
          */
-        public int XDestination { get; set; } = -1;
-        public int YDestination { get; set; } = -1;
+        public string Destination { get; set; } = string.Empty;
 
         /** List of targets for the agent's current action */
         public HashSet<Agent> CurrentTargets { get; set; } = new HashSet<Agent>();
 
         /** Starts travel to the agent's destination */
-        public void StartTravelToLocation(SimLocation destination, float time)
+        public void StartTravelToLocation(LocationNode destination, float time)
         {
-            XDestination = destination.X;
-            YDestination = destination.Y;
-            SimLocation currentLoc = LocationManager.LocationGrid[XLocation][YLocation];
-            OccupiedCounter = LocationManager.FindManhattanDistance(currentLoc, destination);
-/*            Console.WriteLine("time: " + time.ToString() + " | " + Name + ": Started " + CurrentAction.First().Name + "; Destination: " + destination.Name);*/
+            Destination = destination.Name;
+            LocationNode currentLoc = LocationManager.LocationsByPosition[new(XLocation, YLocation)];
+            OccupiedCounter = (int)Math.Ceiling(LocationManager.DistanceMatrix[currentLoc.Name][destination.Name]);
+            Console.WriteLine("time: " + time.ToString() + " | " + Name + ": Started " + CurrentAction.First().Name + "; Destination: " + destination.Name);
         }
 
         /**
@@ -79,32 +74,24 @@ namespace Anthology.Models
          */
         public void MoveCloserToDestination()
         {
-            if (XDestination == -1) return;
+            if (Destination == "") return;
 
-            LocationManager.LocationGrid[XLocation][YLocation].AgentsPresent.Remove(Name);
+            LocationManager.LocationsByPosition[new(XLocation,YLocation)].AgentsPresent.Remove(Name);
 
-            if (XLocation != XDestination)
+            if (OccupiedCounter == 0)
             {
-                XLocation += XLocation > XDestination ? -1 : 1;
+                LocationNode dest = LocationManager.LocationsByName[Destination];
+                XLocation = dest.X;
+                YLocation = dest.Y;
+                Destination = string.Empty;
+                dest.AgentsPresent.Add(Name);
             }
-            else if (YLocation != YDestination)
-            {
-                YLocation += YLocation > YDestination ? -1 : 1;
-            }
-            else
-            {
-                XDestination = -1;
-                YDestination = -1;
-                return;
-            }
-            LocationManager.LocationGrid[XLocation][YLocation].AgentsPresent.Add(Name);
         }
 
         /** Applies the effect of an action to this agent */
         public void ExecuteAction()
         {
-            XDestination = -1;
-            YDestination = -1;
+            Destination = "";
             OccupiedCounter = 0;
 
             if (CurrentAction.Count > 0)
@@ -158,7 +145,7 @@ namespace Anthology.Models
             if (action is ScheduleAction)
             {
                 CurrentTargets.Clear();
-                SimLocation currentLoc = LocationManager.LocationGrid[XLocation][YLocation];
+                LocationNode currentLoc = LocationManager.LocationsByPosition[new(XLocation, YLocation)];
                 foreach (string name in currentLoc.AgentsPresent)
                 {
                     CurrentTargets.Add(AgentManager.GetAgentByName(name));
@@ -172,11 +159,11 @@ namespace Anthology.Models
          */
         public void SelectNextAction()
         {
-            float maxDeltaUtility = 0f;
+           float maxDeltaUtility = 0f;
             List<Action> currentChoice = new();
-            List<SimLocation> currentDest = new();
+            List<LocationNode> currentDest = new();
             List<string> actionSelectLog = new();
-            SimLocation currentLoc = LocationManager.LocationGrid[XLocation][YLocation];
+            LocationNode currentLoc = LocationManager.LocationsByPosition[new(XLocation, YLocation)];
             HashSet<Action> actionOptions = new();
             actionOptions.UnionWith(ActionManager.Actions.ScheduleActions);
             actionOptions.UnionWith(ActionManager.Actions.PrimaryActions);
@@ -186,29 +173,31 @@ namespace Anthology.Models
                 if (action.Hidden) continue;
                 actionSelectLog.Add("Action: " + action.Name);
 
-                int travelTime;
-                HashSet<SimLocation> possibleLocations = new();
-                possibleLocations.UnionWith(LocationManager.LocationSet);
-
+                float travelTime;
+                HashSet<LocationNode> possibleLocations = new();
                 HashSet<Requirement> rMotives = action.GetRequirementsByType(Requirement.MOTIVE);
                 HashSet<Requirement> rLocations = action.GetRequirementsByType(Requirement.LOCATION);
                 HashSet<Requirement> rPeople = action.GetRequirementsByType(Requirement.PEOPLE);
 
-                if(possibleLocations.Count > 0 && rMotives.Count > 0)
+                if (rMotives.Any())
                 {
                     if (!AgentManager.AgentSatisfiesMotiveRequirement(this, rMotives))
                     {
                         possibleLocations.Clear();
                     }
                 }
-                if (possibleLocations.Count > 0 && rLocations.Count > 0)
+                if (rLocations.Any())
                 {
                     if (rLocations.First() is RLocation rLoc)
                     {
-                        possibleLocations = LocationManager.LocationsSatisfyingLocationRequirement(possibleLocations, rLoc);
+                        possibleLocations = LocationManager.LocationsSatisfyingLocationRequirement(rLoc);
                     }
                 }
-                if (possibleLocations.Count > 0 && rPeople.Count > 0)
+                else
+                {
+                    possibleLocations.UnionWith(LocationManager.LocationsByName.Values);
+                }
+                if (possibleLocations.Any() && rPeople.Any())
                 {
                     if (rPeople.First() is RPeople rPpl)
                     {
@@ -218,9 +207,9 @@ namespace Anthology.Models
 
                 if (possibleLocations.Count > 0)
                 {
-                    SimLocation? nearestLocation = LocationManager.FindNearestLocationFrom(possibleLocations, this);
-                    if (nearestLocation == null) continue;
-                    travelTime = LocationManager.FindManhattanDistance(nearestLocation, currentLoc);
+                    LocationNode nearestLocation = LocationManager.FindNearestLocationFrom(currentLoc, possibleLocations);
+                    /*if (nearestLocation == null) continue;*/
+                    travelTime = LocationManager.DistanceMatrix[currentLoc.Name][nearestLocation.Name];
                     float deltaUtility = ActionManager.GetEffectDeltaForAgentAction(this, action);
 /*                    actionSelectLog.Add("Action Utility: " + deltaUtility.ToString());*/
                     deltaUtility /= (action.MinTime + travelTime);
@@ -249,7 +238,7 @@ namespace Anthology.Models
             Random r = new();
             int idx = r.Next(0, currentChoice.Count);
             Action choice = currentChoice[idx];
-            SimLocation dest = currentDest[idx];
+            LocationNode dest = currentDest[idx];
             CurrentAction.AddLast(choice);
             
 
@@ -297,10 +286,10 @@ namespace Anthology.Models
         public Dictionary<string, float> Motives { get; set; } = new();
 
         /** starting X coordinate */
-        public int XLocation { get; set; }
+        public float XLocation { get; set; }
 
         /** starting Y coordinate */
-        public int YLocation { get; set; }
+        public float YLocation { get; set; }
 
         /** describes whether the agent is currently occupied */
         public int OccupiedCounter { get; set; }
@@ -309,9 +298,8 @@ namespace Anthology.Models
         public string CurrentAction { get; set; } = string.Empty;
 
         /** Location the agent is currently headed to */
-        public int XDestination { get; set; } = -1;
-        public int YDestination { get; set; } = -1;
-
+        public string Destination { get;set; } = string.Empty;
+       
         /** list of targets for the agent's current action */
         public List<string> CurrentTargets { get; set; } = new List<string>();
 
@@ -329,8 +317,7 @@ namespace Anthology.Models
                 YLocation = agent.YLocation,
                 OccupiedCounter = agent.OccupiedCounter,
                 CurrentAction = string.Empty,
-                XDestination = agent.XDestination,
-                YDestination = agent.YDestination,
+                Destination = agent.Destination,
                 Relationships = new()
             };
 
@@ -365,8 +352,7 @@ namespace Anthology.Models
                 XLocation = sAgent.XLocation,
                 YLocation = sAgent.YLocation,
                 OccupiedCounter = sAgent.OccupiedCounter,
-                XDestination = sAgent.XDestination,
-                YDestination = sAgent.YDestination,
+                Destination = sAgent.Destination
             };
 
             agent.CurrentAction.AddFirst(ActionManager.GetActionByName(sAgent.CurrentAction));

@@ -57,24 +57,18 @@ namespace Anthology.Models
         public override void LoadLocationsFromFile(string path) 
         {
             string locationsText = File.ReadAllText(path);
-            IEnumerable<SimLocation>? sLocations = JsonSerializer.Deserialize<IEnumerable<SimLocation>>(locationsText, Jso);
+            IEnumerable<LocationNode>? locationNodes = JsonSerializer.Deserialize<IEnumerable<LocationNode>>(locationsText, Jso);
 
-            if (sLocations == null) return;
-            foreach (SimLocation l in sLocations)
+            if (locationNodes == null) return;
+            foreach (LocationNode node in locationNodes)
             {
-                LocationManager.AddLocation(l);
+                LocationManager.AddLocation(node);
             }
         }
 
         public override string SerializeAllLocations()
         {
-            static bool HasName(SimLocation simLocation)
-            {
-                return simLocation.Name != string.Empty;
-            }
-
-            IEnumerable<SimLocation> namedLocations = LocationManager.LocationSet.Where(HasName);
-            return JsonSerializer.Serialize(namedLocations, Jso);
+            return JsonSerializer.Serialize(LocationManager.LocationsByName.Values, Jso);
         }
     }
 }

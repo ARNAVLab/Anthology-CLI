@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using Anthology.Models.MapManager;
-using MongoDB.Bson;
+﻿using System.Text.Json;
+using Anthology.Models;
 
 namespace SimManagerUnitTest
 {
@@ -28,54 +21,60 @@ namespace SimManagerUnitTest
             TestLocations.Add(new()
             {
                 Name = "A",
-                Position = new(0, 2),
-                ConnectedLocations = { { "C", 1 } },
+                X = 0f,
+                Y = 2f,
+                Connections = { { "C", 1 } },
                 Tags = { "Restaurant", "Food" }
             });
 
             TestLocations.Add(new()
             {
                 Name = "B",
-                Position = new(1, 2),
-                ConnectedLocations = { { "D", 3 } },
+                X = 1f,
+                Y = 2f,
+                Connections = { { "D", 3 } },
                 Tags = { "Recreational", "Park" }
             });
 
             TestLocations.Add(new()
             {
                 Name = "C",
-                Position = new(0, 1),
-                ConnectedLocations = { { "A", 1 }, { "D", 5 }, { "F", 2 } },
+                X = 0f,
+                Y = 1f,
+                Connections = { { "A", 1 }, { "D", 5 }, { "F", 2 } },
                 Tags = { "Park", "Pathway" }
             });
 
             TestLocations.Add(new()
             {
                 Name = "D",
-                Position = new(1, 1),
-                ConnectedLocations = { { "B", 3 }, { "C", 5 }, { "E", 4 } },
+                X = 1f,
+                Y = 1f,
+                Connections = { { "B", 3 }, { "C", 5 }, { "E", 4 } },
                 Tags = { "Recreational", "Pathway" }
             });
 
             TestLocations.Add(new()
             {
                 Name = "F",
-                Position = new(0, 0),
-                ConnectedLocations = { { "C", 2 } },
+                X = 0f,
+                Y = 0f,
+                Connections = { { "C", 2 } },
                 Tags = { "Food" }
             });
 
             TestLocations.Add(new()
             {
                 Name = "E",
-                Position = new(1, 0),
-                ConnectedLocations = { { "D", 4 } },
+                X = 1f,
+                Y = 0f,
+                Connections = { { "D", 4 } },
                 Tags = { "House" }
             });
         }
 
         [TestMethod]
-        public void TestLocationManager()
+        public void TestLocationGraphFunctionality()
         {
             Assert.AreEqual(0, LocationManager.LocationsByName.Count);
             foreach (LocationNode node in TestLocations)
@@ -92,7 +91,17 @@ namespace SimManagerUnitTest
             Assert.AreEqual(0, LocationManager.DistanceMatrix["A"]["A"]);
             Assert.AreEqual(1, LocationManager.DistanceMatrix["A"]["C"]);
             Assert.AreEqual(10, LocationManager.DistanceMatrix["A"]["E"]);
-            Assert.AreEqual("", JsonSerializer.Serialize(LocationManager.DistanceMatrix, Jso));
+            Assert.AreEqual(10, LocationManager.DistanceMatrix["E"]["A"]);
+        }
+
+        [TestMethod]
+        public void TestLocationManager()
+        {
+            LocationManager.Init("Data\\Locations2.json");
+            Assert.AreEqual(6, LocationManager.LocationsByName.Count);
+            Assert.IsTrue(LocationManager.LocationsByName.ContainsKey("Dorm"));
+            Assert.IsTrue(LocationManager.LocationsByName.ContainsKey("Math Hall"));
+            Assert.AreEqual(3, LocationManager.DistanceMatrix["Math Hall"]["Dorm"]);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+﻿using Anthology.Models.Deprecated;
 
 namespace Anthology.Models
 {
@@ -32,7 +32,7 @@ namespace Anthology.Models
 
         public static void GenerateSimLocations(uint n, int gridSize)
         {
-            UI.GridSize = gridSize;
+            /*UI.GridSize = gridSize;
             LocationManager.LocationSet.Clear();
             LocationManager.LocationGrid.Clear();
             for (int i = 0; i < gridSize; i++)
@@ -67,7 +67,7 @@ namespace Anthology.Models
                     }
                 };
                 LocationManager.AddLocation(sl);
-            }
+            }*/
         }
 
         public static void GeneratePrimaryActions(uint n)

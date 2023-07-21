@@ -14,7 +14,7 @@
             Time = 0;
             ActionManager.Init(actionPath);
             AgentManager.Init(agentPath);
-            LocationManager.Init(UI.GridSize, locationPath);
+            LocationManager.Init(locationPath);
         }
 
         /** Increment simulation time by one tick */

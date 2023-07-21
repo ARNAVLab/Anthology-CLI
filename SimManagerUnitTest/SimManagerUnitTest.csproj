@@ -13,6 +13,7 @@
     <None Remove="Data\Actions.json" />
     <None Remove="Data\Agents.json" />
     <None Remove="Data\Locations.json" />
+    <None Remove="Data\Locations2.json" />
     <None Remove="Data\Paths.json" />
   </ItemGroup>
 
@@ -28,6 +29,11 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Include="Data\Locations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Data\Locations2.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
