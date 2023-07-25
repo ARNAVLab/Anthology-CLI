@@ -1,6 +1,6 @@
-﻿using MongoDB.Bson.Serialization.IdGenerators;
-using System.Numerics;
+﻿using System.Numerics;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace Anthology.Models
 {
@@ -16,6 +16,7 @@ namespace Anthology.Models
 
         [JsonIgnore]
         public static Dictionary<string, Dictionary<string, float>> DistanceMatrix { get; set; } = new();
+
         public static void Init(string path)
         {
             Reset();
@@ -43,13 +44,10 @@ namespace Anthology.Models
                     LocationsByTag.Add(tag, new());
                 LocationsByTag[tag].Add(node);
             }
-
-            foreach (Agent a in AgentManager.Agents)
+            foreach (Agent agent in AgentManager.Agents)
             {
-                if (a.CurrentLocation == node.Name)
-                {
-                    node.AgentsPresent.Add(a.Name);
-                }
+                if (agent.CurrentLocation == node.Name)
+                    node.AgentsPresent.Add(agent.Name);
             }
         }
 
@@ -60,111 +58,87 @@ namespace Anthology.Models
             AddLocation(new() { Name = name, X = x, Y = y, Tags = newTags, Connections = connections });
         }
 
-        /*public static void UpdateClosestLocationsByTags()
-        {
-            HashSet<string> tags = new();
-            foreach (LocationNode loc in LocationsByName.Values)
-            {
-                tags.UnionWith(loc.Tags);
-            }
-
-            foreach (LocationNode loc in LocationsByName.Values)
-            {
-                loc.UpdateClosestLocationsByTags(tags);
-            }
-        }*/
-
         public static void UpdateDistanceMatrix()
-        {
-            foreach (string loc1 in LocationsByName.Keys)
+        { 
+            Parallel.ForEach(LocationsByName.Keys, loc1 =>
             {
                 foreach (string loc2 in LocationsByName.Keys)
                 {
-                    if (loc1 == loc2)
-                    {
-                        DistanceMatrix[loc1][loc2] = 0;
-                    }
-                    else
-                    {
-                        DistanceMatrix[loc1][loc2] = float.MaxValue;
-                    }
+                    if (loc1 == loc2) DistanceMatrix[loc1][loc2] = 0;
+                    else DistanceMatrix[loc1][loc2] = float.MaxValue;
                 }
-            }
+            });
 
-            foreach (KeyValuePair<string, LocationNode> loc in LocationsByName)
+            Parallel.ForEach(LocationsByName, loc =>
             {
                 foreach (KeyValuePair<string, float> con in loc.Value.Connections)
-                {
                     DistanceMatrix[loc.Key][con.Key] = con.Value;
-                }
-            }
+            });
 
-            foreach (string loc1 in LocationsByName.Keys)
+            Parallel.ForEach(LocationsByName.Keys, loc1 =>
             {
-                foreach (string loc2 in LocationsByName.Keys)
+            foreach (string loc2 in LocationsByName.Keys)
+            {
+                foreach (string loc3 in LocationsByName.Keys)
                 {
-                    foreach (string loc3 in LocationsByName.Keys)
-                    {
                         if (DistanceMatrix[loc2][loc3] > DistanceMatrix[loc2][loc1] + DistanceMatrix[loc1][loc3])
                             DistanceMatrix[loc2][loc3] = DistanceMatrix[loc2][loc1] + DistanceMatrix[loc1][loc3];
                     }
                 }
-            }
+            });
         }
 
         public static HashSet<LocationNode> LocationsSatisfyingLocationRequirement(RLocation requirements)
         {
-            HashSet<LocationNode> matches = new();
+            ParallelQuery<LocationNode> matches = ParallelEnumerable.Empty<LocationNode>();
             if (requirements.HasOneOrMoreOf.Any())
             {
                 foreach (string tag in requirements.HasOneOrMoreOf)
                 {
-                    matches.UnionWith(LocationsByTag[tag]);
+                    matches.Concat(LocationsByTag[tag].AsParallel());
                 }
             }
             else
             {
-                matches.UnionWith(LocationsByName.Values);
+                matches.Concat(LocationsByName.Values.AsParallel());
             }
             if (requirements.HasAllOf.Any())
             {
                 foreach (string tag in requirements.HasAllOf)
                 {
-                    matches.IntersectWith(LocationsByTag[tag]);
+                    matches.Intersect(LocationsByTag[tag].AsParallel());
                 }
             }
             if (requirements.HasNoneOf.Any())
             {
                 foreach (string tag in requirements.HasNoneOf)
                 {
-                    matches.ExceptWith(LocationsByTag[tag]);
+                    matches.Except(LocationsByTag[tag].AsParallel());
                 }
             }
-            return matches;
+            return matches.ToHashSet();
         }
 
         public static HashSet<LocationNode> LocationsSatisfyingPeopleRequirement(HashSet<LocationNode> locations, RPeople requirements, string agent = "")
         {
-            bool IsLocationInvalid(LocationNode location)
+            bool IsLocationValid(LocationNode location)
             {
                 if (agent == "" || location.AgentsPresent.Contains(agent))
                 {
-                    return !location.SatisfiesRequirements(requirements);
+                    return location.SatisfiesRequirements(requirements);
                 }
                 else
                 {
                     location.AgentsPresent.Add(agent);
-                    bool invalid = !location.SatisfiesRequirements(requirements);
+                    bool valid = location.SatisfiesRequirements(requirements);
                     location.AgentsPresent.Remove(agent);
-                    return invalid;
+                    return valid;
                 }
             }
+            ParallelQuery<LocationNode> satisfactoryLocations;
+            satisfactoryLocations = ParallelEnumerable.Where(locations.AsParallel(), IsLocationValid);
 
-            HashSet<LocationNode> satisfactoryLocations = new();
-            satisfactoryLocations.UnionWith(locations);
-            satisfactoryLocations.RemoveWhere(IsLocationInvalid);
-
-            return satisfactoryLocations;
+            return satisfactoryLocations.ToHashSet();
         }
 
         public static LocationNode FindNearestLocationFrom(LocationNode loc, HashSet<LocationNode> locations)
@@ -180,6 +154,15 @@ namespace Anthology.Models
                     nearest = location;
                 }
             }
+
+       /*     Parallel.ForEach(locations, location =>
+            {
+                if (dist > DistanceMatrix[loc.Name][location.Name])
+                {
+                    dist = DistanceMatrix[loc.Name][location.Name];
+                    nearest = location;
+                }
+            });*/
             return nearest;
         }
     }

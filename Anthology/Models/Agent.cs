@@ -156,9 +156,9 @@
          */
         public void SelectNextAction()
         {
-           float maxDeltaUtility = 0f;
-            List<Action> currentChoice = new();
-            List<LocationNode> currentDest = new();
+            float maxDeltaUtility = 0f;
+            List<Action> currentChoice = new() { ActionManager.Actions.PrimaryActions.First() };
+            List<LocationNode> currentDest = new() { LocationManager.LocationsByName[CurrentLocation] };
             List<string> actionSelectLog = new();
             LocationNode currentLoc = LocationManager.LocationsByName[CurrentLocation];
             HashSet<Action> actionOptions = new();

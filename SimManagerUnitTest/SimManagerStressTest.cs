@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Anthology.Models;
-using Microsoft.VisualStudio.TestPlatform.Utilities;
-using Microsoft.Win32.SafeHandles;
 
 namespace SimManagerUnitTest
 {
@@ -15,33 +8,43 @@ namespace SimManagerUnitTest
     {
         private const int NUM_ACTIONS = 10; // number of possible actions each agent can consider choosing
         private const int NUM_ITERATIONS = 60; // number of iterations to run each test
-        private const int GRID_SIZE = 400; // size of the map grid for each test
-        private readonly static bool TEST_HUNDRED = false; // set to true to run tests for hundred agents
-        private readonly static bool TEST_THOUSAND = false; // set to true to run tests for thousand agents
-        private readonly static bool TEST_TEN_THOUSAND = false; // set to true to run tests for ten thousand agents
-        private readonly static bool TEST_HUNDRED_THOUSAND = false; // set to true to run tests for hundred thousand agents
-        private readonly static bool TEST_MILLION = false; // set to true to run tests for million agents
+        private readonly static bool TEST_HUNDRED_AGENTS = true; // set to true to run tests for hundred agents
+        private readonly static bool TEST_THOUSAND_AGENTS = true; // set to true to run tests for thousand agents
+        private readonly static bool TEST_TEN_THOUSAND_AGENTS = false; // set to true to run tests for ten thousand agents
+        private readonly static bool TEST_HUNDRED_THOUSAND_AGENTS = false; // set to true to run tests for hundred thousand agents
+        private readonly static bool TEST_MILLION_AGENTS = false; // set to true to run tests for million agents
+        private readonly static bool TEST_FIVE_LOCATIONS = true; // set to true to run tests for five locations
+        private readonly static bool TEST_TEN_LOCATIONS = true; // set to true to run tests for ten locations
+        private readonly static bool TEST_TWENTY_LOCATIONS = true; // set to true to run tests for twenty locations
+        private readonly static bool TEST_FIFTY_LOCATIONS = true; // set to true to run tests for fifty locations
+        private readonly static bool TEST_HUNDRED_LOCATIONS = true; // set to true to run tests for hundred locations
+        private readonly static bool TEST_FIVE_HUNDRED_LOCATIONS = true; // set to true to run tests for five hundred locations
+        private readonly static bool TEST_THOUSAND_LOCATIONS = true; // set to true to run tests for thousand locations
+        private readonly static bool TEST_FIVE_THOUSAND_LOCATIONS = true; // set to true to run tests for five thousand locations
+        private readonly static bool TEST_TEN_THOUSAND_LOCATIONS = true; // set to true to run tests for ten thousand locations
 
         [TestMethod]
-        public void TestHundredAgentsFiveLocations()
+        public void Test01HundredAgentsFiveLocations()
         {
-            if (!TEST_HUNDRED) return;
-            AnthologyFactory.GenerateAgents(100, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(5, GRID_SIZE);
+            if (!TEST_HUNDRED_AGENTS || !TEST_FIVE_LOCATIONS) return;
+            int numLocations = 5;
+            AnthologyFactory.GenerateAgents(100, numLocations);
+            AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
             
             Stopwatch timer = Stopwatch.StartNew();
-            ExecutionManager.RunSim(NUM_ITERATIONS);
+            ExecutionManager.RunSim(60);
             timer.Stop();
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
         [TestMethod]
-        public void TestHundredAgentsTenLocations()
+        public void Test06HundredAgentsTenLocations()
         {
-            if (!TEST_HUNDRED) return;
-            AnthologyFactory.GenerateAgents(100, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(10, GRID_SIZE);
+            if (!TEST_HUNDRED_AGENTS || !TEST_TEN_LOCATIONS) return;
+            int numLocations = 10;
+            AnthologyFactory.GenerateAgents(100, numLocations);
+            AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -51,11 +54,12 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestHundredAgentsTwentyLocations()
+        public void Test11HundredAgentsTwentyLocations()
         {
-            if (!TEST_HUNDRED) return;
-            AnthologyFactory.GenerateAgents(100, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(20, GRID_SIZE);
+            if (!TEST_HUNDRED_AGENTS || !TEST_TWENTY_LOCATIONS) return;
+            int numLocations = 20;
+            AnthologyFactory.GenerateAgents(100, numLocations);
+            AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -65,11 +69,12 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestHundredAgentsFiftyLocations()
+        public void Test16HundredAgentsFiftyLocations()
         {
-            if (!TEST_HUNDRED) return;
-            AnthologyFactory.GenerateAgents(100, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(50, GRID_SIZE);
+            if (!TEST_HUNDRED_AGENTS || !TEST_FIFTY_LOCATIONS) return;
+            int numLocations = 50;
+            AnthologyFactory.GenerateAgents(100, numLocations);
+            AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -79,11 +84,12 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestHundredAgentsHundredLocations()
+        public void Test21HundredAgentsHundredLocations()
         {
-            if (!TEST_HUNDRED) return;
-            AnthologyFactory.GenerateAgents(100, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(100, GRID_SIZE);
+            if (!TEST_HUNDRED_AGENTS || !TEST_HUNDRED_LOCATIONS) return;
+            int numLocations = 100;
+            AnthologyFactory.GenerateAgents(100, numLocations);
+            AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -93,11 +99,12 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestHundredAgentsFiveHundredLocations()
+        public void Test26HundredAgentsFiveHundredLocations()
         {
-            if (!TEST_HUNDRED) return;
-            AnthologyFactory.GenerateAgents(100, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(500, GRID_SIZE);
+            if (!TEST_HUNDRED_AGENTS || !TEST_FIVE_HUNDRED_LOCATIONS) return;
+            int numLocations = 500;
+            AnthologyFactory.GenerateAgents(100, numLocations);
+            AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -107,11 +114,12 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestHundredAgentsThousandLocations()
+        public void Test31HundredAgentsThousandLocations()
         {
-            if (!TEST_HUNDRED) return;
-            AnthologyFactory.GenerateAgents(100, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(1000, GRID_SIZE);
+            if (!TEST_HUNDRED_AGENTS || !TEST_THOUSAND_LOCATIONS) return;
+            int numLocations = 1000;
+            AnthologyFactory.GenerateAgents(100, numLocations);
+            AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -121,11 +129,12 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestHundredAgentsFiveThousandLocations()
+        public void Test36HundredAgentsFiveThousandLocations()
         {
-            if (!TEST_HUNDRED) return;
-            AnthologyFactory.GenerateAgents(100, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(5000, GRID_SIZE);
+            if (!TEST_HUNDRED_AGENTS || !TEST_FIVE_THOUSAND_LOCATIONS) return;
+            int numLocations = 5000;
+            AnthologyFactory.GenerateAgents(100, numLocations);
+            AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -135,11 +144,12 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestHundredAgentsTenThousandLocations()
+        public void Test41HundredAgentsTenThousandLocations()
         {
-            if (!TEST_HUNDRED) return;
-            AnthologyFactory.GenerateAgents(100, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(10000, GRID_SIZE);
+            if (!TEST_HUNDRED_AGENTS || !TEST_TEN_THOUSAND_LOCATIONS) return;
+            int numLocations = 10000;
+            AnthologyFactory.GenerateAgents(100, numLocations);
+            AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -149,11 +159,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestThousandAgentsFiveLocations()
+        public void Test02ThousandAgentsFiveLocations()
         {
-            if (!TEST_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(1000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(5, GRID_SIZE);
+            if (!TEST_THOUSAND_AGENTS || !TEST_FIVE_LOCATIONS) return;
+            int numLocations = 5;
+            AnthologyFactory.GenerateAgents(1000, numLocations);
+            if (!TEST_HUNDRED_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -163,11 +175,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestThousandAgentsTenLocations()
+        public void Test07ThousandAgentsTenLocations()
         {
-            if (!TEST_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(1000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(10, GRID_SIZE);
+            if (!TEST_THOUSAND_AGENTS || !TEST_TEN_LOCATIONS) return;
+            int numLocations = 10;
+            AnthologyFactory.GenerateAgents(1000, numLocations);
+            if (!TEST_HUNDRED_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -177,11 +191,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestThousandAgentsTwentyLocations()
+        public void Test12ThousandAgentsTwentyLocations()
         {
-            if (!TEST_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(1000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(20, GRID_SIZE);
+            if (!TEST_THOUSAND_AGENTS || !TEST_TWENTY_LOCATIONS) return;
+            int numLocations = 20;
+            AnthologyFactory.GenerateAgents(1000, numLocations);
+            if (!TEST_HUNDRED_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -191,11 +207,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestThousandAgentsFiftyLocations()
+        public void Test17ThousandAgentsFiftyLocations()
         {
-            if (!TEST_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(1000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(50, GRID_SIZE);
+            if (!TEST_THOUSAND_AGENTS || !TEST_FIFTY_LOCATIONS) return;
+            int numLocations = 50;
+            AnthologyFactory.GenerateAgents(1000, numLocations);
+            if (!TEST_HUNDRED_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -205,11 +223,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestThousandAgentsHundredLocations()
+        public void Test22ThousandAgentsHundredLocations()
         {
-            if (!TEST_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(1000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(100, GRID_SIZE);
+            if (!TEST_THOUSAND_AGENTS || !TEST_HUNDRED_LOCATIONS) return;
+            int numLocations = 100;
+            AnthologyFactory.GenerateAgents(1000, numLocations);
+            if (!TEST_HUNDRED_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -219,11 +239,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestThousandAgentsFiveHundredLocations()
+        public void Test27ThousandAgentsFiveHundredLocations()
         {
-            if (!TEST_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(1000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(500, GRID_SIZE);
+            if (!TEST_THOUSAND_AGENTS || !TEST_FIVE_HUNDRED_LOCATIONS) return;
+            int numLocations = 500;
+            AnthologyFactory.GenerateAgents(1000, numLocations);
+            if (!TEST_HUNDRED_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -233,11 +255,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestThousandAgentsThousandLocations()
+        public void Test32ThousandAgentsThousandLocations()
         {
-            if (!TEST_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(1000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(1000, GRID_SIZE);
+            if (!TEST_THOUSAND_AGENTS || !TEST_THOUSAND_LOCATIONS) return;
+            int numLocations = 1000;
+            AnthologyFactory.GenerateAgents(1000, numLocations);
+            if (!TEST_HUNDRED_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -247,11 +271,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestThousandAgentsFiveThousandLocations()
+        public void Test37ThousandAgentsFiveThousandLocations()
         {
-            if (!TEST_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(1000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(5000, GRID_SIZE);
+            if (!TEST_THOUSAND_AGENTS || !TEST_FIVE_THOUSAND_LOCATIONS) return;
+            int numLocations = 5000;
+            AnthologyFactory.GenerateAgents(1000, numLocations);
+            if (!TEST_HUNDRED_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -261,11 +287,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestThousandAgentsTenThousandLocations()
+        public void Test42ThousandAgentsTenThousandLocations()
         {
-            if (!TEST_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(1000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(10000, GRID_SIZE);
+            if (!TEST_THOUSAND_AGENTS || !TEST_TEN_THOUSAND_LOCATIONS) return;
+            int numLocations = 10000;
+            AnthologyFactory.GenerateAgents(1000, numLocations);
+            if (!TEST_HUNDRED_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -275,11 +303,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestTenThousandAgentsFiveLocations()
+        public void Test03TenThousandAgentsFiveLocations()
         {
-            if (!TEST_TEN_THOUSAND) return; 
-            AnthologyFactory.GenerateAgents(10000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(5, GRID_SIZE);
+            if (!TEST_TEN_THOUSAND_AGENTS || !TEST_FIVE_LOCATIONS) return;
+            int numLocations = 5;
+            AnthologyFactory.GenerateAgents(10000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -289,11 +319,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestTenThousandAgentsTenLocations()
+        public void Test08TenThousandAgentsTenLocations()
         {
-            if (!TEST_TEN_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(10000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(10, GRID_SIZE);
+            if (!TEST_TEN_THOUSAND_AGENTS || !TEST_TEN_LOCATIONS) return;
+            int numLocations = 10;
+            AnthologyFactory.GenerateAgents(10000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -303,11 +335,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestTenThousandAgentsTwentyLocations()
+        public void Test13TenThousandAgentsTwentyLocations()
         {
-            if (!TEST_TEN_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(10000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(20, GRID_SIZE);
+            if (!TEST_TEN_THOUSAND_AGENTS || !TEST_TWENTY_LOCATIONS) return;
+            int numLocations = 20;
+            AnthologyFactory.GenerateAgents(10000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -317,11 +351,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestTenThousandAgentsFiftyLocations()
+        public void Test18TenThousandAgentsFiftyLocations()
         {
-            if (!TEST_TEN_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(10000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(50, GRID_SIZE);
+            if (!TEST_TEN_THOUSAND_AGENTS || !TEST_FIFTY_LOCATIONS) return;
+            int numLocations = 50;
+            AnthologyFactory.GenerateAgents(10000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -331,11 +367,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestTenThousandAgentsHundredLocations()
+        public void Test23TenThousandAgentsHundredLocations()
         {
-            if (!TEST_TEN_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(10000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(100, GRID_SIZE);
+            if (!TEST_TEN_THOUSAND_AGENTS || !TEST_HUNDRED_LOCATIONS) return;
+            int numLocations = 100;
+            AnthologyFactory.GenerateAgents(10000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -345,11 +383,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestTenThousandAgentsFiveHundredLocations()
+        public void Test28TenThousandAgentsFiveHundredLocations()
         {
-            if (!TEST_TEN_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(10000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(500, GRID_SIZE);
+            if (!TEST_TEN_THOUSAND_AGENTS || !TEST_FIVE_HUNDRED_LOCATIONS) return;
+            int numLocations = 500;
+            AnthologyFactory.GenerateAgents(10000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -359,11 +399,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestTenThousandAgentsThousandLocations()
+        public void Test33TenThousandAgentsThousandLocations()
         {
-            if (!TEST_TEN_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(10000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(1000, GRID_SIZE);
+            if (!TEST_TEN_THOUSAND_AGENTS || !TEST_THOUSAND_LOCATIONS) return;
+            int numLocations = 1000;
+            AnthologyFactory.GenerateAgents(10000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -373,11 +415,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestTenThousandAgentsFiveThousandLocations()
+        public void Test38TenThousandAgentsFiveThousandLocations()
         {
-            if (!TEST_TEN_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(10000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(5000, GRID_SIZE);
+            if (!TEST_TEN_THOUSAND_AGENTS || !TEST_FIVE_THOUSAND_LOCATIONS) return;
+            int numLocations = 5000;
+            AnthologyFactory.GenerateAgents(10000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -387,11 +431,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestTenThousandAgentsTenThousandLocations()
+        public void Test43TenThousandAgentsTenThousandLocations()
         {
-            if (!TEST_TEN_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(10000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(10000, GRID_SIZE);
+            if (!TEST_TEN_THOUSAND_AGENTS || !TEST_TEN_THOUSAND_LOCATIONS) return;
+            int numLocations = 10000;
+            AnthologyFactory.GenerateAgents(10000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -401,11 +447,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestHundredThousandAgentsFiveLocations()
+        public void Test04HundredThousandAgentsFiveLocations()
         {
-            if (!TEST_HUNDRED_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(100000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(5, GRID_SIZE);
+            if (!TEST_HUNDRED_THOUSAND_AGENTS || !TEST_FIVE_LOCATIONS) return;
+            int numLocations = 5;
+            AnthologyFactory.GenerateAgents(100000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS && !TEST_TEN_THOUSAND_LOCATIONS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -415,11 +463,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestHundredThousandAgentsTenLocations()
+        public void Test09HundredThousandAgentsTenLocations()
         {
-            if (!TEST_HUNDRED_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(100000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(10, GRID_SIZE);
+            if (!TEST_HUNDRED_THOUSAND_AGENTS || !TEST_TEN_LOCATIONS) return;
+            int numLocations = 10;
+            AnthologyFactory.GenerateAgents(100000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS && !TEST_TEN_THOUSAND_LOCATIONS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -429,11 +479,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestHundredThousandAgentsTwentyLocations()
+        public void Test14HundredThousandAgentsTwentyLocations()
         {
-            if (!TEST_HUNDRED_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(100000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(20, GRID_SIZE);
+            if (!TEST_HUNDRED_THOUSAND_AGENTS || !TEST_TWENTY_LOCATIONS) return;
+            int numLocations = 20;
+            AnthologyFactory.GenerateAgents(100000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS && !TEST_TEN_THOUSAND_LOCATIONS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -443,11 +495,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestHundredThousandAgentsFiftyLocations()
+        public void Test19HundredThousandAgentsFiftyLocations()
         {
-            if (!TEST_HUNDRED_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(100000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(50, GRID_SIZE);
+            if (!TEST_HUNDRED_THOUSAND_AGENTS || !TEST_FIFTY_LOCATIONS) return;
+            int numLocations = 50;
+            AnthologyFactory.GenerateAgents(100000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS && !TEST_TEN_THOUSAND_LOCATIONS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -457,11 +511,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestHundredThousandAgentsHundredLocations()
+        public void Test24HundredThousandAgentsHundredLocations()
         {
-            if (!TEST_HUNDRED_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(100000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(100, GRID_SIZE);
+            if (!TEST_HUNDRED_THOUSAND_AGENTS || !TEST_HUNDRED_LOCATIONS) return;
+            int numLocations = 100;
+            AnthologyFactory.GenerateAgents(100000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS && !TEST_TEN_THOUSAND_LOCATIONS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -471,11 +527,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestHundredThousandAgentsFiveHundredLocations()
+        public void Test29HundredThousandAgentsFiveHundredLocations()
         {
-            if (!TEST_HUNDRED_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(100000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(500, GRID_SIZE);
+            if (!TEST_HUNDRED_THOUSAND_AGENTS || !TEST_FIVE_HUNDRED_LOCATIONS) return;
+            int numLocations = 500;
+            AnthologyFactory.GenerateAgents(100000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS && !TEST_TEN_THOUSAND_LOCATIONS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -485,11 +543,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestHundredThousandAgentsThousandLocations()
+        public void Test34HundredThousandAgentsThousandLocations()
         {
-            if (!TEST_HUNDRED_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(100000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(1000, GRID_SIZE);
+            if (!TEST_HUNDRED_THOUSAND_AGENTS || !TEST_THOUSAND_LOCATIONS) return;
+            int numLocations = 1000;
+            AnthologyFactory.GenerateAgents(100000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS && !TEST_TEN_THOUSAND_LOCATIONS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -499,11 +559,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestHundredThousandAgentsFiveThousandLocations()
+        public void Test39HundredThousandAgentsFiveThousandLocations()
         {
-            if (!TEST_HUNDRED_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(100000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(5000, GRID_SIZE);
+            if (!TEST_HUNDRED_THOUSAND_AGENTS || !TEST_FIVE_THOUSAND_LOCATIONS) return;
+            int numLocations = 5000;
+            AnthologyFactory.GenerateAgents(100000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS && !TEST_TEN_THOUSAND_LOCATIONS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -513,11 +575,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestHundredThousandAgentsTenThousandLocations()
+        public void Test44HundredThousandAgentsTenThousandLocations()
         {
-            if (!TEST_HUNDRED_THOUSAND) return;
-            AnthologyFactory.GenerateAgents(100000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(10000, GRID_SIZE);
+            if (!TEST_HUNDRED_THOUSAND_AGENTS || !TEST_TEN_THOUSAND_LOCATIONS) return;
+            int numLocations = 10000;
+            AnthologyFactory.GenerateAgents(100000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS && !TEST_TEN_THOUSAND_LOCATIONS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -527,11 +591,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestMillionAgentsFiveLocations()
+        public void Test05MillionAgentsFiveLocations()
         {
-            if (!TEST_MILLION) return;
-            AnthologyFactory.GenerateAgents(1000000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(5, GRID_SIZE);
+            if (!TEST_MILLION_AGENTS || !TEST_FIVE_LOCATIONS) return;
+            int numLocations = 5;
+            AnthologyFactory.GenerateAgents(1000000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS && !TEST_TEN_THOUSAND_LOCATIONS && !TEST_HUNDRED_THOUSAND_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -541,11 +607,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestMillionAgentsTenLocations()
+        public void Test10MillionAgentsTenLocations()
         {
-            if (!TEST_MILLION) return;
-            AnthologyFactory.GenerateAgents(1000000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(10, GRID_SIZE);
+            if (!TEST_MILLION_AGENTS || !TEST_TEN_LOCATIONS) return;
+            int numLocations = 10;
+            AnthologyFactory.GenerateAgents(1000000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS && !TEST_TEN_THOUSAND_LOCATIONS && !TEST_HUNDRED_THOUSAND_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -555,11 +623,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestMillionAgentsTwentyLocations()
+        public void Test15MillionAgentsTwentyLocations()
         {
-            if (!TEST_MILLION) return;
-            AnthologyFactory.GenerateAgents(1000000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(20, GRID_SIZE);
+            if (!TEST_MILLION_AGENTS || !TEST_TWENTY_LOCATIONS) return;
+            int numLocations = 20;
+            AnthologyFactory.GenerateAgents(1000000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS && !TEST_TEN_THOUSAND_LOCATIONS && !TEST_HUNDRED_THOUSAND_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -569,11 +639,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestMillionAgentsFiftyLocations()
+        public void Test20MillionAgentsFiftyLocations()
         {
-            if (!TEST_MILLION) return;
-            AnthologyFactory.GenerateAgents(1000000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(50, GRID_SIZE);
+            if (!TEST_MILLION_AGENTS || !TEST_FIFTY_LOCATIONS) return;
+            int numLocations = 50;
+            AnthologyFactory.GenerateAgents(1000000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS && !TEST_TEN_THOUSAND_LOCATIONS && !TEST_HUNDRED_THOUSAND_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -583,11 +655,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestMillionAgentsHundredLocations()
+        public void Test25MillionAgentsHundredLocations()
         {
-            if (!TEST_MILLION) return;
-            AnthologyFactory.GenerateAgents(1000000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(100, GRID_SIZE);
+            if (!TEST_MILLION_AGENTS || !TEST_HUNDRED_LOCATIONS) return;
+            int numLocations = 100;
+            AnthologyFactory.GenerateAgents(1000000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS && !TEST_TEN_THOUSAND_LOCATIONS && !TEST_HUNDRED_THOUSAND_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -597,11 +671,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestMillionAgentsFiveHundredLocations()
+        public void Test30MillionAgentsFiveHundredLocations()
         {
-            if (!TEST_MILLION) return;
-            AnthologyFactory.GenerateAgents(1000000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(500, GRID_SIZE);
+            if (!TEST_MILLION_AGENTS || !TEST_FIVE_HUNDRED_LOCATIONS) return;
+            int numLocations = 500;
+            AnthologyFactory.GenerateAgents(1000000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS && !TEST_TEN_THOUSAND_LOCATIONS && !TEST_HUNDRED_THOUSAND_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -611,11 +687,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestMillionAgentsThousandLocations()
+        public void Test35MillionAgentsThousandLocations()
         {
-            if (!TEST_MILLION) return;
-            AnthologyFactory.GenerateAgents(1000000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(1000, GRID_SIZE);
+            if (!TEST_MILLION_AGENTS || !TEST_THOUSAND_LOCATIONS) return;
+            int numLocations = 1000;
+            AnthologyFactory.GenerateAgents(1000000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS && !TEST_TEN_THOUSAND_LOCATIONS && !TEST_HUNDRED_THOUSAND_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -625,11 +703,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestMillionAgentsFiveThousandLocations()
+        public void Test40MillionAgentsFiveThousandLocations()
         {
-            if (!TEST_MILLION) return;
-            AnthologyFactory.GenerateAgents(1000000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(5000, GRID_SIZE);
+            if (!TEST_MILLION_AGENTS || !TEST_FIVE_THOUSAND_LOCATIONS) return;
+            int numLocations = 5000;
+            AnthologyFactory.GenerateAgents(1000000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS && !TEST_TEN_THOUSAND_LOCATIONS && !TEST_HUNDRED_THOUSAND_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();
@@ -639,39 +719,13 @@ namespace SimManagerUnitTest
         }
 
         [TestMethod]
-        public void TestMillionAgentsTenThousandLocations()
+        public void Test45MillionAgentsTenThousandLocations()
         {
-            if (!TEST_MILLION) return;
-            AnthologyFactory.GenerateAgents(1000000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(10000, GRID_SIZE);
-            AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
-
-            Stopwatch timer = Stopwatch.StartNew();
-            ExecutionManager.RunSim(NUM_ITERATIONS);
-            timer.Stop();
-            Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
-        }
-
-        [TestMethod]
-        public void TestMillionAgentsFiftyThousandLocations()
-        {
-            if (!TEST_MILLION) return;
-            AnthologyFactory.GenerateAgents(1000000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(50000, GRID_SIZE);
-            AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
-
-            Stopwatch timer = Stopwatch.StartNew();
-            ExecutionManager.RunSim(NUM_ITERATIONS);
-            timer.Stop();
-            Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
-        }
-
-        [TestMethod]
-        public void TestMillionAgentsHundredThousandLocations()
-        {
-            if (!TEST_MILLION) return;
-            AnthologyFactory.GenerateAgents(1000000, GRID_SIZE);
-            AnthologyFactory.GenerateSimLocations(100000, GRID_SIZE);
+            if (!TEST_MILLION_AGENTS || !TEST_TEN_THOUSAND_LOCATIONS) return;
+            int numLocations = 10000;
+            AnthologyFactory.GenerateAgents(1000000, numLocations);
+            if (!TEST_HUNDRED_AGENTS && !TEST_THOUSAND_AGENTS && !TEST_TEN_THOUSAND_LOCATIONS && !TEST_HUNDRED_THOUSAND_AGENTS)
+                AnthologyFactory.GenerateLocations(numLocations);
             AnthologyFactory.GeneratePrimaryActions(NUM_ACTIONS);
 
             Stopwatch timer = Stopwatch.StartNew();

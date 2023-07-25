@@ -12,6 +12,31 @@
             World.ReadWrite.LoadAgentsFromFile(path);
         }
 
+        /// <summary>
+        /// Removes all agents from the simulation
+        /// </summary>
+        public static void Reset()
+        {
+            foreach (LocationNode loc in LocationManager.LocationsByName.Values)
+            {
+                loc.AgentsPresent.Clear();
+            }
+            Agents.Clear();
+        }
+
+        /// <summary>
+        /// Adds the given agent to the simulation and marks it as present in its current location
+        /// </summary>
+        /// <param name="agent">The agent to add to the simulation</param>
+        public static void AddAgent(Agent agent)
+        {
+            Agents.Add(agent);
+            if (LocationManager.LocationsByName.ContainsKey(agent.CurrentLocation))
+            {
+                LocationManager.LocationsByName[agent.CurrentLocation].AgentsPresent.Add(agent.Name);
+            }
+        }
+
         /** Gets the agent in the simulation with the matching name */
         public static Agent GetAgentByName(string name)
         {
@@ -90,10 +115,10 @@
         /** Decrements the motives of every agent in the simulation */
         public static void DecrementMotives()
         {
-            foreach (Agent a in Agents)
+            Parallel.ForEach(Agents, a =>
             {
                 a.DecrementMotives();
-            }
+            });
         }
     }
 }

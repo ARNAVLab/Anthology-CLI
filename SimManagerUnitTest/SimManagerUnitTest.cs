@@ -79,8 +79,8 @@ namespace SimManagerUnitTest
             Assert.AreEqual("wait_action", SimManager.NPCs["Norma"].CurrentAction.Name);
             SimManager.GetIteration();
             Assert.AreEqual("eat_alone", SimManager.NPCs["Norma"].CurrentAction.Name);
-            SimManager.GetIteration(20);
-            Assert.AreNotEqual("travel_action", SimManager.NPCs["Norma"].CurrentAction.Name);
+            SimManager.GetIteration(61);
+            Assert.AreEqual("travel_action", SimManager.NPCs["Norma"].CurrentAction.Name);
         }
 /*
         [TestMethod]

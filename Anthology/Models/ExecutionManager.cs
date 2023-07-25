@@ -20,8 +20,10 @@ namespace Anthology.Models
             {
                 if (ToContinue())
                 {
-                    foreach (Agent agent in AgentManager.Agents)
+                    Parallel.ForEach(AgentManager.Agents, agent =>
+                    {
                         Turn(agent);
+                    });
 
                     World.IncrementTime();
                 }
