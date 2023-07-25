@@ -10,18 +10,55 @@ using Microsoft.Win32.SafeHandles;
 
 namespace SimManagerUnitTest
 {
+    /// <summary>
+    /// Stress test class for simulation manager.
+    /// </summary>
     [TestClass]
     public class SimManagerStressTest
     {
-        private const int NUM_ACTIONS = 10; // number of possible actions each agent can consider choosing
-        private const int NUM_ITERATIONS = 60; // number of iterations to run each test
-        private const int GRID_SIZE = 400; // size of the map grid for each test
-        private readonly static bool TEST_HUNDRED = false; // set to true to run tests for hundred agents
-        private readonly static bool TEST_THOUSAND = false; // set to true to run tests for thousand agents
-        private readonly static bool TEST_TEN_THOUSAND = false; // set to true to run tests for ten thousand agents
-        private readonly static bool TEST_HUNDRED_THOUSAND = false; // set to true to run tests for hundred thousand agents
-        private readonly static bool TEST_MILLION = false; // set to true to run tests for million agents
+        /// <summary>
+        /// Number of possible actions each agent can consider choosing.
+        /// </summary>
+        private const int NUM_ACTIONS = 10;
 
+        /// <summary>
+        /// Number of iterations to run each test.
+        /// </summary>
+        private const int NUM_ITERATIONS = 60;
+
+        /// <summary>
+        /// Size of the map grid for each test.
+        /// </summary>
+        private const int GRID_SIZE = 400;
+
+        /// <summary>
+        /// Set to true to run tests for hundred agents.
+        /// </summary>
+        private readonly static bool TEST_HUNDRED = false;
+
+        /// <summary>
+        /// Set to true to run tests for thousand agents.
+        /// </summary>
+        private readonly static bool TEST_THOUSAND = false;
+
+        /// <summary>
+        /// Set to true to run tests for ten thousand agents.
+        /// </summary>
+        private readonly static bool TEST_TEN_THOUSAND = false;
+
+        /// <summary>
+        /// Set to true to run tests for hundred thousand agents.
+        /// </summary>
+        private readonly static bool TEST_HUNDRED_THOUSAND = false;
+
+        /// <summary>
+        /// Set to true to run tests for million agents.
+        /// </summary>
+        private readonly static bool TEST_MILLION = false;
+
+        /// <summary>
+        /// Tests generating 100 agents and 5 locations.
+        /// </summary>
         [TestMethod]
         public void TestHundredAgentsFiveLocations()
         {
@@ -36,6 +73,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 100 agents and 10 locations.
+        /// </summary>
         [TestMethod]
         public void TestHundredAgentsTenLocations()
         {
@@ -49,6 +89,10 @@ namespace SimManagerUnitTest
             timer.Stop();
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
+
+        /// <summary>
+        /// Tests generating 100 agents and 20 locations.
+        /// </summary>
 
         [TestMethod]
         public void TestHundredAgentsTwentyLocations()
@@ -64,6 +108,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 100 agents with 50 locations.
+        /// </summary>
         [TestMethod]
         public void TestHundredAgentsFiftyLocations()
         {
@@ -78,6 +125,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 100 agents and 100 locations.
+        /// </summary>
         [TestMethod]
         public void TestHundredAgentsHundredLocations()
         {
@@ -92,6 +142,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 100 agents and 500 locations.
+        /// </summary>
         [TestMethod]
         public void TestHundredAgentsFiveHundredLocations()
         {
@@ -106,6 +159,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 100 agents and 1000 locations.
+        /// </summary>
         [TestMethod]
         public void TestHundredAgentsThousandLocations()
         {
@@ -120,6 +176,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 100 agents and 5000 locations.
+        /// </summary>
         [TestMethod]
         public void TestHundredAgentsFiveThousandLocations()
         {
@@ -134,6 +193,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 100 agents and 10000 locations.
+        /// </summary>
         [TestMethod]
         public void TestHundredAgentsTenThousandLocations()
         {
@@ -148,6 +210,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000 agents and 5 locations.
+        /// </summary>
         [TestMethod]
         public void TestThousandAgentsFiveLocations()
         {
@@ -162,6 +227,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000 agents and 10 locations.
+        /// </summary>
         [TestMethod]
         public void TestThousandAgentsTenLocations()
         {
@@ -176,6 +244,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000 agents and 20 locations.
+        /// </summary>
         [TestMethod]
         public void TestThousandAgentsTwentyLocations()
         {
@@ -190,6 +261,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000 agents and 50 locations.
+        /// </summary>
         [TestMethod]
         public void TestThousandAgentsFiftyLocations()
         {
@@ -204,6 +278,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000 agents and 100 locations.
+        /// </summary>
         [TestMethod]
         public void TestThousandAgentsHundredLocations()
         {
@@ -218,6 +295,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000 agents and 500 locations.
+        /// </summary>
         [TestMethod]
         public void TestThousandAgentsFiveHundredLocations()
         {
@@ -232,6 +312,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000 agents and 1000 locations.
+        /// </summary>
         [TestMethod]
         public void TestThousandAgentsThousandLocations()
         {
@@ -246,6 +329,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000 agents and 5000 locations.
+        /// </summary>
         [TestMethod]
         public void TestThousandAgentsFiveThousandLocations()
         {
@@ -260,6 +346,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000 agents and 10000 locations.
+        /// </summary>
         [TestMethod]
         public void TestThousandAgentsTenThousandLocations()
         {
@@ -274,6 +363,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 10000 agents and 5 locations.
+        /// </summary>
         [TestMethod]
         public void TestTenThousandAgentsFiveLocations()
         {
@@ -288,6 +380,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 10000 agents and 10 locations.
+        /// </summary>
         [TestMethod]
         public void TestTenThousandAgentsTenLocations()
         {
@@ -302,6 +397,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 10000 agents and 20 locations.
+        /// </summary>
         [TestMethod]
         public void TestTenThousandAgentsTwentyLocations()
         {
@@ -316,6 +414,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 10000 agents and 50 locations.
+        /// </summary>
         [TestMethod]
         public void TestTenThousandAgentsFiftyLocations()
         {
@@ -330,6 +431,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 10000 agents and 100 locations.
+        /// </summary>
         [TestMethod]
         public void TestTenThousandAgentsHundredLocations()
         {
@@ -344,6 +448,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 10000 agents and 500 locations.
+        /// </summary>
         [TestMethod]
         public void TestTenThousandAgentsFiveHundredLocations()
         {
@@ -358,6 +465,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 10000 agents and 1000 locations.
+        /// </summary>
         [TestMethod]
         public void TestTenThousandAgentsThousandLocations()
         {
@@ -372,6 +482,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 10000 agents and 5000 locations.
+        /// </summary>
         [TestMethod]
         public void TestTenThousandAgentsFiveThousandLocations()
         {
@@ -386,6 +499,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 10000 agents and 10000 locations.
+        /// </summary>
         [TestMethod]
         public void TestTenThousandAgentsTenThousandLocations()
         {
@@ -400,6 +516,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 100000 agents and 5 locations.
+        /// </summary>
         [TestMethod]
         public void TestHundredThousandAgentsFiveLocations()
         {
@@ -414,6 +533,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 100000 agents and 10 locations.
+        /// </summary>
         [TestMethod]
         public void TestHundredThousandAgentsTenLocations()
         {
@@ -428,6 +550,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 100000 agents and 20 locations.
+        /// </summary>
         [TestMethod]
         public void TestHundredThousandAgentsTwentyLocations()
         {
@@ -442,6 +567,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 100000 agents and 50 locations.
+        /// </summary>
         [TestMethod]
         public void TestHundredThousandAgentsFiftyLocations()
         {
@@ -456,6 +584,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 100000 agents and 100 locations.
+        /// </summary>
         [TestMethod]
         public void TestHundredThousandAgentsHundredLocations()
         {
@@ -470,6 +601,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 100000 agents and 500 locations.
+        /// </summary>
         [TestMethod]
         public void TestHundredThousandAgentsFiveHundredLocations()
         {
@@ -484,6 +618,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 100000 agents and 1000 locations.
+        /// </summary>
         [TestMethod]
         public void TestHundredThousandAgentsThousandLocations()
         {
@@ -498,6 +635,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 100000 agents and 5000 locations.
+        /// </summary>
         [TestMethod]
         public void TestHundredThousandAgentsFiveThousandLocations()
         {
@@ -512,6 +652,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 100000 agents and 10000 locations.
+        /// </summary>
         [TestMethod]
         public void TestHundredThousandAgentsTenThousandLocations()
         {
@@ -526,6 +669,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000000 agents and 5 locations.
+        /// </summary>
         [TestMethod]
         public void TestMillionAgentsFiveLocations()
         {
@@ -540,6 +686,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000000 agents and 10 locations.
+        /// </summary>
         [TestMethod]
         public void TestMillionAgentsTenLocations()
         {
@@ -554,6 +703,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000000 agents and 20 locations.
+        /// </summary>
         [TestMethod]
         public void TestMillionAgentsTwentyLocations()
         {
@@ -568,6 +720,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000000 agents and 50 locations.
+        /// </summary>
         [TestMethod]
         public void TestMillionAgentsFiftyLocations()
         {
@@ -582,6 +737,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000000 agents and 100 locations.
+        /// </summary>
         [TestMethod]
         public void TestMillionAgentsHundredLocations()
         {
@@ -596,6 +754,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000000 agents and 500 locations.
+        /// </summary>
         [TestMethod]
         public void TestMillionAgentsFiveHundredLocations()
         {
@@ -610,6 +771,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000000 agents and 1000 locations.
+        /// </summary>
         [TestMethod]
         public void TestMillionAgentsThousandLocations()
         {
@@ -624,6 +788,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000000 agents and 5000 locations.
+        /// </summary>
         [TestMethod]
         public void TestMillionAgentsFiveThousandLocations()
         {
@@ -638,6 +805,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000000 agents and 10000 locations.
+        /// </summary>
         [TestMethod]
         public void TestMillionAgentsTenThousandLocations()
         {
@@ -652,6 +822,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000000 agents and 50000 locations.
+        /// </summary>
         [TestMethod]
         public void TestMillionAgentsFiftyThousandLocations()
         {
@@ -666,6 +839,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(timer.ElapsedMilliseconds < 1, "Time elapsed = " + timer.ElapsedMilliseconds + "ms.");
         }
 
+        /// <summary>
+        /// Tests generating 1000000 agents and 100000 locations.
+        /// </summary>
         [TestMethod]
         public void TestMillionAgentsHundredThousandLocations()
         {

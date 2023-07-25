@@ -3,33 +3,41 @@ using System.Text.Json;
 
 namespace Anthology.Models
 {
-    /**
-     * Relationship class
-     * Relationships are composed by agents, so the owning agent will always be the source of the relationship.
-     * eg. an agent that has the 'brother' relationship with Norma is Norma's brother
-     */
+    /// <summary>
+    /// Relationships are composed by agents, so the owning agent will always be the source of the relationship,
+    /// eg. an agent that has the 'brother' relationship with Norma is Norma's brother.
+    /// </summary>
     public class Relationship
     {
-        /** The type of relationship, eg. 'student' or 'teacher' */
+        /// <summary>
+        /// The type of relationship, eg. 'student' or 'teacher'.
+        /// </summary>
         public string Type { get; set; } = string.Empty;
 
-        /** The agent that this relationship is with */
+        /// <summary>
+        /// The agent that this relationship is with.
+        /// </summary>
         public string With { get; set; } = string.Empty;
 
-        /** How strong the relationship is */
+        /// <summary>
+        /// How strong the relationship is.
+        /// </summary>
         public float Valence { get; set; }
     }
 
-    /**
-     * Agent class
-     * Describes the agent object or NPCs in the simulation 
-     */
+    /// <summary>
+    /// Describes the agent object or NPCs in the simulation.
+    /// </summary>
     public class Agent
     {
-        /** Name of the agent */
+        /// <summary>
+        /// Name of the agent.
+        /// </summary>
         public string Name { get; set; } = string.Empty;
 
-        /** Container of all the motive properties of this agent */
+        /// <summary>
+        /// Container of all the motive properties of this agent.
+        /// </summary>
         public Dictionary<string, float> Motives { get; set; } = new Dictionary<string, float>()
                                                                       {
                                                                         { "accomplishment", 1 },
@@ -39,31 +47,55 @@ namespace Anthology.Models
                                                                         { "physical", 1 } 
                                                                       };
 
-        /** Set of all the relationships of this agent */
+        /// <summary>
+        /// Set of all the relationships of this agent.
+        /// </summary>
         public HashSet<Relationship> Relationships { get; set; } = new HashSet<Relationship>();
 
-        /** Current location of the agent */
+        /// <summary>
+        /// Current x-coordinate of the agent.
+        /// </summary>
         public int XLocation { get; set; }
+
+        /// <summary>
+        /// Current y-coordinate of the agent.
+        /// </summary>
         public int YLocation { get; set; }
 
-        /** How long the agent will be occupied with the current action they are executing */
+        /// <summary>
+        /// How long the agent will be occupied with the current action they are executing.
+        /// </summary>
         public int OccupiedCounter { get; set; }
 
-        /** A queue containing the next few actions being executed by the agent */
+        /// <summary>
+        /// A queue containing the next few actions being executed by the agent.
+        /// </summary>
         public LinkedList<Action> CurrentAction { get; set; } = new LinkedList<Action>();
 
-        /**
-         * The destination that the agent is heading to
-         * Can be -1 if the agent has reached their previous destination and is 
-         * executing an action at that location.
-         */
+        /// <summary>
+        /// The x-coordinate of destination that the agent is heading to.
+        /// Can be -1 if the agent has reached their previous destination and is
+        /// executing an action at that location.
+        /// </summary>
         public int XDestination { get; set; } = -1;
+
+        /// <summary>
+        /// The y-coordinate of destination that the agent is heading to.
+        /// Can be -1 if the agent has reached their previous destination and is
+        /// executing an action at that location.
+        /// </summary>
         public int YDestination { get; set; } = -1;
 
-        /** List of targets for the agent's current action */
+        /// <summary>
+        /// List of targets for the agent's current action.
+        /// </summary>
         public HashSet<Agent> CurrentTargets { get; set; } = new HashSet<Agent>();
 
-        /** Starts travel to the agent's destination */
+        /// <summary>
+        /// Starts travel to the agent's destination.
+        /// </summary>
+        /// <param name="destination">The agent's destination.</param>
+        /// <param name="time">The time in which the agent started traveling.</param>
         public void StartTravelToLocation(SimLocation destination, float time)
         {
             XDestination = destination.X;
@@ -73,10 +105,10 @@ namespace Anthology.Models
 /*            Console.WriteLine("time: " + time.ToString() + " | " + Name + ": Started " + CurrentAction.First().Name + "; Destination: " + destination.Name);*/
         }
 
-        /**
-         * Move closer to the agent's destination
-         * Uses the manhattan distance to move the agent, so either moves along the x or y axis during any tick 
-         */
+        /// <summary>
+        /// Moves closer to the agent's destination.
+        /// Uses the manhattan distance to move the agent, so either moves along the x or y axis during any tick.
+        /// </summary>
         public void MoveCloserToDestination()
         {
             if (XDestination == -1) return;
@@ -100,7 +132,9 @@ namespace Anthology.Models
             LocationManager.LocationGrid[XLocation][YLocation].AgentsPresent.Add(Name);
         }
 
-        /** Applies the effect of an action to this agent */
+        /// <summary>
+        /// Applies the effect of an action to this agent.
+        /// </summary>
         public void ExecuteAction()
         {
             XDestination = -1;
@@ -146,10 +180,10 @@ namespace Anthology.Models
             }
         }
 
-        /**
-         * Starts an action (if the agent is at a location where the action can be performed)
-         * else makes the agent travel to a suitable location to perform the action
-         */
+        /// <summary>
+        /// Starts an action (if the agent is at a location where the action can be performed).
+        /// Else, makes the agent travel to a suitable location to perform the action.
+        /// </summary>
         public void StartAction()
         {
             Action action = CurrentAction.First();
@@ -166,10 +200,10 @@ namespace Anthology.Models
             }
         }
 
-        /**
-         * Selects an action from a set of valid actions to be performed by this agent.
-         * Selects the action with the maximal utility of the agent (motive increase / time).
-         */
+        /// <summary>
+        /// Selects an action from a set of valid actions to be performed by this agent.
+        /// Selects the action with the maximal utility of the agent (motive increase / time).
+        /// </summary>
         public void SelectNextAction()
         {
             float maxDeltaUtility = 0f;
@@ -264,7 +298,10 @@ namespace Anthology.Models
             }
         }
 
-        /** Returns whether the agent is content, ie. checks to see if an agent has the maximum motives */
+        /// <summary>
+        /// Returns whether the agent is content, ie. checks to see if an agent has the maximum motives.
+        /// </summary>
+        /// <returns>True if all motives are at max.</returns>
         public bool IsContent()
         {
             foreach (float m in Motives.Values)
@@ -274,7 +311,9 @@ namespace Anthology.Models
             return true;
         }
 
-        /** Decrements all the motives of this agent */
+        /// <summary>
+        /// Decrements all the motives of this agent.
+        /// </summary>
         public void DecrementMotives()
         {
             foreach(string m in Motives.Keys)
@@ -284,41 +323,67 @@ namespace Anthology.Models
         }
     }
 
-    /**
-     * Agent class received from a JSON file
-     * The action is provided as a string and matched to the Agent.CurrentAction object accordingly
-     */
+    /// <summary>
+    /// Agent class received from a JSON file.
+    /// The action is provided as a string and matched to the Agent.CurrentAction object accordingly.
+    /// </summary>
     public class SerializableAgent
     {
-        /** initialized to the name of the agent */
+        /// <summary>
+        /// Initialized to the name of the agent.
+        /// </summary>
         public string Name { get; set; } = string.Empty;
 
-        /** motives intiailized with values for the agent */
+        /// <summary>
+        /// Motives intiailized with values for the agent.
+        /// </summary>
         public Dictionary<string, float> Motives { get; set; } = new();
 
-        /** starting X coordinate */
+        /// <summary>
+        /// Starting x-coordinate.
+        /// </summary>
         public int XLocation { get; set; }
 
-        /** starting Y coordinate */
+        /// <summary>
+        /// Starting y-coordinate.
+        /// </summary>
         public int YLocation { get; set; }
 
-        /** describes whether the agent is currently occupied */
+        /// <summary>
+        /// Describes whether the agent is currently occupied.
+        /// </summary>
         public int OccupiedCounter { get; set; }
 
-        /** queue containing the next few actions being executed by the agent */
+        /// <summary>
+        /// Queue containing the next few actions being executed by the agent.
+        /// </summary>
         public string CurrentAction { get; set; } = string.Empty;
 
-        /** Location the agent is currently headed to */
+        /// <summary>
+        /// X-coordinate of location the agent is currently headed to.
+        /// </summary>
         public int XDestination { get; set; } = -1;
+
+        /// <summary>
+        /// Y-coordinate of location the agent is currently headed to.
+        /// </summary>
         public int YDestination { get; set; } = -1;
 
-        /** list of targets for the agent's current action */
+        /// <summary>
+        /// List of targets for the agent's current action.
+        /// </summary>
         public List<string> CurrentTargets { get; set; } = new List<string>();
 
-        /** list of relationships that the agent possesses */
+        /// <summary>
+        /// List of relationships that the agent possesses.
+        /// </summary>
         public List<Relationship> Relationships { get; set; } = new List<Relationship>();
 
-        /** Creates a serializable agent from the given agent for file I/O */
+        /// <summary>
+        /// Creates a serializable agent from the given agent for file I/O.
+        /// </summary>
+        /// <param name="agent">The agent to serialize.</param>
+        /// <returns>A serialized version of agent.</returns>
         public static SerializableAgent SerializeAgent(Agent agent)
         {
             SerializableAgent serializableAgent = new()
@@ -356,7 +421,11 @@ namespace Anthology.Models
             return serializableAgent;
         }
 
-        /** Creates an agent from the given serializable agent for file I/O */
+        /// <summary>
+        /// Creates an agent from the given serializable agent for file I/O.
+        /// </summary>
+        /// <param name="sAgent">The agent to deserialize.</param>
+        /// <returns>Raw Agent type that was deserialized.</returns>
         public static Agent DeserializeToAgent(SerializableAgent sAgent)
         {
             Agent agent = new()

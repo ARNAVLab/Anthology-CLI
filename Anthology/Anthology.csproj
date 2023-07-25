@@ -4,6 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,7 +12,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="doxygen-1.9.6.windows.x64" Version="1.9.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="MongoDB.Driver" Version="2.19.2" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="doxygen $(ProjectDir)doc\$(ProjectName).doxygen" />
+  </Target>
 
 </Project>

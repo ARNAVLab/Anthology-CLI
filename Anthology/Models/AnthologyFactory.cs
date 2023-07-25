@@ -2,8 +2,16 @@
 
 namespace Anthology.Models
 {
+    /// <summary>
+    /// Factory class that generates agents, locations, and actions.
+    /// </summary>
     public static class AnthologyFactory
     {
+        /// <summary>
+        /// Generates all agents given amount of agents and grid size. 
+        /// </summary>
+        /// <param name="n">Number of agents to add.</param>
+        /// <param name="gridSize">Size of the square grid (in terms of rows/columns).</param>
         public static void GenerateAgents(uint n, int gridSize)
         {
             UI.GridSize = gridSize;
@@ -30,6 +38,11 @@ namespace Anthology.Models
             }
         }
 
+        /// <summary>
+        /// Generates locations in the grid given number of locations.
+        /// </summary>
+        /// <param name="n">Number of locations to generate.</param>
+        /// <param name="gridSize">Size of the square grid (in terms of rows/columns)</param>
         public static void GenerateSimLocations(uint n, int gridSize)
         {
             UI.GridSize = gridSize;
@@ -70,6 +83,10 @@ namespace Anthology.Models
             }
         }
 
+        /// <summary>
+        /// Generates primary actions given number of primary actions.
+        /// </summary>
+        /// <param name="n">Number of primary actions to generate.</param>
         public static void GeneratePrimaryActions(uint n)
         {
             ActionManager.Actions.PrimaryActions.Clear();
