@@ -1,15 +1,25 @@
 ﻿namespace Anthology.Models
 {
-    /** Provides functionality for checking location-centric conditions */
+    /// <summary>
+    /// Provides functionality for checking location-centric conditions.
+    /// </summary>
     public static class LocationManager
     {
-        /** Locations in the simulation as a set for set operations */
+        /// <summary>
+        /// Locations in the simulation as a set for set operations.
+        /// </summary>
         public static HashSet<SimLocation> LocationSet { get; set; } = new HashSet<SimLocation>();
 
-        /** Locations in the simulation as a grid for coordinate access */
+        /// <summary>
+        /// Locations in the simulation as a grid for coordinate access.
+        /// </summary>
         public static Dictionary<int, Dictionary<int, SimLocation>> LocationGrid { get; set; } = new Dictionary<int, Dictionary<int, SimLocation>>();
 
-        /** Initialize/reset all static location manager variables and fill an empty N x N grid */
+        /// <summary>
+        /// Initialize/reset all static location manager variables and fill an empty N x N grid.
+        /// </summary>
+        /// <param name="n">Number of rows/columns of location grid.</param>
+        /// <param name="path">Path of JSON file to load locations from.</param>
         public static void Init(int n, string path)
         {
             LocationSet.Clear();
@@ -25,7 +35,10 @@
             World.ReadWrite.LoadLocationsFromFile(path);
         }
 
-        /** Add a location to both the location set and the location grid */
+        /// <summary>
+        /// Adds a location to both the location set and the location grid.
+        /// </summary>
+        /// <param name="location">The location to add.</param>
         public static void AddLocation(SimLocation location)
         {
             foreach (Agent a in AgentManager.Agents)
@@ -59,7 +72,13 @@
             LocationGrid[location.X][location.Y] = location;
         }
 
-        /** Create and add a location to both the location set and the location grid */
+        /// <summary>
+        /// Creates and adds a location to both the location set and the location grid.
+        /// </summary>
+        /// <param name="name">Name of the location.</param>
+        /// <param name="x">X-coordinate of the location.</param>
+        /// <param name="y">Y-coordinate of the location.</param>
+        /// <param name="tags">Relevant tags of the location.</param>
         public static void AddLocation(string name, int x, int y, IEnumerable<string> tags)
         {
             HashSet<string> newTags = new();
@@ -67,7 +86,11 @@
             AddLocation(new() { Name = name, X = x, Y = y, Tags = newTags });
         }
 
-        /** Finds the location with the matching name */
+        /// <summary>
+        /// Finds the location with the matching name.
+        /// </summary>
+        /// <param name="name">The name of the location.</param>
+        /// <returns>Location with name matching the given name.</returns>
         public static SimLocation GetSimLocationByName(string name)
         {
             bool IsNameMatch(SimLocation location)
@@ -79,11 +102,15 @@
             return location;
         }
 
-        /** 
-         * Filter given set of locations to find those locations that satisfy conditions specified in the location requirement
-         * Returns a set of locations that match the HasAllOf, HasOneOrMOreOf, and HasNoneOf constraints
-         * Returns all the locations that satisfied the given requirement, or an empty set is none match.
-         */
+        /// <summary>
+        /// Filter given set of locations to find those locations that satisfy conditions specified in the location requirement.
+        /// Returns a set of locations that match the HasAllOf, HasOneOrMOreOf, and HasNoneOf constraints.
+        /// Returns all the locations that satisfied the given requirement, or an empty set is none match.
+        /// </summary>
+        /// <param name="locations">The set of locations to filter.</param>
+        /// <param name="requirements">Requirements that locations must satisfy in order to be returned.</param>
+        /// <param name="agent">Agent relevant for handling agent requirement(s).</param>
+        /// <returns></returns>
         public static HashSet<SimLocation> LocationsSatisfyingLocationRequirement(HashSet<SimLocation> locations, RLocation requirements, string agent = "")
         {
             bool IsLocationInvalid(SimLocation location)
@@ -108,12 +135,16 @@
             return satisfactoryLocations;
         }
 
-        /**
-         * Filter given set of locations to find those locations that satisfy conditions specified in the people requirement
-         * Returns a set of locations that match the MinNumPeople, MaxNumPeople, SpecificPeoplePresent, SpecificPeopleAbsent,
-         * RelationshipsPresent, and RelationshipsAbsent requirements
-         * Returns all the locations that satisfied the given requirement, or an empty set is none match.
-         */
+        /// <summary>
+        /// Filter given set of locations to find those locations that satisfy conditions specified in the people requirement.
+        /// Returns a set of locations that match the MinNumPeople, MaxNumPeople, SpecificPeoplePresent, SpecificPeopleAbsent,
+        /// RelationshipsPresent, and RelationshipsAbsent requirements.
+        /// Returns all the locations that satisfied the given requirement, or an empty set is none match.
+        /// </summary>
+        /// <param name="locations">The set of locations to filter.</param>
+        /// <param name="requirements">Requirements that locations must satisfy to be returned.</param>
+        /// <param name="agent">Agent relevant for handling agent requirement(s).</param>
+        /// <returns></returns>
         public static HashSet<SimLocation> LocationsSatisfyingPeopleRequirement(HashSet<SimLocation> locations, RPeople requirements, string agent = "")
         {
             bool IsLocationInvalid(SimLocation location)
@@ -138,7 +169,13 @@
             return satisfactoryLocations;
         }
 
-        /** Returns the SimLocation at the given (X,Y) coordinates, or null if one does not exist */
+        /// <summary>
+        /// Returns the SimLocation at the given (X,Y) coordinates, or null if one does not exist.
+        /// </summary>
+        /// <param name="locations">The set of locations to search from.</param>
+        /// <param name="x">X-coordinate of potential location to return.</param>
+        /// <param name="y">Y-coordinate of potential location to return.</param>
+        /// <returns>Location at designated coordinates. Null if not found.</returns>
         public static SimLocation? FindSimLocationAt(HashSet<SimLocation> locations, float x, float y)
         {
             foreach (SimLocation loc in locations)
@@ -151,13 +188,23 @@
             return null;
         }
 
-        /** Returns the SimLocation nearest the given SimLocation, or null if one does not exist */
+        /// <summary>
+        /// Returns the SimLocation nearest the given SimLocation, or null if one does not exist.
+        /// </summary>
+        /// <param name="locations">Set of locations to search from.</param>
+        /// <param name="from">The location whose coordinates act as search origin.</param>
+        /// <returns>Location closest to given location.</returns>
         public static SimLocation? FindNearestLocationFrom(HashSet<SimLocation> locations, SimLocation from)
         {
             return FindNearestLocationXY(locations, from.X, from.Y);
         }
 
-        /** Returns the SimLocation nearest the given Agent, or null if one does not exist */
+        /// <summary>
+        /// Returns the SimLocation nearest the given Agent, or null if one does not exist.
+        /// </summary>
+        /// <param name="locations">Set of locations to search from.</param>
+        /// <param name="from">The agent whose coordinates act as search origin.</param>
+        /// <returns>Location closest to agent.</returns>
         public static SimLocation? FindNearestLocationFrom(HashSet<SimLocation> locations, Agent from)
         {
             SimLocation locFrom = LocationGrid[from.XLocation][from.YLocation];
@@ -165,19 +212,36 @@
         }
 
 
-        /** Find the manhattan distance between two locations */
+        /// <summary>
+        /// Finds the manhattan distance between two locations.
+        /// </summary>
+        /// <param name="a">Location whose coordinates act as origin.</param>
+        /// <param name="b">Location whose coordinates act as destination.</param>
+        /// <returns>Distance between the two locations.</returns>
         public static int FindManhattanDistance(SimLocation a, SimLocation b)
         {
             return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
         }
 
-        /** Find the manhattan distance between a location and specified (X,Y) coordinates */
+        /// <summary>
+        /// Finds the manhattan distance between a location and specified (X,Y) coordinates.
+        /// </summary>
+        /// <param name="loc">Location whose coordinate acts as origin.</param>
+        /// <param name="x">X-coordinate of destination.</param>
+        /// <param name="y">Y-coordinate of destination.</param>
+        /// <returns>Distance between the given location's coordinate and the (X, Y) coordinates.</returns>
         public static int FindManhattanDistance(SimLocation loc, int x, int y)
         {
             return Math.Abs(loc.X - x) + Math.Abs(loc.Y - y);
         }
 
-        /** Helper function that finds the location nearest to the given (X,Y) coordinate */
+        /// <summary>
+        /// Helper function that finds the location nearest to the given (X,Y) coordinates.
+        /// </summary>
+        /// <param name="locations">Set of locations to search from.</param>
+        /// <param name="x">X-coordinate of desired location.</param>
+        /// <param name="y">Y-coordinate of desired location.</param>
+        /// <returns>Location that is nearest to the given (X, Y) coordinates.</returns>
         private static SimLocation? FindNearestLocationXY(HashSet<SimLocation> locations, int x, int y)
         {
             HashSet<SimLocation> locationsToCheck = new();
