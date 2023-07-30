@@ -1,5 +1,7 @@
+using Anthology.Models;
 using Anthology.SimulationManager;
 using Anthology.SimulationManager.HistoryManager;
+using System.Text.Json;
 
 namespace SimManagerUnitTest
 {
@@ -78,7 +80,7 @@ namespace SimManagerUnitTest
         {
             Assert.AreEqual("wait_action", SimManager.NPCs["Norma"].CurrentAction.Name);
             SimManager.GetIteration();
-            Assert.AreEqual("eat_alone", SimManager.NPCs["Norma"].CurrentAction.Name);
+            Assert.AreEqual("eat_alone", JsonSerializer.Serialize(SimManager.NPCs, NetJson.Jso));//SimManager.NPCs["Norma"].CurrentAction.Name);
             SimManager.GetIteration(61);
             Assert.AreEqual("travel_action", SimManager.NPCs["Norma"].CurrentAction.Name);
         }

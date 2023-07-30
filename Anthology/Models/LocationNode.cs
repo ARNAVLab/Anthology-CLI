@@ -17,6 +17,9 @@ namespace Anthology.Models
         [JsonIgnore]
         public HashSet<string> AgentsPresent { get; set; } = new();
 
+        [JsonIgnore]
+        public int ID { get; set; }
+
         /** checks if this location satisfies all of the passed location requirements */
         public bool SatisfiesRequirements(RLocation reqs)
         {

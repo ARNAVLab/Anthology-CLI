@@ -71,7 +71,7 @@ namespace Anthology.Models
                 };
                 LocationManager.AddLocation(node);
             }
-            LocationManager.UpdateDistanceMatrix();
+            LocationManager.UpdateDistanceMat();
         }
 
         public static void GeneratePrimaryActions(uint n)

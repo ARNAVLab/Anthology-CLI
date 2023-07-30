@@ -63,7 +63,7 @@
         {
             Destination = destination.Name;
             LocationNode currentLoc = LocationManager.LocationsByName[CurrentLocation];
-            OccupiedCounter = (int)Math.Ceiling(LocationManager.DistanceMatrix[currentLoc.Name][destination.Name]);
+            OccupiedCounter = (int)Math.Ceiling(LocationManager.DistanceMat[currentLoc.ID * LocationManager.LocationCount + destination.ID]);
             Console.WriteLine("time: " + time.ToString() + " | " + Name + ": Started " + CurrentAction.First().Name + "; Destination: " + destination.Name);
         }
 
@@ -176,14 +176,14 @@
                 HashSet<Requirement> rLocations = action.GetRequirementsByType(Requirement.LOCATION);
                 HashSet<Requirement> rPeople = action.GetRequirementsByType(Requirement.PEOPLE);
 
-                if (rMotives.Any())
+                if (rMotives.Count > 0)
                 {
                     if (!AgentManager.AgentSatisfiesMotiveRequirement(this, rMotives))
                     {
-                        possibleLocations.Clear();
+                        continue;
                     }
                 }
-                if (rLocations.Any())
+                if (rLocations.Count > 0)
                 {
                     if (rLocations.First() is RLocation rLoc)
                     {
@@ -194,7 +194,7 @@
                 {
                     possibleLocations.UnionWith(LocationManager.LocationsByName.Values);
                 }
-                if (possibleLocations.Any() && rPeople.Any())
+                if (possibleLocations.Count > 0 && rPeople.Count > 0)
                 {
                     if (rPeople.First() is RPeople rPpl)
                     {
@@ -206,11 +206,11 @@
                 {
                     LocationNode nearestLocation = LocationManager.FindNearestLocationFrom(currentLoc, possibleLocations);
                     /*if (nearestLocation == null) continue;*/
-                    travelTime = LocationManager.DistanceMatrix[currentLoc.Name][nearestLocation.Name];
+                    travelTime = LocationManager.DistanceMat[currentLoc.ID * LocationManager.LocationCount + nearestLocation.ID];
                     float deltaUtility = ActionManager.GetEffectDeltaForAgentAction(this, action);
-/*                    actionSelectLog.Add("Action Utility: " + deltaUtility.ToString());*/
-                    deltaUtility /= (action.MinTime + travelTime);
-/*                    actionSelectLog.Add("Action Weighted Utility: " + deltaUtility.ToString());*/
+                    float denom = action.MinTime + travelTime;
+                    if (denom != 0)
+                        deltaUtility /= denom;
 
                     if (deltaUtility == maxDeltaUtility)
                     {
@@ -225,11 +225,6 @@
                         currentChoice.Add(action);
                         currentDest.Add(nearestLocation);
                     }
-/*                    if (currentChoice.Count > 0)
-                    {
-                        actionSelectLog.Add("Current Choice: " + currentChoice.First().Name);
-                        actionSelectLog.Add("Current Destination: " + currentDest.First().Name);
-                    }*/
                 }
             }
             Random r = new();

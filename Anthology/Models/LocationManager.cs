@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Collections;
+using System.Numerics;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
@@ -8,20 +9,21 @@ namespace Anthology.Models
     {
         public static Dictionary<string, LocationNode> LocationsByName { get; set; } = new();
 
-        [JsonIgnore]
         public static Dictionary<Vector2, LocationNode> LocationsByPosition { get; set; } = new();
 
-        [JsonIgnore]
         public static Dictionary<string, HashSet<LocationNode>> LocationsByTag { get; set; } = new();
 
-        [JsonIgnore]
-        public static Dictionary<string, Dictionary<string, float>> DistanceMatrix { get; set; } = new();
+        //public static Dictionary<string, Dictionary<string, float>> DistanceMatrix { get; set; } = new();
+
+        public static int LocationCount { get; set; } = 0;
+
+        public static float[] DistanceMat { get; set; } = Array.Empty<float>();
 
         public static void Init(string path)
         {
             Reset();
             World.ReadWrite.LoadLocationsFromFile(path);
-            UpdateDistanceMatrix();
+            UpdateDistanceMat();
         }
 
         public static void Reset()
@@ -29,14 +31,15 @@ namespace Anthology.Models
             LocationsByName.Clear();
             LocationsByPosition.Clear();
             LocationsByTag.Clear();
-            DistanceMatrix.Clear();
+            DistanceMat = Array.Empty<float>();
+            LocationCount = 0;
         }
 
         public static void AddLocation(LocationNode node)
         {
             LocationsByName.Add(node.Name, node);
             LocationsByPosition.Add(new(node.X, node.Y), node);
-            DistanceMatrix.Add(node.Name, new());
+            node.ID = LocationCount++;
 
             foreach (string tag in node.Tags)
             {
@@ -58,7 +61,7 @@ namespace Anthology.Models
             AddLocation(new() { Name = name, X = x, Y = y, Tags = newTags, Connections = connections });
         }
 
-        public static void UpdateDistanceMatrix()
+        /*public static void UpdateDistanceMatrix()
         { 
             Parallel.ForEach(LocationsByName.Keys, loc1 =>
             {
@@ -86,6 +89,40 @@ namespace Anthology.Models
                     }
                 }
             });
+        }*/
+
+        public static void UpdateDistanceMat()
+        {
+            DistanceMat = new float[LocationCount * LocationCount];
+            Parallel.For(0, LocationCount, loc1 =>
+            {
+                for (int loc2 = 0; loc2 < LocationCount; loc2++)
+                {
+                    if (loc1 == loc2) DistanceMat[loc1 * LocationCount + loc2] = 0;
+                    else DistanceMat[loc1 * LocationCount + loc2] = (float.MaxValue / 2f) - 1f;
+                }
+            });
+            IEnumerable<LocationNode> locationNodes = LocationsByName.Values;
+            Parallel.ForEach(locationNodes, loc1 =>
+            {
+                foreach (KeyValuePair<string, float> con in loc1.Connections)
+                {
+                    LocationNode loc2 = LocationsByName[con.Key];
+                    DistanceMat[loc1.ID * LocationCount + loc2.ID] = con.Value;
+                }
+            });
+            for (int k = 0; k < LocationCount; k++)
+            {
+                Parallel.For(0, LocationCount, i =>
+                {
+                    for (int j = 0; j < LocationCount; j++)
+                    {
+                        float d = DistanceMat[i * LocationCount + k] + DistanceMat[k * LocationCount + j];
+                        if (DistanceMat[i * LocationCount + j] > DistanceMat[i * LocationCount + k] + DistanceMat[k * LocationCount + j])
+                            DistanceMat[i * LocationCount + j] = DistanceMat[i * LocationCount + k] + DistanceMat[k * LocationCount + j];
+                    }
+                });
+            }
         }
 
         public static HashSet<LocationNode> LocationsSatisfyingLocationRequirement(RLocation requirements)
@@ -141,28 +178,22 @@ namespace Anthology.Models
             return satisfactoryLocations.ToHashSet();
         }
 
-        public static LocationNode FindNearestLocationFrom(LocationNode loc, HashSet<LocationNode> locations)
+        public static LocationNode FindNearestLocationFrom(LocationNode loc, IEnumerable<LocationNode> locations)
         {
-            LocationNode nearest = locations.First();
-            float dist = DistanceMatrix[loc.Name][nearest.Name];
+            IEnumerator<LocationNode> iterator = locations.GetEnumerator();
+            iterator.MoveNext();
+            LocationNode nearest = iterator.Current;
+            float dist = DistanceMat[loc.ID * LocationCount + nearest.ID];
 
-            foreach (LocationNode location in locations)
+            while (iterator.MoveNext())
             {
-                if (dist > DistanceMatrix[loc.Name][location.Name])
+                if (dist > DistanceMat[loc.ID * LocationCount + iterator.Current.ID])
                 {
-                    dist = DistanceMatrix[loc.Name][location.Name];
-                    nearest = location;
+                    nearest = iterator.Current;
+                    dist = DistanceMat[loc.ID * LocationCount + nearest.ID];
                 }
             }
 
-       /*     Parallel.ForEach(locations, location =>
-            {
-                if (dist > DistanceMatrix[loc.Name][location.Name])
-                {
-                    dist = DistanceMatrix[loc.Name][location.Name];
-                    nearest = location;
-                }
-            });*/
             return nearest;
         }
     }
