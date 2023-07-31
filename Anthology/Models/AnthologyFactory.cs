@@ -76,9 +76,9 @@ namespace Anthology.Models
 
         public static void GeneratePrimaryActions(uint n)
         {
-            ActionManager.Actions.PrimaryActions.Clear();
-            ActionManager.Actions.PrimaryActions.Add(new PrimaryAction() { Name = "wait_action" });
-            ActionManager.Actions.PrimaryActions.Add(new PrimaryAction() { Name = "travel_action" });
+            ActionManager.Reset();
+            ActionManager.AddAction(new PrimaryAction() { Name = "wait_action" });
+            ActionManager.AddAction(new PrimaryAction() { Name = "travel_action" });
 
             Random r = new();
             for (uint i = 0; i < n; i++)

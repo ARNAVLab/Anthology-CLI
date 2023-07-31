@@ -125,38 +125,38 @@ namespace Anthology.Models
             }
         }
 
-        public static HashSet<LocationNode> LocationsSatisfyingLocationRequirement(RLocation requirements)
+        public static IEnumerable<LocationNode> LocationsSatisfyingLocationRequirement(RLocation requirements)
         {
-            ParallelQuery<LocationNode> matches = ParallelEnumerable.Empty<LocationNode>();
-            if (requirements.HasOneOrMoreOf.Any())
+            List<LocationNode> matches = new();
+            if (requirements.HasOneOrMoreOf.Count > 0)
             {
                 foreach (string tag in requirements.HasOneOrMoreOf)
                 {
-                    matches.Concat(LocationsByTag[tag].AsParallel());
+                    matches.AddRange(LocationsByTag[tag]);
                 }
             }
             else
             {
-                matches.Concat(LocationsByName.Values.AsParallel());
+                matches.AddRange(LocationsByName.Values);
             }
-            if (requirements.HasAllOf.Any())
+            if (requirements.HasAllOf.Count > 0)
             {
                 foreach (string tag in requirements.HasAllOf)
                 {
-                    matches.Intersect(LocationsByTag[tag].AsParallel());
+                    matches = matches.Intersect(LocationsByTag[tag]).ToList();
                 }
             }
-            if (requirements.HasNoneOf.Any())
+            if (requirements.HasNoneOf.Count > 0)
             {
                 foreach (string tag in requirements.HasNoneOf)
                 {
-                    matches.Except(LocationsByTag[tag].AsParallel());
+                    matches = matches.Except(LocationsByTag[tag]).ToList();
                 }
             }
-            return matches.ToHashSet();
+            return matches;
         }
 
-        public static HashSet<LocationNode> LocationsSatisfyingPeopleRequirement(HashSet<LocationNode> locations, RPeople requirements, string agent = "")
+        public static IEnumerable<LocationNode> LocationsSatisfyingPeopleRequirement(IEnumerable<LocationNode> locations, RPeople requirements, string agent = "")
         {
             bool IsLocationValid(LocationNode location)
             {
@@ -172,24 +172,28 @@ namespace Anthology.Models
                     return valid;
                 }
             }
-            ParallelQuery<LocationNode> satisfactoryLocations;
-            satisfactoryLocations = ParallelEnumerable.Where(locations.AsParallel(), IsLocationValid);
 
-            return satisfactoryLocations.ToHashSet();
+            List<LocationNode> matches = new();
+            foreach (LocationNode location in locations)
+            {
+                if (IsLocationValid(location)) matches.Add(location);
+            }
+
+            return matches;
         }
 
         public static LocationNode FindNearestLocationFrom(LocationNode loc, IEnumerable<LocationNode> locations)
         {
-            IEnumerator<LocationNode> iterator = locations.GetEnumerator();
-            iterator.MoveNext();
-            LocationNode nearest = iterator.Current;
+            IEnumerator<LocationNode> enumerator = locations.GetEnumerator();
+            enumerator.MoveNext();
+            LocationNode nearest = enumerator.Current;
             float dist = DistanceMat[loc.ID * LocationCount + nearest.ID];
 
-            while (iterator.MoveNext())
+            while (enumerator.MoveNext())
             {
-                if (dist > DistanceMat[loc.ID * LocationCount + iterator.Current.ID])
+                if (dist > DistanceMat[loc.ID * LocationCount + enumerator.Current.ID])
                 {
-                    nearest = iterator.Current;
+                    nearest = enumerator.Current;
                     dist = DistanceMat[loc.ID * LocationCount + nearest.ID];
                 }
             }

@@ -38,24 +38,44 @@ namespace Anthology.Models
                    RelationshipsPresent(reqs.RelationshipsPresent);
         }
 
-        /** checks if this location satisfies the passed HasAllOf requirement */
-        private bool HasAllOf(HashSet<string> hasAllOf)
+        /** returns true if the specified agent is at this location */
+        public bool IsAgentHere(Agent npc)
         {
-            return hasAllOf.IsSubsetOf(Tags);
+            return AgentsPresent.Contains(npc.Name);
+        }
+
+        /** checks if this location satisfies the passed HasAllOf requirement */
+        private bool HasAllOf(IEnumerable<string> hasAllOf)
+        {
+            IEnumerator<string> enumerator = hasAllOf.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                if (!Tags.Contains(enumerator.Current)) return false;
+            }
+            return true;
         }
 
         /** checks if this location satisfies the HasOneOrMOreOf requirement */
-        private bool HasOneOrMoreOf(HashSet<string> hasOneOrMoreOf)
+        private bool HasOneOrMoreOf(IEnumerable<string> hasOneOrMoreOf)
         {
-            if (hasOneOrMoreOf.Count == 0) { return true; }
-            return hasOneOrMoreOf.Overlaps(Tags);
+            IEnumerator<string> enumerator = hasOneOrMoreOf.GetEnumerator();
+            if (!enumerator.MoveNext()) return true;
+            do
+            {
+                if (Tags.Contains(enumerator.Current)) return true;
+            } while (enumerator.MoveNext());
+            return false;
         }
 
         /** checks if this location satisfies the HasNoneOf requirement */
-        private bool HasNoneOf(HashSet<string> hasNoneOf)
+        private bool HasNoneOf(IEnumerable<string> hasNoneOf)
         {
-            if (hasNoneOf.Count == 0) { return true; }
-            return !hasNoneOf.Overlaps(Tags);
+            IEnumerator<string> enumerator = hasNoneOf.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                if (Tags.Contains(enumerator.Current)) return false;
+            }
+            return true;
         }
 
         /** checks if this location satisfies the MinNumPeople requirement */
@@ -71,27 +91,36 @@ namespace Anthology.Models
         }
 
         /** checks if this location satifies the SpecificPeoplePresent requirement */
-        private bool SpecificPeoplePresent(HashSet<string> specificPeoplePresent)
+        private bool SpecificPeoplePresent(IEnumerable<string> specificPeoplePresent)
         {
-            if (specificPeoplePresent.Count == 0) { return true; }
-            return specificPeoplePresent.IsSubsetOf(AgentsPresent);
+            IEnumerator<string> enumerator = specificPeoplePresent.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                if (!AgentsPresent.Contains(enumerator.Current)) return false;
+            }
+            return true;
         }
 
         /** checks if this location satisfies the SpecificPeopleAbsent requirement */
-        private bool SpecificPeopleAbsent(HashSet<string> specificPeopleAbsent)
+        private bool SpecificPeopleAbsent(IEnumerable<string> specificPeopleAbsent)
         {
-            if (specificPeopleAbsent.Count == 0) { return true; }
-            return !specificPeopleAbsent.Overlaps(AgentsPresent);
+            IEnumerator<string> enumerator = specificPeopleAbsent.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                if (AgentsPresent.Contains(enumerator.Current)) return false;
+            }
+            return true;
         }
 
         /** checks if this location satifies the RelationshipsPresent requirement */
-        private bool RelationshipsPresent(HashSet<string> relationshipsPresent)
+        private bool RelationshipsPresent(IEnumerable<string> relationshipsPresent)
         {
-            if (relationshipsPresent.Count == 0) { return true; }
-            HashSet<string> relationshipsHere = new();
+            IEnumerator<string> enumerator = relationshipsPresent.GetEnumerator();
+            if (!enumerator.MoveNext()) { return true; }
+            List<string> relationshipsHere = new();
             foreach (string name in AgentsPresent)
             {
-                HashSet<Relationship> ar = AgentManager.GetAgentByName(name).Relationships;
+                IEnumerable<Relationship> ar = AgentManager.GetAgentByName(name).Relationships;
                 foreach (Relationship r in ar)
                 {
                     if (AgentsPresent.Contains(r.With))
@@ -100,7 +129,11 @@ namespace Anthology.Models
                     }
                 }
             }
-            return relationshipsPresent.IsSubsetOf(relationshipsHere);
+            do
+            {
+                if (!relationshipsHere.Contains(enumerator.Current)) return false;
+            } while (enumerator.MoveNext());
+            return true;
         }
     }
 }

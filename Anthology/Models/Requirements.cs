@@ -53,15 +53,15 @@ namespace Anthology.Models
 
         /** set of string tags that must be a subset of the location's tags for the action to occur */
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public HashSet<string> HasAllOf { get; set; } = new HashSet<string>();
+        public List<string> HasAllOf { get; set; } = new();
 
         /** set of string tags in which their must exist at least one match with the location's tags for the action to occur */
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public HashSet<string> HasOneOrMoreOf { get; set; } = new HashSet<string>();
+        public List<string> HasOneOrMoreOf { get; set; } = new();
 
         /** set of string tags that must be a disjoint set of the location's tags for the action to occur */
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public HashSet<string> HasNoneOf { get; set; } = new HashSet<string>();
+        public List<string> HasNoneOf { get; set; } = new();
     }
 
     /**
@@ -88,25 +88,25 @@ namespace Anthology.Models
          * eg. A cook must be present at a restaurant for food to be served to a customer.
          */
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public HashSet<string> SpecificPeoplePresent { get; set; } = new HashSet<string>();
+        public List<string> SpecificPeoplePresent { get; set; } = new();
 
         /** set of agents that must be absent for the action to be completed. */
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public HashSet<string> SpecificPeopleAbsent { get; set; } = new HashSet<string>();
+        public List<string> SpecificPeopleAbsent { get; set; } = new();
 
         /**
          * Relationships that must exist between participating agents in order for the action to execute
          * eg. [teacher, student] relationships for the action "submit_homework"
          */
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public HashSet<string> RelationshipsPresent { get; set; } = new HashSet<string>();
+        public List<string> RelationshipsPresent { get; set; } = new();
 
         /**
          * Relationships that must not exist between participating agents in order for the action to execute
          * eg. [siblings] relationship for the action "kiss_romantically"
          */
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public HashSet<string> RelationshipsAbsent { get; set; } = new HashSet<string>();
+        public List<string> RelationshipsAbsent { get; set; } = new();
     }
 
     /**
@@ -145,45 +145,45 @@ namespace Anthology.Models
         /** Location requirements in the container */
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("Location Requirements")]
-        public HashSet<RLocation>? Locations { get; set; }
+        public List<RLocation>? Locations { get; set; }
 
         /** People requirements in the container */
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("People Requirements")]
-        public HashSet<RPeople>? People { get; set; }
+        public List<RPeople>? People { get; set; }
 
         /** Motive requirements in the container */
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("Motive Requirements")]
-        public HashSet<RMotive>? Motives { get; set; }
+        public List<RMotive>? Motives { get; set; }
 
         /** Add an arbitrary requirement to the container */
         public void AddRequirement(Requirement req)
         {
             if (req is RLocation rl)
             {
-                Locations ??= new HashSet<RLocation>();
+                Locations ??= new();
                 Locations.Add(rl);
             }
             else if (req is RPeople rp)
             {
-                People ??= new HashSet<RPeople>();
+                People ??= new();
                 People.Add(rp);
             }
             else if (req is RMotive rm)
             {
-                Motives ??= new HashSet<RMotive>();
+                Motives ??= new();
                 Motives.Add(rm);
             }
         }
 
         /** Get a set of all requirements in the container */
-        public HashSet<Requirement> GetAll()
+        public IEnumerable<Requirement> GetAll()
         {
-            HashSet<Requirement> reqs = new();
-            if (Locations != null) reqs.UnionWith(Locations);
-            if (People != null) reqs.UnionWith(People);
-            if (Motives != null) reqs.UnionWith(Motives);
+            List<Requirement> reqs = new();
+            if (Locations != null) reqs.AddRange(Locations);
+            if (People != null) reqs.AddRange(People);
+            if (Motives != null) reqs.AddRange(Motives);
             return reqs;
         }
     }

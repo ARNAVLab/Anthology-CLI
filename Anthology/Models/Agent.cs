@@ -161,17 +161,14 @@
             List<LocationNode> currentDest = new() { LocationManager.LocationsByName[CurrentLocation] };
             List<string> actionSelectLog = new();
             LocationNode currentLoc = LocationManager.LocationsByName[CurrentLocation];
-            HashSet<Action> actionOptions = new();
-            actionOptions.UnionWith(ActionManager.Actions.ScheduleActions);
-            actionOptions.UnionWith(ActionManager.Actions.PrimaryActions);
 
-            foreach(Action action in actionOptions)
+            foreach(Action action in ActionManager.AllActions)
             {
                 if (action.Hidden) continue;
                 actionSelectLog.Add("Action: " + action.Name);
 
                 float travelTime;
-                HashSet<LocationNode> possibleLocations = new();
+                List<LocationNode> possibleLocations = new();
                 HashSet<Requirement> rMotives = action.GetRequirementsByType(Requirement.MOTIVE);
                 HashSet<Requirement> rLocations = action.GetRequirementsByType(Requirement.LOCATION);
                 HashSet<Requirement> rPeople = action.GetRequirementsByType(Requirement.PEOPLE);
@@ -187,18 +184,18 @@
                 {
                     if (rLocations.First() is RLocation rLoc)
                     {
-                        possibleLocations = LocationManager.LocationsSatisfyingLocationRequirement(rLoc);
+                        possibleLocations = LocationManager.LocationsSatisfyingLocationRequirement(rLoc).ToList();
                     }
                 }
                 else
                 {
-                    possibleLocations.UnionWith(LocationManager.LocationsByName.Values);
+                    possibleLocations.AddRange(LocationManager.LocationsByName.Values);
                 }
                 if (possibleLocations.Count > 0 && rPeople.Count > 0)
                 {
                     if (rPeople.First() is RPeople rPpl)
                     {
-                        possibleLocations = LocationManager.LocationsSatisfyingPeopleRequirement(possibleLocations, rPpl);
+                        possibleLocations = LocationManager.LocationsSatisfyingPeopleRequirement(possibleLocations, rPpl).ToList();
                     }
                 }
 

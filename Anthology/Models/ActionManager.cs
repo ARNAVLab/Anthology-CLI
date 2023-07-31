@@ -5,12 +5,37 @@
         /** Actions available in the simulation */
         public static ActionContainer Actions { get; set; } = new();
 
+        public static List<Action> AllActions { get; set; } = new();
+
         /** Initialize/reset all action manager variables */
         public static void Init(string path)
         {
             Actions.ScheduleActions.Clear();
             Actions.PrimaryActions.Clear();
+            AllActions.Clear();
             World.ReadWrite.LoadActionsFromFile(path);
+
+            foreach (Action action in Actions.ScheduleActions)
+            {
+                AllActions.Add(action);
+            }
+            foreach (Action action in Actions.PrimaryActions)
+            {
+                AllActions.Add(action);
+            }
+        }
+
+        public static void Reset()
+        {
+            Actions.ScheduleActions.Clear();
+            Actions.PrimaryActions.Clear();
+            AllActions.Clear();
+        }
+
+        public static void AddAction(Action action)
+        {
+            Actions.AddAction(action);
+            AllActions.Add(action);
         }
 
         /** Retrieves an action with the specified name from the set of actions available in the simulation */
@@ -44,7 +69,7 @@
          * Returns the net effect for an action for a specific agent
          * Takes into account the agent's current motivation statuses
          */
-        public static float GetEffectDeltaForAgentAction(Agent agent, Action? action)
+        public static float GetEffectDeltaForAgentAction(Agent agent, Action action)
         {
             float deltaUtility = 0f;
 
