@@ -45,6 +45,7 @@
             }
         }
 
+        /// <summary>
         /// Gets the agent in the simulation with the matching name.
         /// </summary>
         /// <param name="name">Name of the agent to retrieve.</param>

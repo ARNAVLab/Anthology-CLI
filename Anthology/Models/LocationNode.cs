@@ -2,6 +2,9 @@
 
 namespace Anthology.Models
 {
+    /// <summary>
+    /// Locations as used by the graph-based location system.
+    /// </summary>
     public class LocationNode
     {
         /// <summary>

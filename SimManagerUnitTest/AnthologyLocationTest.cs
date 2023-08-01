@@ -1,19 +1,21 @@
-﻿using System.Text.Json;
-using Anthology.Models;
+﻿using Anthology.Models;
 
 namespace SimManagerUnitTest
 {
+    /// <summary>
+    /// Tests Anthology's location system.
+    /// </summary>
     [TestClass]
     public class AnthologyLocationTest
     {
-        HashSet<LocationNode> TestLocations = new();
+        /// <summary>
+        /// Set of locations used for testing
+        /// </summary>
+        private HashSet<LocationNode> TestLocations { get; set; } = new();
 
-        JsonSerializerOptions Jso { get; } = new()
-        {
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-            WriteIndented = true
-        };
-
+        /// <summary>
+        /// Initializes some basic locations for testing.
+        /// </summary>
         [TestInitialize] 
         public void MapLocations()
         {
@@ -74,6 +76,9 @@ namespace SimManagerUnitTest
             });
         }
 
+        /// <summary>
+        /// Tests that the graph is populated and functions correctly.
+        /// </summary>
         [TestMethod]
         public void TestLocationGraphFunctionality()
         {
@@ -98,6 +103,9 @@ namespace SimManagerUnitTest
             Assert.AreEqual(10, LocationManager.DistanceMatrix[locE.ID * LocationManager.LocationCount + locA.ID]);
         }
 
+        /// <summary>
+        /// Tests some simple location manager functionality.
+        /// </summary>
         [TestMethod]
         public void TestLocationManager()
         {

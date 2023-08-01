@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="doxygen $(ProjectDir)doc\$(ProjectName).doxygen" />
+    <Exec Command="$(TargetDir)doxygen.exe $(ProjectDir)doc\$(ProjectName).doxygen" />
   </Target>
 
 </Project>

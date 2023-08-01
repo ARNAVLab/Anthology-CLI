@@ -24,10 +24,10 @@ namespace Anthology.SimulationManager
             set { Dirty = true; name = value; }
         }
 
+        private string location = string.Empty;
         /// <summary>
         /// The name of the current location of the NPC
         /// </summary>
-        private string location = string.Empty;
         public string Location
         {
             get { return location; }

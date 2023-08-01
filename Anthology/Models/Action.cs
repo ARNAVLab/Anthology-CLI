@@ -84,8 +84,11 @@ namespace Anthology.Models
         /// </summary>
         public RequirementContainer Requirements { get; set; } = new();
 
-        /** Filter through the set of requirements of this action to find the set of the given requirement type */
-        public HashSet<Requirement> GetRequirementsByType(string type)
+
+        /// <summary>
+        /// Filter through the set of requirements of this action to find the requirements of the given type.
+        /// </summary>
+        public List<Requirement> GetRequirementsByType(string type)
         {
             List<Requirement> reqs = new();
             IEnumerable<Requirement> allReqs = Requirements.GetAll();
