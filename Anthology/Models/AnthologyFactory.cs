@@ -40,7 +40,11 @@ namespace Anthology.Models
                 c[0] = i > 0 ? i - 1 : n - 1;
                 c[1] = i < n - 1 ? i + 1 : 0;
                 c[2] = r.Next(n);
-                if (c[2] == i) c[2] += 1;
+                if (c[2] == i)
+                {
+                    if (i == n - 1) c[2] = n / 2;
+                    else c[2] += 1;
+                }
                 if (c[2] == c[0])
                 {
                     if (c[2] == 0) c[2] = n - 1;
@@ -71,7 +75,7 @@ namespace Anthology.Models
                 };
                 LocationManager.AddLocation(node);
             }
-            LocationManager.UpdateDistanceMat();
+            LocationManager.UpdateDistanceMatrix();
         }
 
         public static void GeneratePrimaryActions(uint n)

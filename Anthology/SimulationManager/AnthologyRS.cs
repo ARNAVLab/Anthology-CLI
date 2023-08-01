@@ -13,7 +13,7 @@ namespace Anthology.SimulationManager
 
         public override void LoadNpcs(Dictionary<string, NPC> npcs)
         {
-            HashSet<Agent> agents = AgentManager.Agents;
+            List<Agent> agents = AgentManager.Agents;
             foreach (Agent a in agents)
             {
                 if (!npcs.TryGetValue(a.Name, out NPC? npc))

@@ -43,15 +43,7 @@ namespace Anthology.Models
          */
         public static bool ToContinue()
         {
-            if (AgentManager.AllAgentsContent())
-            {
-                return false;
-            }
-            else if (!UI.Paused)
-            {
-                return false;
-            }
-            return true;
+            return !(UI.Paused || AgentManager.AllAgentsContent());
         }
 
         /**

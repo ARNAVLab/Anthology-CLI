@@ -10,12 +10,12 @@ namespace Anthology.Models
 
         public float Y { get; set; }
 
-        public HashSet<string> Tags { get; set; } = new();
+        public List<string> Tags { get; set; } = new();
 
         public Dictionary<string, float> Connections { get; set; } = new();
 
         [JsonIgnore]
-        public HashSet<string> AgentsPresent { get; set; } = new();
+        public LinkedList<string> AgentsPresent { get; set; } = new();
 
         [JsonIgnore]
         public int ID { get; set; }

@@ -82,7 +82,7 @@ namespace SimManagerUnitTest
             {
                 LocationManager.AddLocation(node);
             }
-            LocationManager.UpdateDistanceMat();
+            LocationManager.UpdateDistanceMatrix();
             Assert.AreEqual(6, LocationManager.LocationsByName.Count);
             Assert.IsTrue(LocationManager.LocationsByName.ContainsKey("A"));
             Assert.IsTrue(LocationManager.LocationsByPosition.ContainsKey(new(0, 1)));
@@ -92,10 +92,10 @@ namespace SimManagerUnitTest
             LocationNode locA = LocationManager.LocationsByName["A"];
             LocationNode locC = LocationManager.LocationsByName["C"];
             LocationNode locE = LocationManager.LocationsByName["E"];
-            Assert.AreEqual(0, LocationManager.DistanceMat[locA.ID * LocationManager.LocationCount + locA.ID]);
-            Assert.AreEqual(1, LocationManager.DistanceMat[locA.ID * LocationManager.LocationCount + locC.ID]);
-            Assert.AreEqual(10, LocationManager.DistanceMat[locA.ID * LocationManager.LocationCount + locE.ID]);
-            Assert.AreEqual(10, LocationManager.DistanceMat[locE.ID * LocationManager.LocationCount + locA.ID]);
+            Assert.AreEqual(0, LocationManager.DistanceMatrix[locA.ID * LocationManager.LocationCount + locA.ID]);
+            Assert.AreEqual(1, LocationManager.DistanceMatrix[locA.ID * LocationManager.LocationCount + locC.ID]);
+            Assert.AreEqual(10, LocationManager.DistanceMatrix[locA.ID * LocationManager.LocationCount + locE.ID]);
+            Assert.AreEqual(10, LocationManager.DistanceMatrix[locE.ID * LocationManager.LocationCount + locA.ID]);
         }
 
         [TestMethod]
@@ -107,7 +107,7 @@ namespace SimManagerUnitTest
             Assert.IsTrue(LocationManager.LocationsByName.ContainsKey("Math Hall"));
             LocationNode mathHall = LocationManager.LocationsByName["Math Hall"];
             LocationNode dorm = LocationManager.LocationsByName["Dorm"];
-            Assert.AreEqual(3, LocationManager.DistanceMat[mathHall.ID * LocationManager.LocationCount + dorm.ID]);
+            Assert.AreEqual(3, LocationManager.DistanceMatrix[mathHall.ID * LocationManager.LocationCount + dorm.ID]);
         }
     }
 }

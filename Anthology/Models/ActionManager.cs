@@ -45,24 +45,8 @@
             {
                 return action.Name == actionName;
             }
-
-            Action action;
-            try
-            {
-                action = Actions.PrimaryActions.First(HasName);
-            }
-            catch (Exception)
-            {
-                try
-                {
-                    action = Actions.ScheduleActions.First(HasName);
-                }
-                catch (Exception)
-                {
-                    throw new Exception("Action with name: " + actionName + " cannot be found.");
-                }
-            }
-            return action;
+            Action? action = AllActions.Find(HasName);
+            return action ?? throw new Exception("Action with name: " + actionName + " cannot be found.");
         }
 
         /**

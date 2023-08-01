@@ -78,17 +78,16 @@ namespace Anthology.Models
         public RequirementContainer Requirements { get; set; } = new();
 
         /** Filter through the set of requirements of this action to find the set of the given requirement type */
-        public HashSet<Requirement> GetRequirementsByType(string type)
+        public List<Requirement> GetRequirementsByType(string type)
         {
-            bool MismatchesType(Requirement req)
+            List<Requirement> reqs = new();
+            IEnumerable<Requirement> allReqs = Requirements.GetAll();
+            IEnumerator<Requirement> enumerator = allReqs.GetEnumerator();
+            while (enumerator.MoveNext())
             {
-                return req.ReqType != type;
+                if (enumerator.Current.ReqType == type)
+                    reqs.Add(enumerator.Current);
             }
-
-            HashSet<Requirement> reqs = new();
-            reqs.UnionWith(Requirements.GetAll());
-            reqs.RemoveWhere(MismatchesType);
-
             return reqs;
         }
     }

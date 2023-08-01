@@ -3,7 +3,7 @@
     public static class AgentManager
     {
         /** Agents in the simulation */
-        public static HashSet<Agent> Agents { get; set; } = new HashSet<Agent>();
+        public static List<Agent> Agents { get; set; } = new();
 
         /** Initialize/reset all agent manager variables */
         public static void Init(string path)
@@ -33,7 +33,7 @@
             Agents.Add(agent);
             if (LocationManager.LocationsByName.ContainsKey(agent.CurrentLocation))
             {
-                LocationManager.LocationsByName[agent.CurrentLocation].AgentsPresent.Add(agent.Name);
+                LocationManager.LocationsByName[agent.CurrentLocation].AgentsPresent.AddLast(agent.Name);
             }
         }
 
@@ -44,56 +44,52 @@
             {
                 return a.Name == name;
             }
-
-            Agent agent = Agents.First(MatchName);
-            return agent;
+            Agent? agent = Agents.Find(MatchName);
+            return agent ?? throw new ArgumentException("Agent with name: " + name + " does not exist.");
         }
 
         /** Check whether the agent satisfies the motive requirement for an action */
-        public static bool AgentSatisfiesMotiveRequirement(Agent agent, HashSet<Requirement> reqs)
+        public static bool AgentSatisfiesMotiveRequirement(Agent agent, IEnumerable<RMotive> reqs)
         {
-            foreach (Requirement r in reqs)
+            foreach (RMotive r in reqs)
             {
-                if (r is RMotive rMotive)
+                string t = r.MotiveType;
+                float c = r.Threshold;
+                switch (r.Operation)
                 {
-                    string t = rMotive.MotiveType;
-                    float c = rMotive.Threshold;
-                    switch (rMotive.Operation)
-                    {
-                        case BinOps.EQUALS:
-                            if (!(agent.Motives[t] == c))
-                            {
-                                return false;
-                            }
-                            break;
-                        case BinOps.LESS:
-                            if (!(agent.Motives[t] < c))
-                            {
-                                return false;
-                            }
-                            break;
-                        case BinOps.GREATER:
-                            if (!(agent.Motives[t] > c))
-                            {
-                                return false;
-                            }
-                            break;
-                        case BinOps.LESS_EQUALS:
-                            if (!(agent.Motives[t] <= c))
-                            {
-                                return false;
-                            }
-                            break;
-                        case BinOps.GREATER_EQUALS:
-                            if (!(agent.Motives[t] >= c))
-                            {
-                                return false;
-                            }
-                            break;
-                        default:
-                            Console.WriteLine("ERROR - JSON BinOp specification mistake for Motive Requirement for action");
+                    case BinOps.EQUALS:
+                        if (!(agent.Motives[t] == c))
+                        {
                             return false;
-                    }
+                        }
+                        break;
+                    case BinOps.LESS:
+                        if (!(agent.Motives[t] < c))
+                        {
+                            return false;
+                        }
+                        break;
+                    case BinOps.GREATER:
+                        if (!(agent.Motives[t] > c))
+                        {
+                            return false;
+                        }
+                        break;
+                    case BinOps.LESS_EQUALS:
+                        if (!(agent.Motives[t] <= c))
+                        {
+                            return false;
+                        }
+                        break;
+                    case BinOps.GREATER_EQUALS:
+                        if (!(agent.Motives[t] >= c))
+                        {
+                            return false;
+                        }
+                        break;
+                    default:
+                        Console.WriteLine("ERROR - JSON BinOp specification mistake for Motive Requirement for action");
+                        return false;
                 }
             }
             return true;

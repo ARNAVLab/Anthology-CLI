@@ -12,7 +12,7 @@
         public static int SleepStill { get; set; } = 10;
 
         /** whether or not the UI is paused */
-        public static bool Paused { get; set; } = true;
+        public static bool Paused { get; set; } = false;
 
         /** each slot in the array is the characters contained on one board space */
         public static List<List<string>> Board { get; set; } = new();

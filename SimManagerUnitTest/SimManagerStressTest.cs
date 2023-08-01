@@ -9,19 +9,19 @@ namespace SimManagerUnitTest
         private const int NUM_ACTIONS = 10; // number of possible actions each agent can consider choosing
         private const int NUM_ITERATIONS = 60; // number of iterations to run each test
         private readonly static bool TEST_HUNDRED_AGENTS = true; // set to true to run tests for hundred agents
-        private readonly static bool TEST_THOUSAND_AGENTS = false; // set to true to run tests for thousand agents
-        private readonly static bool TEST_TEN_THOUSAND_AGENTS = false; // set to true to run tests for ten thousand agents
-        private readonly static bool TEST_HUNDRED_THOUSAND_AGENTS = false; // set to true to run tests for hundred thousand agents
+        private readonly static bool TEST_THOUSAND_AGENTS = true; // set to true to run tests for thousand agents
+        private readonly static bool TEST_TEN_THOUSAND_AGENTS = true; // set to true to run tests for ten thousand agents
+        private readonly static bool TEST_HUNDRED_THOUSAND_AGENTS = true; // set to true to run tests for hundred thousand agents
         private readonly static bool TEST_MILLION_AGENTS = false; // set to true to run tests for million agents
-        private readonly static bool TEST_FIVE_LOCATIONS = false; // set to true to run tests for five locations
-        private readonly static bool TEST_TEN_LOCATIONS = false; // set to true to run tests for ten locations
-        private readonly static bool TEST_TWENTY_LOCATIONS = false; // set to true to run tests for twenty locations
-        private readonly static bool TEST_FIFTY_LOCATIONS = false; // set to true to run tests for fifty locations
-        private readonly static bool TEST_HUNDRED_LOCATIONS = false; // set to true to run tests for hundred locations
+        private readonly static bool TEST_FIVE_LOCATIONS = true; // set to true to run tests for five locations
+        private readonly static bool TEST_TEN_LOCATIONS = true; // set to true to run tests for ten locations
+        private readonly static bool TEST_TWENTY_LOCATIONS = true; // set to true to run tests for twenty locations
+        private readonly static bool TEST_FIFTY_LOCATIONS = true; // set to true to run tests for fifty locations
+        private readonly static bool TEST_HUNDRED_LOCATIONS = true; // set to true to run tests for hundred locations
         private readonly static bool TEST_FIVE_HUNDRED_LOCATIONS = true; // set to true to run tests for five hundred locations
         private readonly static bool TEST_THOUSAND_LOCATIONS = true; // set to true to run tests for thousand locations
-        private readonly static bool TEST_FIVE_THOUSAND_LOCATIONS = false; // set to true to run tests for five thousand locations
-        private readonly static bool TEST_TEN_THOUSAND_LOCATIONS = false; // set to true to run tests for ten thousand locations
+        private readonly static bool TEST_FIVE_THOUSAND_LOCATIONS = true; // set to true to run tests for five thousand locations
+        private readonly static bool TEST_TEN_THOUSAND_LOCATIONS = true; // set to true to run tests for ten thousand locations
 
         [TestMethod]
         public void Test01HundredAgentsFiveLocations()

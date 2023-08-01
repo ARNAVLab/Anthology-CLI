@@ -37,7 +37,7 @@
                                                                       };
 
         /** Set of all the relationships of this agent */
-        public HashSet<Relationship> Relationships { get; set; } = new HashSet<Relationship>();
+        public List<Relationship> Relationships { get; set; } = new();
 
         /** Current location of the agent */
         public string CurrentLocation { get; set; } = string.Empty;
@@ -46,7 +46,7 @@
         public int OccupiedCounter { get; set; }
 
         /** A queue containing the next few actions being executed by the agent */
-        public LinkedList<Action> CurrentAction { get; set; } = new LinkedList<Action>();
+        public LinkedList<Action> CurrentAction { get; set; } = new();
 
         /**
          * The destination that the agent is heading to
@@ -56,14 +56,14 @@
         public string Destination { get; set; } = string.Empty;
 
         /** List of targets for the agent's current action */
-        public HashSet<Agent> CurrentTargets { get; set; } = new HashSet<Agent>();
+        public List<Agent> CurrentTargets { get; set; } = new();
 
         /** Starts travel to the agent's destination */
         public void StartTravelToLocation(LocationNode destination, float time)
         {
             Destination = destination.Name;
             LocationNode currentLoc = LocationManager.LocationsByName[CurrentLocation];
-            OccupiedCounter = (int)Math.Ceiling(LocationManager.DistanceMat[currentLoc.ID * LocationManager.LocationCount + destination.ID]);
+            OccupiedCounter = (int)Math.Ceiling(LocationManager.DistanceMatrix[currentLoc.ID * LocationManager.LocationCount + destination.ID]);
             Console.WriteLine("time: " + time.ToString() + " | " + Name + ": Started " + CurrentAction.First().Name + "; Destination: " + destination.Name);
         }
 
@@ -81,7 +81,7 @@
             {
                 CurrentLocation = Destination;
                 Destination = string.Empty;
-                LocationManager.LocationsByName[CurrentLocation].AgentsPresent.Add(Name);
+                LocationManager.LocationsByName[CurrentLocation].AgentsPresent.AddLast(Name);
             }
         }
 
@@ -157,8 +157,8 @@
         public void SelectNextAction()
         {
             float maxDeltaUtility = 0f;
-            List<Action> currentChoice = new() { ActionManager.Actions.PrimaryActions.First() };
-            List<LocationNode> currentDest = new() { LocationManager.LocationsByName[CurrentLocation] };
+            List<Action> currentChoice = new();
+            List<LocationNode> currentDest = new();
             List<string> actionSelectLog = new();
             LocationNode currentLoc = LocationManager.LocationsByName[CurrentLocation];
 
@@ -169,41 +169,35 @@
 
                 float travelTime;
                 List<LocationNode> possibleLocations = new();
-                HashSet<Requirement> rMotives = action.GetRequirementsByType(Requirement.MOTIVE);
-                HashSet<Requirement> rLocations = action.GetRequirementsByType(Requirement.LOCATION);
-                HashSet<Requirement> rPeople = action.GetRequirementsByType(Requirement.PEOPLE);
+                List<RMotive>? rMotives = action.Requirements.Motives;
+                List<RLocation>? rLocations = action.Requirements.Locations;
+                List<RPeople>? rPeople = action.Requirements.People;
 
-                if (rMotives.Count > 0)
+                if (rMotives != null)
                 {
                     if (!AgentManager.AgentSatisfiesMotiveRequirement(this, rMotives))
                     {
                         continue;
                     }
                 }
-                if (rLocations.Count > 0)
+                if (rLocations != null)
                 {
-                    if (rLocations.First() is RLocation rLoc)
-                    {
-                        possibleLocations = LocationManager.LocationsSatisfyingLocationRequirement(rLoc).ToList();
-                    }
+                    possibleLocations = LocationManager.LocationsSatisfyingLocationRequirement(rLocations[0]).ToList();
                 }
                 else
                 {
                     possibleLocations.AddRange(LocationManager.LocationsByName.Values);
                 }
-                if (possibleLocations.Count > 0 && rPeople.Count > 0)
+                if (rPeople != null && possibleLocations.Count > 0)
                 {
-                    if (rPeople.First() is RPeople rPpl)
-                    {
-                        possibleLocations = LocationManager.LocationsSatisfyingPeopleRequirement(possibleLocations, rPpl).ToList();
-                    }
+                    possibleLocations = LocationManager.LocationsSatisfyingPeopleRequirement(possibleLocations, rPeople[0]).ToList();
                 }
 
                 if (possibleLocations.Count > 0)
                 {
                     LocationNode nearestLocation = LocationManager.FindNearestLocationFrom(currentLoc, possibleLocations);
                     /*if (nearestLocation == null) continue;*/
-                    travelTime = LocationManager.DistanceMat[currentLoc.ID * LocationManager.LocationCount + nearestLocation.ID];
+                    travelTime = LocationManager.DistanceMatrix[currentLoc.ID * LocationManager.LocationCount + nearestLocation.ID];
                     float deltaUtility = ActionManager.GetEffectDeltaForAgentAction(this, action);
                     float denom = action.MinTime + travelTime;
                     if (denom != 0)
