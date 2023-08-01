@@ -2,18 +2,42 @@
 
 namespace Anthology.Models
 {
+    /// <summary>
+    /// Provides functionality for checking location-centric conditions.
+    /// </summary>
     public static class LocationManager
     {
+        /// <summary>
+        /// Locations in the simulation stored by name.
+        /// </summary>
         public static Dictionary<string, LocationNode> LocationsByName { get; set; } = new();
 
+        /// <summary>
+        /// Locations in the simulation stored by (X,Y) position.
+        /// </summary>
         public static Dictionary<Vector2, LocationNode> LocationsByPosition { get; set; } = new();
 
+        /// <summary>
+        /// Locations in the simulation stored by tags for action selection.
+        /// </summary>
         public static Dictionary<string, List<LocationNode>> LocationsByTag { get; set; } = new();
 
+        /// <summary>
+        /// The total number of locations in the simulation.
+        /// </summary>
         public static int LocationCount { get; set; } = 0;
 
+        /// <summary>
+        /// The directed distance matrix for determining the travel distance between
+        /// any two locations. To obtain the distance from A to B, index into the
+        /// matrix like: [A.ID * LocationCount + B.ID].
+        /// </summary>
         public static float[] DistanceMatrix { get; set; } = Array.Empty<float>();
 
+        /// <summary>
+        /// Initialize/reset all static location manager variables compute the distance matrix.
+        /// </summary>
+        /// <param name="path">Path of JSON file to load locations from.</param>
         public static void Init(string path)
         {
             Reset();
@@ -21,6 +45,9 @@ namespace Anthology.Models
             UpdateDistanceMatrix();
         }
 
+        /// <summary>
+        /// Resets all storage of locations in the simulation.
+        /// </summary>
         public static void Reset()
         {
             LocationsByName.Clear();
@@ -30,6 +57,10 @@ namespace Anthology.Models
             LocationCount = 0;
         }
 
+        /// <summary>
+        /// Adds a location accordingly to each location data structure.
+        /// </summary>
+        /// <param name="node">The location to add to the simulation.</param>
         public static void AddLocation(LocationNode node)
         {
             LocationsByName.Add(node.Name, node);
@@ -49,6 +80,14 @@ namespace Anthology.Models
             }
         }
 
+        /// <summary>
+        /// Creates and adds a location to each of the static data structures.
+        /// </summary>
+        /// <param name="name">Name of the location.</param>
+        /// <param name="x">X-coordinate of the location.</param>
+        /// <param name="y">Y-coordinate of the location.</param>
+        /// <param name="tags">Relevant tags of the location.</param>
+        /// <param name="connections">Connections from the location to others.</param>
         public static void AddLocation(string name, float x, float y, IEnumerable<string> tags, Dictionary<string, float> connections)
         {
             List<string> newTags = new();
@@ -56,6 +95,10 @@ namespace Anthology.Models
             AddLocation(new() { Name = name, X = x, Y = y, Tags = newTags, Connections = connections });
         }
 
+        /// <summary>
+        /// Resets and populates the static distance matrix with all-pairs-shortest-path
+        /// via the Floyd-Warshall algorithm.
+        /// </summary>
         public static void UpdateDistanceMatrix()
         {
             DistanceMatrix = new float[LocationCount * LocationCount];
@@ -90,6 +133,12 @@ namespace Anthology.Models
             }
         }
 
+        /// <summary>
+        /// Filter all locations to find those locations that satisfy conditions specified in the location requirement.
+        /// Returns an enumerable of locations that match the HasAllOf, HasOneOrMOreOf, and HasNoneOf constraints.
+        /// </summary>
+        /// <param name="requirements">Requirements that locations must satisfy in order to be returned.</param>
+        /// <returns>Returns all the locations that satisfied the given requirement, or an empty enumerable if none match.</returns>
         public static IEnumerable<LocationNode> LocationsSatisfyingLocationRequirement(RLocation requirements)
         {
             List<LocationNode> matches = new();
@@ -121,6 +170,15 @@ namespace Anthology.Models
             return matches;
         }
 
+        /// <summary>
+        /// Filter given locations to find those locations that satisfy conditions specified in the people requirement.
+        /// Returns locations that match the MinNumPeople, MaxNumPeople, SpecificPeoplePresent, SpecificPeopleAbsent,
+        /// RelationshipsPresent, and RelationshipsAbsent requirements.
+        /// </summary>
+        /// <param name="locations">The set of locations to filter.</param>
+        /// <param name="requirements">Requirements that locations must satisfy to be returned.</param>
+        /// <param name="agent">Agent relevant for handling agent requirement(s).</param>
+        /// <returns>Returns all the locations that satisfied the given requirement, or an empty enumerable if none match.</returns>
         public static IEnumerable<LocationNode> LocationsSatisfyingPeopleRequirement(IEnumerable<LocationNode> locations, RPeople requirements, string agent = "")
         {
             bool IsLocationValid(LocationNode location)
@@ -147,13 +205,19 @@ namespace Anthology.Models
             return matches;
         }
 
-        public static LocationNode FindNearestLocationFrom(LocationNode loc, IEnumerable<LocationNode> locations)
+        /// <summary>
+        /// Finds the nearest location of a given set from a specified location.
+        /// </summary>
+        /// <param name="from">The source location.</param>
+        /// <param name="locations">The locations to filter for the closest.</param>
+        /// <returns></returns>
+        public static LocationNode FindNearestLocationFrom(LocationNode from, IEnumerable<LocationNode> locations)
         {
             IEnumerator<LocationNode> enumerator = locations.GetEnumerator();
             enumerator.MoveNext();
             LocationNode nearest = enumerator.Current;
-            float dist = DistanceMatrix[loc.ID * LocationCount + nearest.ID];
-            int row = loc.ID * LocationCount;
+            float dist = DistanceMatrix[from.ID * LocationCount + nearest.ID];
+            int row = from.ID * LocationCount;
             int i;
             while (enumerator.MoveNext())
             {

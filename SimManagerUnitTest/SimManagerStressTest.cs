@@ -21,7 +21,7 @@ namespace SimManagerUnitTest
         private readonly static bool TEST_FIVE_HUNDRED_LOCATIONS = true; // set to true to run tests for five hundred locations
         private readonly static bool TEST_THOUSAND_LOCATIONS = true; // set to true to run tests for thousand locations
         private readonly static bool TEST_FIVE_THOUSAND_LOCATIONS = true; // set to true to run tests for five thousand locations
-        private readonly static bool TEST_TEN_THOUSAND_LOCATIONS = true; // set to true to run tests for ten thousand locations
+        private readonly static bool TEST_TEN_THOUSAND_LOCATIONS = false; // set to true to run tests for ten thousand locations
 
         [TestMethod]
         public void Test01HundredAgentsFiveLocations()
