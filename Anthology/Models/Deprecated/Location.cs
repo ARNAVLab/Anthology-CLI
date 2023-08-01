@@ -2,31 +2,53 @@
 
 namespace Anthology.Models.Deprecated
 {
+    /// <summary>
+    /// Encapsulates a location within the simulation. A location can have a name, tags, a list of 
+    /// agents occupying the location, and mandatory coordinates.
+    /// </summary>
     public class SimLocation
     {
-        /** optional name of the location. Eg. Restaurant, Home, Movie Theatre, etc */
+        /// <summary>
+        /// Optional name of the location. Eg. Restaurant, Home, Movie Theatre, etc.
+        /// </summary>
         public string Name { get; set; } = string.Empty;
 
-        /** x-coordinate of the location */
+        /// <summary>
+        /// X-coordinate of location.
+        /// </summary>
         public int X { get; set; }
 
-        /** y-coordinate of the location */
+        /// <summary>
+        /// Y-coordinate of location.
+        /// </summary>
         public int Y { get; set; }
 
-        /** optional set of tags associated with the location. Eg. Restaurant could have 'food', 'delivery' as tags */
+        /// <summary>
+        /// Optional set of tags associated with the location. Eg. Restaurant could have 'food', 'delivery' as tags.
+        /// </summary>
         public HashSet<string> Tags { get; set; } = new HashSet<string>();
 
-        /** set of agents at the location */
+        /// <summary>
+        /// Set of agents at the location.
+        /// </summary>
         [JsonIgnore]
         public HashSet<string> AgentsPresent { get; set; } = new HashSet<string>();
 
-        /** returns true if the specified agent is at this location */
+        /// <summary>
+        /// Returns true if the specified agent is at this location.
+        /// </summary>
+        /// <param name="npc">The agent to determine if present at location.</param>
+        /// <returns>True if agent is at location.</returns>
         public bool IsAgentHere(Agent npc)
         {
             return AgentsPresent.Contains(npc.Name);
         }
 
-        /** checks if this location satisfies all of the passed location requirements */
+        /// <summary>
+        /// Checks if this location satisfies all of the passed location requirements.
+        /// </summary>
+        /// <param name="reqs">Requirements to check for location.</param>
+        /// <returns>True if location satisfies all requirements.</returns>
         public bool SatisfiesRequirements(RLocation reqs)
         {
             return HasAllOf(reqs.HasAllOf) &&
@@ -34,7 +56,11 @@ namespace Anthology.Models.Deprecated
                    HasNoneOf(reqs.HasNoneOf);
         }
 
-        /** checks if this location satisfies all of the passed people requirements */
+        /// <summary>
+        /// Checks if this location satisfies all of the passed people requirements.
+        /// </summary>
+        /// <param name="reqs">People requirements to check for.</param>
+        /// <returns>True if location satisfies given requirements.</returns>
         public bool SatisfiesRequirements(RPeople reqs)
         {
             return HasMinNumPeople(reqs.MinNumPeople) &&
@@ -44,7 +70,11 @@ namespace Anthology.Models.Deprecated
                    RelationshipsPresent(reqs.RelationshipsPresent);
         }
 
-        /** checks if this location satisfies the passed HasAllOf requirement */
+        /// <summary>
+        /// Checks if location has all tags specified.
+        /// </summary>
+        /// <param name="hasAllOf">All tags to check.</param>
+        /// <returns>True if location has all tags given.</returns>
         private bool HasAllOf(IEnumerable<string> hasAllOf)
         {
             IEnumerator<string> enumerator = hasAllOf.GetEnumerator();
@@ -55,7 +85,11 @@ namespace Anthology.Models.Deprecated
             return true;
         }
 
-        /** checks if this location satisfies the HasOneOrMOreOf requirement */
+        /// <summary>
+        /// Checks if location satisfies at least one tag specified.
+        /// </summary>
+        /// <param name="hasOneOrMoreOf">The set of tags to check.</param>
+        /// <returns>True if location has at least one of the tags specified.</returns>
         private bool HasOneOrMoreOf(IEnumerable<string> hasOneOrMoreOf)
         {
             IEnumerator<string> enumerator = hasOneOrMoreOf.GetEnumerator();
@@ -67,7 +101,11 @@ namespace Anthology.Models.Deprecated
             return false;
         }
 
-        /** checks if this location satisfies the HasNoneOf requirement */
+        /// <summary>
+        /// Checks if this location has none of the given tags.
+        /// </summary>
+        /// <param name="hasNoneOf">The set of tags to check.</param>
+        /// <returns>True if location has none of the given tags.</returns>
         private bool HasNoneOf(IEnumerable<string> hasNoneOf)
         {
             IEnumerator<string> enumerator = hasNoneOf.GetEnumerator();
@@ -78,19 +116,31 @@ namespace Anthology.Models.Deprecated
             return true;
         }
 
-        /** checks if this location satisfies the MinNumPeople requirement */
+        /// <summary>
+        /// Checks if this location has at least a given amount of people.
+        /// </summary>
+        /// <param name="minNumPeople">The minimum amount of people.</param>
+        /// <returns>True if location has at least the given amount of people.</returns>
         private bool HasMinNumPeople(short minNumPeople)
         {
             return minNumPeople <= AgentsPresent.Count;
         }
 
-        /** checks if this location satifies the MaxNumPeople requirement */
+        /// <summary>
+        /// Checks if location has less than or equal to given amount of people.
+        /// </summary>
+        /// <param name="maxNumPeople">The max amount of people.</param>
+        /// <returns>True if location has less than or equal to given amount of people.</returns>
         private bool HasNotMaxNumPeople(short maxNumPeople)
         {
             return maxNumPeople >= AgentsPresent.Count;
         }
 
-        /** checks if this location satifies the SpecificPeoplePresent requirement */
+        /// <summary>
+        /// Checks if location has given people.
+        /// </summary>
+        /// <param name="specificPeoplePresent">The set of people to check.</param>
+        /// <returns>True if location has given people.</returns>
         private bool SpecificPeoplePresent(IEnumerable<string> specificPeoplePresent)
         {
             IEnumerator<string> enumerator = specificPeoplePresent.GetEnumerator();
@@ -101,7 +151,11 @@ namespace Anthology.Models.Deprecated
             return true;
         }
 
-        /** checks if this location satisfies the SpecificPeopleAbsent requirement */
+        /// <summary>
+        /// Checks if location does not have given people.
+        /// </summary>
+        /// <param name="specificPeopleAbsent">The set of people to check.</param>
+        /// <returns>True if location does not have the given people.</returns>
         private bool SpecificPeopleAbsent(IEnumerable<string> specificPeopleAbsent)
         {
             IEnumerator<string> enumerator = specificPeopleAbsent.GetEnumerator();
@@ -112,7 +166,11 @@ namespace Anthology.Models.Deprecated
             return true;
         }
 
-        /** checks if this location satifies the RelationshipsPresent requirement */
+        /// <summary>
+        /// Checks if given relationships are present at location.
+        /// </summary>
+        /// <param name="relationshipsPresent">The set of relationships to check.</param>
+        /// <returns>True if given relationships are present at location.</returns>
         private bool RelationshipsPresent(IEnumerable<string> relationshipsPresent)
         {
             IEnumerator<string> enumerator = relationshipsPresent.GetEnumerator();

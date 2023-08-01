@@ -1,11 +1,19 @@
 ﻿namespace Anthology.Models
 {
+    /// <summary>
+    /// Manages agents and their motives.
+    /// </summary>
     public static class AgentManager
     {
-        /** Agents in the simulation */
+        /// <summary>
+        /// Agents in the simulation.
+        /// </summary>
         public static List<Agent> Agents { get; set; } = new();
 
-        /** Initialize/reset all agent manager variables */
+        /// <summary>
+        /// Initializes/resets all agent manager variables.
+        /// </summary>
+        /// <param name="path">Path of JSON file to load from.</param>
         public static void Init(string path)
         {
             Agents.Clear();
@@ -13,7 +21,7 @@
         }
 
         /// <summary>
-        /// Removes all agents from the simulation
+        /// Removes all agents from the simulation.
         /// </summary>
         public static void Reset()
         {
@@ -37,7 +45,10 @@
             }
         }
 
-        /** Gets the agent in the simulation with the matching name */
+        /// Gets the agent in the simulation with the matching name.
+        /// </summary>
+        /// <param name="name">Name of the agent to retrieve.</param>
+        /// <returns>Agent with given name.</returns>
         public static Agent GetAgentByName(string name)
         {
             bool MatchName(Agent a)
@@ -48,7 +59,12 @@
             return agent ?? throw new ArgumentException("Agent with name: " + name + " does not exist.");
         }
 
-        /** Check whether the agent satisfies the motive requirement for an action */
+        /// <summary>
+        /// Checks whether the agent satisfies the motive requirement for an action.
+        /// </summary>
+        /// <param name="agent">The agent to check.</param>
+        /// <param name="reqs">The requirements to check.</param>
+        /// <returns>True if agent satisfies all requirements for an action.</returns>
         public static bool AgentSatisfiesMotiveRequirement(Agent agent, IEnumerable<RMotive> reqs)
         {
             foreach (RMotive r in reqs)
@@ -95,10 +111,11 @@
             return true;
         }
 
-        /**
-         * Stopping condition for the simulation
-         * Stops the sim when all agents are content 
-         */
+        /// <summary>
+        /// Stopping condition for the simulation.
+        /// Stops the sim when all agents are content.
+        /// </summary>
+        /// <returns>True if all agents are content.</returns>
         public static bool AllAgentsContent()
         {
             foreach (Agent a in Agents)
@@ -108,7 +125,9 @@
             return true;
         }
 
-        /** Decrements the motives of every agent in the simulation */
+        /// <summary>
+        /// Decrements the motives of every agent in the simulation.
+        /// </summary>
         public static void DecrementMotives()
         {
             Parallel.ForEach(Agents, a =>

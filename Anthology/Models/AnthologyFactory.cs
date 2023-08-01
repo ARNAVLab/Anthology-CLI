@@ -1,9 +1,15 @@
-﻿using Anthology.Models.Deprecated;
-
-namespace Anthology.Models
+﻿namespace Anthology.Models
 {
+    /// <summary>
+    /// Factory class that generates agents, locations, and actions.
+    /// </summary>
     public static class AnthologyFactory
     {
+        /// <summary>
+        /// Generates all agents given amount of agents and grid size. 
+        /// </summary>
+        /// <param name="numAgents">Number of agents to add.</param>
+        /// <param name="numLocations">Number of locations that (will) exist.</param>
         public static void GenerateAgents(int numAgents, int numLocations)
         {
             AgentManager.Reset();
@@ -27,6 +33,10 @@ namespace Anthology.Models
             }
         }
 
+        /// <summary>
+        /// Generates locations in the grid given number of locations.
+        /// </summary>
+        /// <param name="n">Number of locations to generate.</param>
         public static void GenerateLocations(int n)
         {
             if (n < 5)
@@ -78,6 +88,10 @@ namespace Anthology.Models
             LocationManager.UpdateDistanceMatrix();
         }
 
+        /// <summary>
+        /// Generates primary actions given number of primary actions.
+        /// </summary>
+        /// <param name="n">Number of primary actions to generate.</param>
         public static void GeneratePrimaryActions(uint n)
         {
             ActionManager.Reset();

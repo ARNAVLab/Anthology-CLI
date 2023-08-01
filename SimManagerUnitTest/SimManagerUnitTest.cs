@@ -5,11 +5,20 @@ using System.Text.Json;
 
 namespace SimManagerUnitTest
 {
+    /// <summary>
+    /// Simulation Manager Test class.
+    /// </summary>
     [TestClass]
     public class SimManagerUnitTest
     {
+        /// <summary>
+        /// Path of test JSON file.
+        /// </summary>
         private const string DATA_JSON = "Data\\Paths.json";
 
+        /// <summary>
+        /// Tests initialization of SimManager using concrete types AnthologyRS, LyraKS, and MongoHM.
+        /// </summary>
         [TestInitialize]
         public void TestInitialize()
         {
@@ -23,6 +32,9 @@ namespace SimManagerUnitTest
             }
         }
 
+        /// <summary>
+        /// Tests Anthology-Lyra combination.
+        /// </summary>
         [TestMethod]
         public void TestInitAnthologyLyra()
         {
@@ -32,6 +44,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(SimManager.Locations.Count > 0);
         }
 
+        /// <summary>
+        /// Tests only the reality sim.
+        /// </summary>
         [TestMethod]
         public void TestReality()
         {
@@ -75,6 +90,9 @@ namespace SimManagerUnitTest
             Assert.IsTrue(locations[new Location.Coords(1, 2)].Tags.Contains("outdoor"));
         }
 
+        /// <summary>
+        /// Tests running iterations of the SimManager.
+        /// </summary>
         [TestMethod]
         public void TestIterations()
         {
@@ -84,7 +102,11 @@ namespace SimManagerUnitTest
             SimManager.GetIteration(61);
             Assert.AreEqual("go_for_walk", SimManager.NPCs["Norma"].CurrentAction.Name);
         }
-/*
+
+        /*
+        /// <summary>
+        /// Tests pushing locations from SimManager to RealitySim's LocationManager.
+        /// </summary>
         [TestMethod]
         public void TestPushingLocationsFromFrontend()
         {
@@ -95,6 +117,7 @@ namespace SimManagerUnitTest
             Assert.AreEqual(2, LocationManager.LocationSet.Count);
             Assert.AreEqual("Gas Station", LocationManager.LocationGrid[1][1].Name);
             Assert.AreEqual("Grocery Store", LocationManager.LocationGrid[2][2].Name);
-        }*/
+        }
+        */
     }
 }

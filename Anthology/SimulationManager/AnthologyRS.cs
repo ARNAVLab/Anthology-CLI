@@ -3,14 +3,24 @@ using System.Numerics;
 
 namespace Anthology.SimulationManager
 {
+    /// <summary>
+    /// Concrete implementation of the reality sim using Anthology.
+    /// </summary>
     public class AnthologyRS : RealitySim
     {
-        
+        /// <summary>
+        /// Initalizes Anthology with given path to JSON file.
+        /// </summary>
+        /// <param name="pathFile">Path to JSON file containing relevant info for initializing Anthology.</param>
         public override void Init(string pathFile = "")
         {
             ExecutionManager.Init(pathFile);
         }
 
+        /// <summary>
+        /// Loads all NPCs from Anthology to given dictionary.
+        /// </summary>
+        /// <param name="npcs">The dictionary to populate.</param>
         public override void LoadNpcs(Dictionary<string, NPC> npcs)
         {
             List<Agent> agents = AgentManager.Agents;
@@ -38,6 +48,10 @@ namespace Anthology.SimulationManager
             }
         }
 
+        /// <summary>
+        /// Loads all locations from Anthology to given dictionary.
+        /// </summary>
+        /// <param name="locations">The dictionary to populate.</param>
         public override void LoadLocations(Dictionary<Location.Coords, Location> locations)
         {
             locations.Clear();
@@ -58,6 +72,9 @@ namespace Anthology.SimulationManager
             }
         }
 
+        /// <summary>
+        /// Updates Anthology's locations to match SimManager's.
+        /// </summary>
         public override void PushLocations()
         {
             /*LocationManager.LocationSet.Clear();
@@ -69,6 +86,10 @@ namespace Anthology.SimulationManager
             }*/
         }
 
+        /// <summary>
+        /// Updates given SimManager's NPC to match Anthology's NPC.
+        /// </summary>
+        /// <param name="npc">The SimManager's NPC to update.</param>
         public override void UpdateNpc(NPC npc)
         {
             bool shouldLog = false;
@@ -107,6 +128,10 @@ namespace Anthology.SimulationManager
             }
         }
 
+        /// <summary>
+        /// Updates Anthology's NPC with given SimManager's NPC.
+        /// </summary>
+        /// <param name="npc">The SimManager's NPC to be used for updating.</param>
         public override void PushUpdatedNpc(NPC npc)
         {
             Agent agent = AgentManager.GetAgentByName(npc.Name);
@@ -118,6 +143,10 @@ namespace Anthology.SimulationManager
             }
         }
 
+        /// <summary>
+        /// Run Anthology sim by given amount of steps.
+        /// </summary>
+        /// <param name="steps">Number of steps to advance Anthology by.</param>
         public override void Run(int steps = 1)
         {
             ExecutionManager.RunSim(steps);

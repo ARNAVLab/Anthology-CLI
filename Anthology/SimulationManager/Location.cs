@@ -1,30 +1,48 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
-using System.Numerics;
 
 namespace Anthology.SimulationManager
 {
-    /**
-     * Locations as they exist between the frontend and backend simulations.
-     * Currently these are expected to come exclusively from the RealitySim
-     * and are accessible to the frontend, but future implementations should
-     * support the frontend informing the manager of locations as well
-     */
+    /// <summary>
+    /// Locations as they exist between the frontend and backend simulations.
+    /// Currently these are expected to come exclusively from the RealitySim
+    /// and are accessible to the frontend, but future implementations should
+    /// support the frontend informing the manager of locations as well.
+    /// </summary>
     public class Location
     {
-        /** The name of the location */
+        /// <summary>
+        /// The name of the location.
+        /// </summary>
         public string Name { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Internal Vector2 type that satisfies Bson construction.
+        /// </summary>
         public struct Coords
         {
+            /// <summary>
+            /// X-component of coordinate. 
+            /// </summary>
             public float X { get; set; }
+            /// <summary>
+            /// Y-component of coordinate.
+            /// </summary>
             public float Y { get; set; }
 
+            /// <summary>
+            /// Constructs a coordinate with default value (0, 0).
+            /// </summary>
             public Coords()
             {
                 X = 0;
                 Y = 0;
             }
 
+            /// <summary>
+            /// Bson version of constructor. 
+            /// </summary>
+            /// <param name="x">X-component of coordinate.</param>
+            /// <param name="y">Y-component of coordinate.</param>
             [BsonConstructor]
             public Coords(float x, float y)
             {
@@ -33,11 +51,15 @@ namespace Anthology.SimulationManager
             }
         }
 
+        /// <summary>
+        /// The (X,Y) position of the location.
+        /// </summary>
         [BsonId]
-        /** The (X,Y) position of the location */
         public Coords Coordinates { get; set; } = new();
 
-        /** Arbitrary set of tags associated with the location */
+        /// <summary>
+        /// Arbitrary set of tags associated with the location.
+        /// </summary>
         public HashSet<string> Tags { get; set; } = new();
 
         /// <summary>

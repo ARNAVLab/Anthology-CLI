@@ -4,15 +4,30 @@ using Anthology.SimulationManager;
 
 namespace SimManagerUnitTest
 {
+    /// <summary>
+    /// History Manager test class.
+    /// </summary>
     [TestClass]
     public class HistoryManagerUnitTest
     {
+        /// <summary>
+        /// Path of test JSON file.
+        /// </summary>
         private const string DATA_JSON = "Data\\Paths.json";
 
+        /// <summary>
+        /// MongoDB test database.
+        /// </summary>
         private readonly IMongoDatabase db = new MongoClient("mongodb://localhost:27017/").GetDatabase("SimManager");
 
+        /// <summary>
+        /// Save state collection name.
+        /// </summary>
         private const string SAVE_STATES_COLLECTION = "save_states";
 
+        /// <summary>
+        /// Tests initialization of the history manager.
+        /// </summary>
         [TestInitialize]
         public void TestInitialize()
         {
@@ -28,6 +43,9 @@ namespace SimManagerUnitTest
             }
         }
 
+        /// <summary>
+        /// Tests history manager collections.
+        /// </summary>
         [TestMethod]
         public void TestHistoryLogger()
         {
