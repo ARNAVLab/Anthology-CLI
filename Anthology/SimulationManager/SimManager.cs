@@ -73,13 +73,13 @@ namespace Anthology.SimulationManager
             }
             else
                 throw new InvalidCastException("Failed to recognize reality sim type");
-            if (false && knowledge.IsSubclassOf(typeof(KnowledgeSim))) // short circuited to skip step until LyraKS is implemented
+            if (knowledge.IsSubclassOf(typeof(KnowledgeSim))) // short circuited to skip step until LyraKS is implemented
             {
                 Knowledge = Activator.CreateInstance(knowledge) as KnowledgeSim;
                 if (Knowledge == null)
                     throw new NullReferenceException("Could not create knowledge sim");
                 Knowledge?.Init(JSONfile);
-                Knowledge?.LoadNpcs(NPCs);
+                //Knowledge?.LoadNpcs(NPCs);
             }
             //else
                 // throw new InvalidCastException("Failed to recognize knowledge sim type"); ignored until LyraKS is implemented
@@ -105,10 +105,11 @@ namespace Anthology.SimulationManager
             {
                 NumIterations++;
                 Reality?.Run();
+                Knowledge?.Run();
                 foreach (NPC npc in NPCs.Values)
                 {
                     Reality?.UpdateNpc(npc);
-                    Knowledge?.UpdateNpc(npc);
+                    //Knowledge?.UpdateNpc(npc);
                 }
                 History?.LogNpcStates(LOG_PATH);
             }

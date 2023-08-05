@@ -45,6 +45,16 @@ namespace SimManagerUnitTest
         }
 
         /// <summary>
+        /// Tests only the knowledge sim.
+        /// </summary>
+        [TestMethod]
+        public void TestKnowledge()
+        {
+            SimManager.Knowledge?.Run();
+
+        }
+
+        /// <summary>
         /// Tests only the reality sim.
         /// </summary>
         [TestMethod]
