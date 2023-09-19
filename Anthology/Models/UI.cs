@@ -23,7 +23,7 @@
         /// <summary>
         /// Whether or not the UI is paused.
         /// </summary>
-        public static bool Paused { get; set; } = true;
+        public static bool Paused { get; set; } = false;
 
         /// <summary>
         /// Each slot in the array is the characters contained on one board space.

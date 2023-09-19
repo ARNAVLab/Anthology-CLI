@@ -80,19 +80,19 @@ namespace Anthology.Models
         /// Set of string tags that must be a subset of the location's tags for the action to occur.
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public HashSet<string> HasAllOf { get; set; } = new HashSet<string>();
+        public List<string> HasAllOf { get; set; } = new();
 
         /// <summary>
         /// Set of string tags in which their must exist at least one match with the location's tags for the action to occur.
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public HashSet<string> HasOneOrMoreOf { get; set; } = new HashSet<string>();
+        public List<string> HasOneOrMoreOf { get; set; } = new();
 
         /// <summary>
         /// Set of string tags that must be a disjoint set of the location's tags for the action to occur.
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public HashSet<string> HasNoneOf { get; set; } = new HashSet<string>();
+        public List<string> HasNoneOf { get; set; } = new();
     }
 
     /// <summary>
@@ -126,27 +126,27 @@ namespace Anthology.Models
         /// eg. A cook must be present at a restaurant for food to be served to a customer.
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public HashSet<string> SpecificPeoplePresent { get; set; } = new HashSet<string>();
+        public List<string> SpecificPeoplePresent { get; set; } = new();
 
         /// <summary>
         /// Set of agents that must be absent for the action to be completed.
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public HashSet<string> SpecificPeopleAbsent { get; set; } = new HashSet<string>();
+        public List<string> SpecificPeopleAbsent { get; set; } = new();
 
         /// <summary>
         /// Relationships that must exist between participating agents in order for the action to execute.
         /// eg. [teacher, student] relationships for the action "submit_homework".
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public HashSet<string> RelationshipsPresent { get; set; } = new HashSet<string>();
+        public List<string> RelationshipsPresent { get; set; } = new();
 
         /// <summary>
         /// Relationships that must not exist between participating agents in order for the action to execute.
         /// eg. [siblings] relationship for the action "kiss_romantically".
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public HashSet<string> RelationshipsAbsent { get; set; } = new HashSet<string>();
+        public List<string> RelationshipsAbsent { get; set; } = new();
     }
 
     /// <summary>
@@ -194,21 +194,21 @@ namespace Anthology.Models
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("Location Requirements")]
-        public HashSet<RLocation>? Locations { get; set; }
+        public List<RLocation>? Locations { get; set; }
 
         /// <summary>
         /// People requirements in the container.
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("People Requirements")]
-        public HashSet<RPeople>? People { get; set; }
+        public List<RPeople>? People { get; set; }
 
         /// <summary>
         /// Motive requirements in the container.
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("Motive Requirements")]
-        public HashSet<RMotive>? Motives { get; set; }
+        public List<RMotive>? Motives { get; set; }
 
         /// <summary>
         /// Add an arbitrary requirement to the container.
@@ -218,17 +218,17 @@ namespace Anthology.Models
         {
             if (req is RLocation rl)
             {
-                Locations ??= new HashSet<RLocation>();
+                Locations ??= new();
                 Locations.Add(rl);
             }
             else if (req is RPeople rp)
             {
-                People ??= new HashSet<RPeople>();
+                People ??= new();
                 People.Add(rp);
             }
             else if (req is RMotive rm)
             {
-                Motives ??= new HashSet<RMotive>();
+                Motives ??= new();
                 Motives.Add(rm);
             }
         }
@@ -237,12 +237,12 @@ namespace Anthology.Models
         /// Get a set of all requirements in the container.
         /// </summary>
         /// <returns>All of container's requirements as a set.</returns>
-        public HashSet<Requirement> GetAll()
+        public IEnumerable<Requirement> GetAll()
         {
-            HashSet<Requirement> reqs = new();
-            if (Locations != null) reqs.UnionWith(Locations);
-            if (People != null) reqs.UnionWith(People);
-            if (Motives != null) reqs.UnionWith(Motives);
+            List<Requirement> reqs = new();
+            if (Locations != null) reqs.AddRange(Locations);
+            if (People != null) reqs.AddRange(People);
+            if (Motives != null) reqs.AddRange(Motives);
             return reqs;
         }
     }

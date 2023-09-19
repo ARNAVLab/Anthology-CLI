@@ -24,41 +24,14 @@ namespace Anthology.SimulationManager
             set { Dirty = true; name = value; }
         }
 
+        private string location = string.Empty;
         /// <summary>
-        /// The (X,Y) coordinate location of the NPC.
+        /// The name of the current location of the NPC
         /// </summary>
-        private Vector2 coordinates;
-
-        /// <summary>
-        /// Retrieves the (X,Y) coordinates of the NPC.
-        /// </summary>
-        public Vector2 Coordinates
+        public string Location
         {
-            get { return coordinates; }
-        }
-
-        /// <summary>
-        /// Move the NPC from their current coordinates by the given amounts.
-        /// </summary>
-        /// <param name="x">Number of units to move in x-axis.</param>
-        /// <param name="y">Number of units to move in y-axis.</param>
-        public void MoveByAmount(float x, float y)
-        {
-            coordinates.X += x;
-            coordinates.Y += y;
-            Dirty = true;
-        }
-
-        /// <summary>
-        /// Set the NPC's coordinates to the given coordinates.
-        /// </summary>
-        /// <param name="x">New x-coordinate of NPC.</param>
-        /// <param name="y">New y-coordinate of NPC.</param>
-        public void SetCoordinates(float x, float y)
-        {
-            coordinates.X = x;
-            coordinates.Y = y;
-            Dirty = true;
+            get { return location; }
+            set { Dirty = true; location = value; }
         }
 
         /// <summary>
@@ -192,7 +165,7 @@ namespace Anthology.SimulationManager
         {
             StringBuilder sb = new();
             sb.AppendFormat("Name: {0}, ", Name);
-            sb.AppendFormat("X: {0}, Y: {1}, ", Coordinates.X, Coordinates.Y);
+            sb.AppendFormat("Current Location: ", Location);
             sb.AppendFormat("Motives: ", Motives.ToString());
             sb.AppendFormat("Current Action: {0}", CurrentAction.Name);
             sb.AppendFormat("Current Destination: {0}", Destination);

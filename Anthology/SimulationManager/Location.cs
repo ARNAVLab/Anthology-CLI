@@ -1,5 +1,4 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
-using System.Numerics;
 
 namespace Anthology.SimulationManager
 {
@@ -24,12 +23,11 @@ namespace Anthology.SimulationManager
             /// <summary>
             /// X-component of coordinate. 
             /// </summary>
-            public int X { get; set; }
-
+            public float X { get; set; }
             /// <summary>
             /// Y-component of coordinate.
             /// </summary>
-            public int Y { get; set; }
+            public float Y { get; set; }
 
             /// <summary>
             /// Constructs a coordinate with default value (0, 0).
@@ -46,7 +44,7 @@ namespace Anthology.SimulationManager
             /// <param name="x">X-component of coordinate.</param>
             /// <param name="y">Y-component of coordinate.</param>
             [BsonConstructor]
-            public Coords(int x, int y)
+            public Coords(float x, float y)
             {
                 X = x;
                 Y = y;
@@ -63,5 +61,11 @@ namespace Anthology.SimulationManager
         /// Arbitrary set of tags associated with the location.
         /// </summary>
         public HashSet<string> Tags { get; set; } = new();
+
+        /// <summary>
+        /// Directly pathable connections between locations and their distances
+        /// Effectively out-edges in graph theory
+        /// </summary>
+        public Dictionary<string, float> Connections { get; set; } = new();
     }
 }

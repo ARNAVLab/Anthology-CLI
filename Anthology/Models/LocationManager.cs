@@ -1,4 +1,6 @@
-﻿namespace Anthology.Models
+﻿using System.Numerics;
+
+namespace Anthology.Models
 {
     /// <summary>
     /// Provides functionality for checking location-centric conditions.
@@ -6,270 +8,228 @@
     public static class LocationManager
     {
         /// <summary>
-        /// Locations in the simulation as a set for set operations.
+        /// Locations in the simulation stored by name.
         /// </summary>
-        public static HashSet<SimLocation> LocationSet { get; set; } = new HashSet<SimLocation>();
+        public static Dictionary<string, LocationNode> LocationsByName { get; set; } = new();
 
         /// <summary>
-        /// Locations in the simulation as a grid for coordinate access.
+        /// Locations in the simulation stored by (X,Y) position.
         /// </summary>
-        public static Dictionary<int, Dictionary<int, SimLocation>> LocationGrid { get; set; } = new Dictionary<int, Dictionary<int, SimLocation>>();
+        public static Dictionary<Vector2, LocationNode> LocationsByPosition { get; set; } = new();
 
         /// <summary>
-        /// Initialize/reset all static location manager variables and fill an empty N x N grid.
+        /// Locations in the simulation stored by tags for action selection.
         /// </summary>
-        /// <param name="n">Number of rows/columns of location grid.</param>
+        public static Dictionary<string, List<LocationNode>> LocationsByTag { get; set; } = new();
+
+        /// <summary>
+        /// The total number of locations in the simulation.
+        /// </summary>
+        public static int LocationCount { get; set; } = 0;
+
+        /// <summary>
+        /// The directed distance matrix for determining the travel distance between
+        /// any two locations. To obtain the distance from A to B, index into the
+        /// matrix like: [A.ID * LocationCount + B.ID].
+        /// </summary>
+        public static float[] DistanceMatrix { get; set; } = Array.Empty<float>();
+
+        /// <summary>
+        /// Initialize/reset all static location manager variables compute the distance matrix.
+        /// </summary>
         /// <param name="path">Path of JSON file to load locations from.</param>
-        public static void Init(int n, string path)
+        public static void Init(string path)
         {
-            LocationSet.Clear();
-            LocationGrid.Clear();
-            for (int i = 0; i < n; i++)
-            {
-                LocationGrid[i] = new();
-                for (int k = 0; k < n; k++)
-                {
-                    LocationGrid[i][k] = new SimLocation();
-                }
-            }
+            Reset();
             World.ReadWrite.LoadLocationsFromFile(path);
+            UpdateDistanceMatrix();
         }
 
         /// <summary>
-        /// Adds a location to both the location set and the location grid.
+        /// Resets all storage of locations in the simulation.
         /// </summary>
-        /// <param name="location">The location to add.</param>
-        public static void AddLocation(SimLocation location)
+        public static void Reset()
         {
-            foreach (Agent a in AgentManager.Agents)
-            {
-                if (a.XLocation == location.X && a.YLocation == location.Y)
-                {
-                    location.AgentsPresent.Add(a.Name);
-                }
-            }
-            LocationSet.Add(location);
-            int max = Math.Max(location.X, location.Y);
-            if (max >= UI.GridSize)
-            {
-                for (int i = UI.GridSize; i <= max; i++)
-                {
-                    LocationGrid.Add(i, new());
-                    for (int k = 0; k <= max; k++)
-                    {
-                        LocationGrid[i].Add(k, new());
-                    }
-                }
-                for (int i = 0; i < UI.GridSize; i++)
-                {
-                    for (int k = UI.GridSize; k <= max; k++)
-                    {
-                        LocationGrid[i].Add(k, new());
-                    }
-                }
-                UI.GridSize = max + 1;
-            }
-            LocationGrid[location.X][location.Y] = location;
+            LocationsByName.Clear();
+            LocationsByPosition.Clear();
+            LocationsByTag.Clear();
+            DistanceMatrix = Array.Empty<float>();
+            LocationCount = 0;
         }
 
         /// <summary>
-        /// Creates and adds a location to both the location set and the location grid.
+        /// Adds a location accordingly to each location data structure.
+        /// </summary>
+        /// <param name="node">The location to add to the simulation.</param>
+        public static void AddLocation(LocationNode node)
+        {
+            LocationsByName.Add(node.Name, node);
+            LocationsByPosition.Add(new(node.X, node.Y), node);
+            node.ID = LocationCount++;
+
+            foreach (string tag in node.Tags)
+            {
+                if (!LocationsByTag.ContainsKey(tag))
+                    LocationsByTag.Add(tag, new());
+                LocationsByTag[tag].Add(node);
+            }
+            foreach (Agent agent in AgentManager.Agents)
+            {
+                if (agent.CurrentLocation == node.Name)
+                    node.AgentsPresent.AddLast(agent.Name);
+            }
+        }
+
+        /// <summary>
+        /// Creates and adds a location to each of the static data structures.
         /// </summary>
         /// <param name="name">Name of the location.</param>
         /// <param name="x">X-coordinate of the location.</param>
         /// <param name="y">Y-coordinate of the location.</param>
         /// <param name="tags">Relevant tags of the location.</param>
-        public static void AddLocation(string name, int x, int y, IEnumerable<string> tags)
+        /// <param name="connections">Connections from the location to others.</param>
+        public static void AddLocation(string name, float x, float y, IEnumerable<string> tags, Dictionary<string, float> connections)
         {
-            HashSet<string> newTags = new();
-            newTags.UnionWith(tags);
-            AddLocation(new() { Name = name, X = x, Y = y, Tags = newTags });
+            List<string> newTags = new();
+            newTags.AddRange(tags);
+            AddLocation(new() { Name = name, X = x, Y = y, Tags = newTags, Connections = connections });
         }
 
         /// <summary>
-        /// Finds the location with the matching name.
+        /// Resets and populates the static distance matrix with all-pairs-shortest-path
+        /// via the Floyd-Warshall algorithm.
         /// </summary>
-        /// <param name="name">The name of the location.</param>
-        /// <returns>Location with name matching the given name.</returns>
-        public static SimLocation GetSimLocationByName(string name)
+        public static void UpdateDistanceMatrix()
         {
-            bool IsNameMatch(SimLocation location)
+            DistanceMatrix = new float[LocationCount * LocationCount];
+            Parallel.For(0, LocationCount, loc1 =>
             {
-                return location.Name == name;
+                for (int loc2 = 0; loc2 < LocationCount; loc2++)
+                {
+                    if (loc1 == loc2) DistanceMatrix[loc1 * LocationCount + loc2] = 0;
+                    else DistanceMatrix[loc1 * LocationCount + loc2] = (float.MaxValue / 2f) - 1f;
+                }
+            });
+            IEnumerable<LocationNode> locationNodes = LocationsByName.Values;
+            Parallel.ForEach(locationNodes, loc1 =>
+            {
+                foreach (KeyValuePair<string, float> con in loc1.Connections)
+                {
+                    LocationNode loc2 = LocationsByName[con.Key];
+                    DistanceMatrix[loc1.ID * LocationCount + loc2.ID] = con.Value;
+                }
+            });
+            for (int k = 0; k < LocationCount; k++)
+            {
+                Parallel.For(0, LocationCount, i =>
+                {
+                    for (int j = 0; j < LocationCount; j++)
+                    {
+                        float d = DistanceMatrix[i * LocationCount + k] + DistanceMatrix[k * LocationCount + j];
+                        if (DistanceMatrix[i * LocationCount + j] > DistanceMatrix[i * LocationCount + k] + DistanceMatrix[k * LocationCount + j])
+                            DistanceMatrix[i * LocationCount + j] = DistanceMatrix[i * LocationCount + k] + DistanceMatrix[k * LocationCount + j];
+                    }
+                });
             }
-
-            SimLocation location = LocationSet.First(IsNameMatch);
-            return location;
         }
 
         /// <summary>
-        /// Filter given set of locations to find those locations that satisfy conditions specified in the location requirement.
-        /// Returns a set of locations that match the HasAllOf, HasOneOrMOreOf, and HasNoneOf constraints.
-        /// Returns all the locations that satisfied the given requirement, or an empty set is none match.
+        /// Filter all locations to find those locations that satisfy conditions specified in the location requirement.
+        /// Returns an enumerable of locations that match the HasAllOf, HasOneOrMOreOf, and HasNoneOf constraints.
         /// </summary>
-        /// <param name="locations">The set of locations to filter.</param>
         /// <param name="requirements">Requirements that locations must satisfy in order to be returned.</param>
-        /// <param name="agent">Agent relevant for handling agent requirement(s).</param>
-        /// <returns></returns>
-        public static HashSet<SimLocation> LocationsSatisfyingLocationRequirement(HashSet<SimLocation> locations, RLocation requirements, string agent = "")
+        /// <returns>Returns all the locations that satisfied the given requirement, or an empty enumerable if none match.</returns>
+        public static IEnumerable<LocationNode> LocationsSatisfyingLocationRequirement(RLocation requirements)
         {
-            bool IsLocationInvalid(SimLocation location)
-            {   
-                if (agent == "" || location.AgentsPresent.Contains(agent))
+            List<LocationNode> matches = new();
+            if (requirements.HasOneOrMoreOf.Count > 0)
+            {
+                foreach (string tag in requirements.HasOneOrMoreOf)
                 {
-                    return !location.SatisfiesRequirements(requirements);
-                }
-                else
-                {
-                    location.AgentsPresent.Add(agent);
-                    bool invalid = !location.SatisfiesRequirements(requirements);
-                    location.AgentsPresent.Remove(agent);
-                    return invalid;
+                    matches.AddRange(LocationsByTag[tag]);
                 }
             }
-
-            HashSet<SimLocation> satisfactoryLocations = new();
-            satisfactoryLocations.UnionWith(locations);
-            satisfactoryLocations.RemoveWhere(IsLocationInvalid);
-
-            return satisfactoryLocations;
+            else
+            {
+                matches.AddRange(LocationsByName.Values);
+            }
+            if (requirements.HasAllOf.Count > 0)
+            {
+                foreach (string tag in requirements.HasAllOf)
+                {
+                    matches = matches.Intersect(LocationsByTag[tag]).ToList();
+                }
+            }
+            if (requirements.HasNoneOf.Count > 0)
+            {
+                foreach (string tag in requirements.HasNoneOf)
+                {
+                    matches = matches.Except(LocationsByTag[tag]).ToList();
+                }
+            }
+            return matches;
         }
 
         /// <summary>
-        /// Filter given set of locations to find those locations that satisfy conditions specified in the people requirement.
-        /// Returns a set of locations that match the MinNumPeople, MaxNumPeople, SpecificPeoplePresent, SpecificPeopleAbsent,
+        /// Filter given locations to find those locations that satisfy conditions specified in the people requirement.
+        /// Returns locations that match the MinNumPeople, MaxNumPeople, SpecificPeoplePresent, SpecificPeopleAbsent,
         /// RelationshipsPresent, and RelationshipsAbsent requirements.
-        /// Returns all the locations that satisfied the given requirement, or an empty set is none match.
         /// </summary>
         /// <param name="locations">The set of locations to filter.</param>
         /// <param name="requirements">Requirements that locations must satisfy to be returned.</param>
         /// <param name="agent">Agent relevant for handling agent requirement(s).</param>
-        /// <returns></returns>
-        public static HashSet<SimLocation> LocationsSatisfyingPeopleRequirement(HashSet<SimLocation> locations, RPeople requirements, string agent = "")
+        /// <returns>Returns all the locations that satisfied the given requirement, or an empty enumerable if none match.</returns>
+        public static IEnumerable<LocationNode> LocationsSatisfyingPeopleRequirement(IEnumerable<LocationNode> locations, RPeople requirements, string agent = "")
         {
-            bool IsLocationInvalid(SimLocation location)
+            bool IsLocationValid(LocationNode location)
             {
                 if (agent == "" || location.AgentsPresent.Contains(agent))
                 {
-                    return !location.SatisfiesRequirements(requirements);
+                    return location.SatisfiesRequirements(requirements);
                 }
                 else
                 {
-                    location.AgentsPresent.Add(agent);
-                    bool invalid = !location.SatisfiesRequirements(requirements);
-                    location.AgentsPresent.Remove(agent);
-                    return invalid;
+                    location.AgentsPresent.AddLast(agent);
+                    bool valid = location.SatisfiesRequirements(requirements);
+                    location.AgentsPresent.RemoveLast();
+                    return valid;
                 }
             }
 
-            HashSet<SimLocation> satisfactoryLocations = new();
-            satisfactoryLocations.UnionWith(locations);
-            satisfactoryLocations.RemoveWhere(IsLocationInvalid);
-
-            return satisfactoryLocations;
-        }
-
-        /// <summary>
-        /// Returns the SimLocation at the given (X,Y) coordinates, or null if one does not exist.
-        /// </summary>
-        /// <param name="locations">The set of locations to search from.</param>
-        /// <param name="x">X-coordinate of potential location to return.</param>
-        /// <param name="y">Y-coordinate of potential location to return.</param>
-        /// <returns>Location at designated coordinates. Null if not found.</returns>
-        public static SimLocation? FindSimLocationAt(HashSet<SimLocation> locations, float x, float y)
-        {
-            foreach (SimLocation loc in locations)
+            List<LocationNode> matches = new();
+            foreach (LocationNode location in locations)
             {
-                if (loc.X == x && loc.Y == y)
-                {
-                    return loc;
-                }
+                if (IsLocationValid(location)) matches.Add(location);
             }
-            return null;
+
+            return matches;
         }
 
         /// <summary>
-        /// Returns the SimLocation nearest the given SimLocation, or null if one does not exist.
+        /// Finds the nearest location of a given set from a specified location.
         /// </summary>
-        /// <param name="locations">Set of locations to search from.</param>
-        /// <param name="from">The location whose coordinates act as search origin.</param>
-        /// <returns>Location closest to given location.</returns>
-        public static SimLocation? FindNearestLocationFrom(HashSet<SimLocation> locations, SimLocation from)
+        /// <param name="from">The source location.</param>
+        /// <param name="locations">The locations to filter for the closest.</param>
+        /// <returns></returns>
+        public static LocationNode FindNearestLocationFrom(LocationNode from, IEnumerable<LocationNode> locations)
         {
-            return FindNearestLocationXY(locations, from.X, from.Y);
-        }
-
-        /// <summary>
-        /// Returns the SimLocation nearest the given Agent, or null if one does not exist.
-        /// </summary>
-        /// <param name="locations">Set of locations to search from.</param>
-        /// <param name="from">The agent whose coordinates act as search origin.</param>
-        /// <returns>Location closest to agent.</returns>
-        public static SimLocation? FindNearestLocationFrom(HashSet<SimLocation> locations, Agent from)
-        {
-            SimLocation locFrom = LocationGrid[from.XLocation][from.YLocation];
-            return FindNearestLocationFrom(locations, locFrom);
-        }
-
-
-        /// <summary>
-        /// Finds the manhattan distance between two locations.
-        /// </summary>
-        /// <param name="a">Location whose coordinates act as origin.</param>
-        /// <param name="b">Location whose coordinates act as destination.</param>
-        /// <returns>Distance between the two locations.</returns>
-        public static int FindManhattanDistance(SimLocation a, SimLocation b)
-        {
-            return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
-        }
-
-        /// <summary>
-        /// Finds the manhattan distance between a location and specified (X,Y) coordinates.
-        /// </summary>
-        /// <param name="loc">Location whose coordinate acts as origin.</param>
-        /// <param name="x">X-coordinate of destination.</param>
-        /// <param name="y">Y-coordinate of destination.</param>
-        /// <returns>Distance between the given location's coordinate and the (X, Y) coordinates.</returns>
-        public static int FindManhattanDistance(SimLocation loc, int x, int y)
-        {
-            return Math.Abs(loc.X - x) + Math.Abs(loc.Y - y);
-        }
-
-        /// <summary>
-        /// Helper function that finds the location nearest to the given (X,Y) coordinates.
-        /// </summary>
-        /// <param name="locations">Set of locations to search from.</param>
-        /// <param name="x">X-coordinate of desired location.</param>
-        /// <param name="y">Y-coordinate of desired location.</param>
-        /// <returns>Location that is nearest to the given (X, Y) coordinates.</returns>
-        private static SimLocation? FindNearestLocationXY(HashSet<SimLocation> locations, int x, int y)
-        {
-            HashSet<SimLocation> locationsToCheck = new();
-            locationsToCheck.UnionWith(locations);
-
-            if (locationsToCheck.Count == 0) return null;
-
-            HashSet<SimLocation> closestSet = new();
-            int closestDist = int.MaxValue;
-
-            foreach (SimLocation loc in locationsToCheck)
+            IEnumerator<LocationNode> enumerator = locations.GetEnumerator();
+            enumerator.MoveNext();
+            LocationNode nearest = enumerator.Current;
+            float dist = DistanceMatrix[from.ID * LocationCount + nearest.ID];
+            int row = from.ID * LocationCount;
+            int i;
+            while (enumerator.MoveNext())
             {
-                int dist = FindManhattanDistance(loc, x, y);
-                if (dist < closestDist)
+                i = row + enumerator.Current.ID;
+                if (dist > DistanceMatrix[i])
                 {
-                    closestDist = dist;
-                    closestSet.Clear();
-                    closestSet.Add(loc);
-                }
-                else if (dist == closestDist)
-                {
-                    closestSet.Add(loc);
+                    nearest = enumerator.Current;
+                    dist = DistanceMatrix[i];
                 }
             }
 
-            Random r = new();
-            int idx = r.Next(0, closestSet.Count);
-            return closestSet.ElementAt(idx);
+            return nearest;
         }
     }
 }
