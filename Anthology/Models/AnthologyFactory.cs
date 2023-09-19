@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-
-namespace Anthology.Models
+﻿namespace Anthology.Models
 {
     /// <summary>
     /// Factory class that generates agents, locations, and actions.
@@ -10,15 +8,13 @@ namespace Anthology.Models
         /// <summary>
         /// Generates all agents given amount of agents and grid size. 
         /// </summary>
-        /// <param name="n">Number of agents to add.</param>
-        /// <param name="gridSize">Size of the square grid (in terms of rows/columns).</param>
-        public static void GenerateAgents(uint n, int gridSize)
+        /// <param name="numAgents">Number of agents to add.</param>
+        /// <param name="numLocations">Number of locations that (will) exist.</param>
+        public static void GenerateAgents(int numAgents, int numLocations)
         {
-            UI.GridSize = gridSize;
-            AgentManager.Agents.Clear();
-
+            AgentManager.Reset();
             Random r = new();
-            for (uint i = 0; i < n; i++)
+            for (uint i = 0; i < numAgents; i++)
             {
                 Agent a = new()
                 {
@@ -31,10 +27,9 @@ namespace Anthology.Models
                         { "m4", r.Next(4) + 1 },
                         { "m5", r.Next(4) + 1 }
                     },
-                    XLocation = r.Next(gridSize),
-                    YLocation = r.Next(gridSize),
+                    CurrentLocation = "l_" + r.Next(numLocations)
                 };
-                AgentManager.Agents.Add(a);
+                AgentManager.AddAgent(a);
             }
         }
 
@@ -42,45 +37,55 @@ namespace Anthology.Models
         /// Generates locations in the grid given number of locations.
         /// </summary>
         /// <param name="n">Number of locations to generate.</param>
-        /// <param name="gridSize">Size of the square grid (in terms of rows/columns)</param>
-        public static void GenerateSimLocations(uint n, int gridSize)
+        public static void GenerateLocations(int n)
         {
-            UI.GridSize = gridSize;
-            LocationManager.LocationSet.Clear();
-            LocationManager.LocationGrid.Clear();
-            for (int i = 0; i < gridSize; i++)
-            {
-                LocationManager.LocationGrid[i] = new Dictionary<int, SimLocation>();
-                for (int k = 0; k < gridSize; k++)
-                {
-                    LocationManager.LocationGrid[i][k] = new SimLocation();
-                }
-            }
-
+            if (n < 5)
+                throw new ArgumentException("Please only use this factory for systems with at least 5 locations");
+            LocationManager.Reset();
             Random r = new();
+            int[] c = new int[3];
 
-            for (uint i = 0; i < n; i++)
+            for (int i = 0; i < n; i++)
             {
-                int x = r.Next(gridSize);
-                int y = r.Next(gridSize);
-                while (LocationManager.LocationGrid[x][y].Name != string.Empty)
+                c[0] = i > 0 ? i - 1 : n - 1;
+                c[1] = i < n - 1 ? i + 1 : 0;
+                c[2] = r.Next(n);
+                if (c[2] == i)
                 {
-                    x = r.Next(gridSize);
-                    y = r.Next(gridSize);
+                    if (i == n - 1) c[2] = n / 2;
+                    else c[2] += 1;
                 }
-                SimLocation sl = new()
+                if (c[2] == c[0])
+                {
+                    if (c[2] == 0) c[2] = n - 1;
+                    else c[2] -= 1;
+                }
+                else if (c[2] == c[1])
+                {
+                    if (c[2] == n - 1) c[2] = 0;
+                    else c[2] += 1;
+                }
+
+                LocationNode node = new()
                 {
                     Name = "l_" + i,
-                    X = x,
-                    Y = y,
+                    X = i,
+                    Y = i,
                     Tags =
                     {
                         "t_" + (i % 3),
                         "t_" + ((i % 7) + 3)
+                    },
+                    Connections =
+                    {
+                        { "l_" + c[0], r.Next(100) },
+                        { "l_" + c[1], r.Next(100) },
+                        { "l_" + c[2], r.Next(100) }
                     }
                 };
-                LocationManager.AddLocation(sl);
+                LocationManager.AddLocation(node);
             }
+            LocationManager.UpdateDistanceMatrix();
         }
 
         /// <summary>
@@ -89,9 +94,9 @@ namespace Anthology.Models
         /// <param name="n">Number of primary actions to generate.</param>
         public static void GeneratePrimaryActions(uint n)
         {
-            ActionManager.Actions.PrimaryActions.Clear();
-            ActionManager.Actions.PrimaryActions.Add(new PrimaryAction() { Name = "travel_action" });
-            ActionManager.Actions.PrimaryActions.Add(new PrimaryAction() { Name = "wait_action" });
+            ActionManager.Reset();
+            ActionManager.AddAction(new PrimaryAction() { Name = "wait_action" });
+            ActionManager.AddAction(new PrimaryAction() { Name = "travel_action" });
 
             Random r = new();
             for (uint i = 0; i < n; i++)
@@ -101,13 +106,13 @@ namespace Anthology.Models
                 switch (rltype)
                 {
                     case 0:
-                        rl.HasAllOf.Add("t_" + r.Next(9));
+                        rl.HasAllOf.Add("t_" + r.Next(8));
                         break;
                     case 1:
-                        rl.HasNoneOf.Add("t_" + r.Next(9));
+                        rl.HasNoneOf.Add("t_" + r.Next(8));
                         break;
                     case 2:
-                        rl.HasOneOrMoreOf.Add("t_" + r.Next(0));
+                        rl.HasOneOrMoreOf.Add("t_" + r.Next(8));
                         break;
                 }
 

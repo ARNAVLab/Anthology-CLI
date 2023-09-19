@@ -1,7 +1,7 @@
 using Anthology.Models;
 using Anthology.SimulationManager;
 using Anthology.SimulationManager.HistoryManager;
-using System.Numerics;
+using System.Text.Json;
 
 namespace SimManagerUnitTest
 {
@@ -28,7 +28,7 @@ namespace SimManagerUnitTest
             }
             catch (Exception e)
             {
-                Assert.Fail("Failed to initialize Sim Manager: " + e.Message);
+                Assert.Fail("Failed to initialize Sim Manager: " + e.ToString());
             }
         }
 
@@ -109,10 +109,11 @@ namespace SimManagerUnitTest
             Assert.AreEqual("wait_action", SimManager.NPCs["Norma"].CurrentAction.Name);
             SimManager.GetIteration();
             Assert.AreEqual("travel_action", SimManager.NPCs["Norma"].CurrentAction.Name);
-            SimManager.GetIteration(20);
-            Assert.AreNotEqual("travel_action", SimManager.NPCs["Norma"].CurrentAction.Name);
+            SimManager.GetIteration(61);
+            Assert.AreEqual("go_for_walk", SimManager.NPCs["Norma"].CurrentAction.Name);
         }
 
+        /*
         /// <summary>
         /// Tests pushing locations from SimManager to RealitySim's LocationManager.
         /// </summary>
@@ -127,5 +128,6 @@ namespace SimManagerUnitTest
             Assert.AreEqual("Gas Station", LocationManager.LocationGrid[1][1].Name);
             Assert.AreEqual("Grocery Store", LocationManager.LocationGrid[2][2].Name);
         }
+        */
     }
 }

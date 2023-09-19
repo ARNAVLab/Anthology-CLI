@@ -8,7 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Data\" />
+    <Compile Remove="Models\MapManager\**" />
+    <Content Remove="Models\MapManager\**" />
+    <EmbeddedResource Remove="Models\MapManager\**" />
+    <None Remove="Models\MapManager\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,7 +23,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="doxygen $(ProjectDir)doc\$(ProjectName).doxygen" />
+    <Exec Command="$(TargetDir)doxygen.exe $(ProjectDir)doc\$(ProjectName).doxygen" />
   </Target>
 
 </Project>

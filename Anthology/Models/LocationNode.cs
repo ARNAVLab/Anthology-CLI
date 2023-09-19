@@ -3,46 +3,47 @@
 namespace Anthology.Models
 {
     /// <summary>
-    /// Encapsulates a location within the simulation. A location can have a name, tags, a list of 
-    /// agents occupying the location, and mandatory coordinates.
+    /// Locations as used by the graph-based location system.
     /// </summary>
-    public class SimLocation
+    public class LocationNode
     {
         /// <summary>
-        /// Optional name of the location. Eg. Restaurant, Home, Movie Theatre, etc.
+        /// The name of the location.
         /// </summary>
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
-        /// X-coordinate of location.
+        /// The X-coordinate of this location.
         /// </summary>
-        public int X { get; set; }
+        public float X { get; set; }
 
         /// <summary>
-        /// Y-coordinate of location.
+        /// The Y-coordinate of this location.
         /// </summary>
-        public int Y { get; set; }
+        public float Y { get; set; }
 
         /// <summary>
-        /// Optional set of tags associated with the location. Eg. Restaurant could have 'food', 'delivery' as tags.
+        /// The tags associated with this location.
         /// </summary>
-        public HashSet<string> Tags { get; set; } = new HashSet<String>();
+        public List<string> Tags { get; set; } = new();
 
         /// <summary>
-        /// Set of agents at the location.
+        /// The connections between this location and others (directed edges).
+        /// </summary>
+        public Dictionary<string, float> Connections { get; set; } = new();
+
+        /// <summary>
+        /// The agents located at this location.
         /// </summary>
         [JsonIgnore]
-        public HashSet<string> AgentsPresent { get; set; } = new HashSet<string>();
+        public LinkedList<string> AgentsPresent { get; set; } = new();
 
         /// <summary>
-        /// Returns true if the specified agent is at this location.
+        /// The ID of this location as assigned by LocationManager when added.
+        /// This is primarily useful for indexing into the distance matrix.
         /// </summary>
-        /// <param name="npc">The agent to determine if present at location.</param>
-        /// <returns>True if agent is at location.</returns>
-        public bool IsAgentHere(Agent npc)
-        {
-            return AgentsPresent.Contains(npc.Name);
-        }
+        [JsonIgnore]
+        public int ID { get; set; }
 
         /// <summary>
         /// Checks if this location satisfies all of the passed location requirements.
@@ -57,10 +58,10 @@ namespace Anthology.Models
         }
 
         /// <summary>
-        /// Checks if this location satisfies all of the passed people requirements.
+        /// Checks if this location satisfies all of the passed location requirements.
         /// </summary>
-        /// <param name="reqs">People requirements to check for.</param>
-        /// <returns>True if location satisfies given requirements.</returns>
+        /// <param name="reqs">Requirements to check for location.</param>
+        /// <returns>True if location satisfies all requirements.</returns>
         public bool SatisfiesRequirements(RPeople reqs)
         {
             return HasMinNumPeople(reqs.MinNumPeople) &&
@@ -75,21 +76,30 @@ namespace Anthology.Models
         /// </summary>
         /// <param name="hasAllOf">All tags to check.</param>
         /// <returns>True if location has all tags given.</returns>
-        private bool HasAllOf(HashSet<string> hasAllOf)
+        private bool HasAllOf(IEnumerable<string> hasAllOf)
         {
-            return hasAllOf.IsSubsetOf(Tags);
+            IEnumerator<string> enumerator = hasAllOf.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                if (!Tags.Contains(enumerator.Current)) return false;
+            }
+            return true;
         }
 
         /// <summary>
         /// Checks if location satisfies at least one tag specified.
-        /// 
         /// </summary>
         /// <param name="hasOneOrMoreOf">The set of tags to check.</param>
         /// <returns>True if location has at least one of the tags specified.</returns>
-        private bool HasOneOrMoreOf(HashSet<string> hasOneOrMoreOf)
+        private bool HasOneOrMoreOf(IEnumerable<string> hasOneOrMoreOf)
         {
-            if (hasOneOrMoreOf.Count == 0) { return true; }
-            return hasOneOrMoreOf.Overlaps(Tags);
+            IEnumerator<string> enumerator = hasOneOrMoreOf.GetEnumerator();
+            if (!enumerator.MoveNext()) return true;
+            do
+            {
+                if (Tags.Contains(enumerator.Current)) return true;
+            } while (enumerator.MoveNext());
+            return false;
         }
 
         /// <summary>
@@ -97,10 +107,14 @@ namespace Anthology.Models
         /// </summary>
         /// <param name="hasNoneOf">The set of tags to check.</param>
         /// <returns>True if location has none of the given tags.</returns>
-        private bool HasNoneOf(HashSet<string> hasNoneOf)
+        private bool HasNoneOf(IEnumerable<string> hasNoneOf)
         {
-            if (hasNoneOf.Count == 0) { return true; }
-            return !hasNoneOf.Overlaps(Tags);
+            IEnumerator<string> enumerator = hasNoneOf.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                if (Tags.Contains(enumerator.Current)) return false;
+            }
+            return true;
         }
 
         /// <summary>
@@ -128,10 +142,14 @@ namespace Anthology.Models
         /// </summary>
         /// <param name="specificPeoplePresent">The set of people to check.</param>
         /// <returns>True if location has given people.</returns>
-        private bool SpecificPeoplePresent(HashSet<string> specificPeoplePresent)
+        private bool SpecificPeoplePresent(IEnumerable<string> specificPeoplePresent)
         {
-            if (specificPeoplePresent.Count == 0) { return true; }
-            return specificPeoplePresent.IsSubsetOf(AgentsPresent);
+            IEnumerator<string> enumerator = specificPeoplePresent.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                if (!AgentsPresent.Contains(enumerator.Current)) return false;
+            }
+            return true;
         }
 
         /// <summary>
@@ -139,24 +157,29 @@ namespace Anthology.Models
         /// </summary>
         /// <param name="specificPeopleAbsent">The set of people to check.</param>
         /// <returns>True if location does not have the given people.</returns>
-        private bool SpecificPeopleAbsent(HashSet<string> specificPeopleAbsent)
+        private bool SpecificPeopleAbsent(IEnumerable<string> specificPeopleAbsent)
         {
-            if (specificPeopleAbsent.Count == 0) { return true; }
-            return !specificPeopleAbsent.Overlaps(AgentsPresent);
+            IEnumerator<string> enumerator = specificPeopleAbsent.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                if (AgentsPresent.Contains(enumerator.Current)) return false;
+            }
+            return true;
         }
 
         /// <summary>
         /// Checks if given relationships are present at location.
         /// </summary>
-        /// <param name="relationshipsPresent">The set of relationships to check.</param>
+        /// <param name="relationshipsPresent">The relationships to check.</param>
         /// <returns>True if given relationships are present at location.</returns>
-        private bool RelationshipsPresent(HashSet<string> relationshipsPresent)
+        private bool RelationshipsPresent(IEnumerable<string> relationshipsPresent)
         {
-            if (relationshipsPresent.Count == 0) { return true; }
-            HashSet<string> relationshipsHere = new();
+            IEnumerator<string> enumerator = relationshipsPresent.GetEnumerator();
+            if (!enumerator.MoveNext()) { return true; }
+            List<string> relationshipsHere = new();
             foreach (string name in AgentsPresent)
             {
-                HashSet<Relationship> ar = AgentManager.GetAgentByName(name).Relationships;
+                IEnumerable<Relationship> ar = AgentManager.GetAgentByName(name).Relationships;
                 foreach (Relationship r in ar)
                 {
                     if (AgentsPresent.Contains(r.With))
@@ -165,7 +188,11 @@ namespace Anthology.Models
                     }
                 }
             }
-            return relationshipsPresent.IsSubsetOf(relationshipsHere);
+            do
+            {
+                if (!relationshipsHere.Contains(enumerator.Current)) return false;
+            } while (enumerator.MoveNext());
+            return true;
         }
     }
 }

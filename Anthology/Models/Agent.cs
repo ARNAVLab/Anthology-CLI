@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Text.Json;
-
-namespace Anthology.Models
+﻿namespace Anthology.Models
 {
     /// <summary>
     /// Relationships are composed by agents, so the owning agent will always be the source of the relationship,
@@ -48,19 +45,14 @@ namespace Anthology.Models
                                                                       };
 
         /// <summary>
-        /// Set of all the relationships of this agent.
+        /// List of all the relationships of this agent.
         /// </summary>
-        public HashSet<Relationship> Relationships { get; set; } = new HashSet<Relationship>();
+        public List<Relationship> Relationships { get; set; } = new();
 
         /// <summary>
-        /// Current x-coordinate of the agent.
+        /// Name of the current location of this agent.
         /// </summary>
-        public int XLocation { get; set; }
-
-        /// <summary>
-        /// Current y-coordinate of the agent.
-        /// </summary>
-        public int YLocation { get; set; }
+        public string CurrentLocation { get; set; } = string.Empty;
 
         /// <summary>
         /// How long the agent will be occupied with the current action they are executing.
@@ -70,39 +62,31 @@ namespace Anthology.Models
         /// <summary>
         /// A queue containing the next few actions being executed by the agent.
         /// </summary>
-        public LinkedList<Action> CurrentAction { get; set; } = new LinkedList<Action>();
+        public LinkedList<Action> CurrentAction { get; set; } = new();
 
         /// <summary>
-        /// The x-coordinate of destination that the agent is heading to.
-        /// Can be -1 if the agent has reached their previous destination and is
-        /// executing an action at that location.
+        /// The name of the destination that this agent is heading towards. 
+        /// Can be the empty string if the agent has reached their previous
+        /// destination and is executing an action.
         /// </summary>
-        public int XDestination { get; set; } = -1;
-
-        /// <summary>
-        /// The y-coordinate of destination that the agent is heading to.
-        /// Can be -1 if the agent has reached their previous destination and is
-        /// executing an action at that location.
-        /// </summary>
-        public int YDestination { get; set; } = -1;
+        public string Destination { get; set; } = string.Empty;
 
         /// <summary>
         /// List of targets for the agent's current action.
         /// </summary>
-        public HashSet<Agent> CurrentTargets { get; set; } = new HashSet<Agent>();
+        public List<Agent> CurrentTargets { get; set; } = new();
 
         /// <summary>
         /// Starts travel to the agent's destination.
         /// </summary>
         /// <param name="destination">The agent's destination.</param>
         /// <param name="time">The time in which the agent started traveling.</param>
-        public void StartTravelToLocation(SimLocation destination, float time)
+        public void StartTravelToLocation(LocationNode destination, float time)
         {
-            XDestination = destination.X;
-            YDestination = destination.Y;
-            SimLocation currentLoc = LocationManager.LocationGrid[XLocation][YLocation];
-            OccupiedCounter = LocationManager.FindManhattanDistance(currentLoc, destination);
-/*            Console.WriteLine("time: " + time.ToString() + " | " + Name + ": Started " + CurrentAction.First().Name + "; Destination: " + destination.Name);*/
+            Destination = destination.Name;
+            LocationNode currentLoc = LocationManager.LocationsByName[CurrentLocation];
+            OccupiedCounter = (int)Math.Ceiling(LocationManager.DistanceMatrix[currentLoc.ID * LocationManager.LocationCount + destination.ID]);
+            Console.WriteLine("time: " + time.ToString() + " | " + Name + ": Started " + CurrentAction.First().Name + "; Destination: " + destination.Name);
         }
 
         /// <summary>
@@ -111,25 +95,16 @@ namespace Anthology.Models
         /// </summary>
         public void MoveCloserToDestination()
         {
-            if (XDestination == -1) return;
+            if (Destination == "") return;
 
-            LocationManager.LocationGrid[XLocation][YLocation].AgentsPresent.Remove(Name);
+            LocationManager.LocationsByName[CurrentLocation].AgentsPresent.Remove(Name);
 
-            if (XLocation != XDestination)
+            if (OccupiedCounter == 0)
             {
-                XLocation += XLocation > XDestination ? -1 : 1;
+                CurrentLocation = Destination;
+                Destination = string.Empty;
+                LocationManager.LocationsByName[CurrentLocation].AgentsPresent.AddLast(Name);
             }
-            else if (YLocation != YDestination)
-            {
-                YLocation += YLocation > YDestination ? -1 : 1;
-            }
-            else
-            {
-                XDestination = -1;
-                YDestination = -1;
-                return;
-            }
-            LocationManager.LocationGrid[XLocation][YLocation].AgentsPresent.Add(Name);
         }
 
         /// <summary>
@@ -137,8 +112,7 @@ namespace Anthology.Models
         /// </summary>
         public void ExecuteAction()
         {
-            XDestination = -1;
-            YDestination = -1;
+            Destination = "";
             OccupiedCounter = 0;
 
             if (CurrentAction.Count > 0)
@@ -192,7 +166,7 @@ namespace Anthology.Models
             if (action is ScheduleAction)
             {
                 CurrentTargets.Clear();
-                SimLocation currentLoc = LocationManager.LocationGrid[XLocation][YLocation];
+                LocationNode currentLoc = LocationManager.LocationsByName[CurrentLocation];
                 foreach (string name in currentLoc.AgentsPresent)
                 {
                     CurrentTargets.Add(AgentManager.GetAgentByName(name));
@@ -208,57 +182,50 @@ namespace Anthology.Models
         {
             float maxDeltaUtility = 0f;
             List<Action> currentChoice = new();
-            List<SimLocation> currentDest = new();
+            List<LocationNode> currentDest = new();
             List<string> actionSelectLog = new();
-            SimLocation currentLoc = LocationManager.LocationGrid[XLocation][YLocation];
-            HashSet<Action> actionOptions = new();
-            actionOptions.UnionWith(ActionManager.Actions.ScheduleActions);
-            actionOptions.UnionWith(ActionManager.Actions.PrimaryActions);
+            LocationNode currentLoc = LocationManager.LocationsByName[CurrentLocation];
 
-            foreach(Action action in actionOptions)
+            foreach(Action action in ActionManager.AllActions)
             {
                 if (action.Hidden) continue;
                 actionSelectLog.Add("Action: " + action.Name);
 
-                int travelTime;
-                HashSet<SimLocation> possibleLocations = new();
-                possibleLocations.UnionWith(LocationManager.LocationSet);
+                float travelTime;
+                List<LocationNode> possibleLocations = new();
+                List<RMotive>? rMotives = action.Requirements.Motives;
+                List<RLocation>? rLocations = action.Requirements.Locations;
+                List<RPeople>? rPeople = action.Requirements.People;
 
-                HashSet<Requirement> rMotives = action.GetRequirementsByType(Requirement.MOTIVE);
-                HashSet<Requirement> rLocations = action.GetRequirementsByType(Requirement.LOCATION);
-                HashSet<Requirement> rPeople = action.GetRequirementsByType(Requirement.PEOPLE);
-
-                if(possibleLocations.Count > 0 && rMotives.Count > 0)
+                if (rMotives != null)
                 {
                     if (!AgentManager.AgentSatisfiesMotiveRequirement(this, rMotives))
                     {
-                        possibleLocations.Clear();
+                        continue;
                     }
                 }
-                if (possibleLocations.Count > 0 && rLocations.Count > 0)
+                if (rLocations != null)
                 {
-                    if (rLocations.First() is RLocation rLoc)
-                    {
-                        possibleLocations = LocationManager.LocationsSatisfyingLocationRequirement(possibleLocations, rLoc);
-                    }
+                    possibleLocations = LocationManager.LocationsSatisfyingLocationRequirement(rLocations[0]).ToList();
                 }
-                if (possibleLocations.Count > 0 && rPeople.Count > 0)
+                else
                 {
-                    if (rPeople.First() is RPeople rPpl)
-                    {
-                        possibleLocations = LocationManager.LocationsSatisfyingPeopleRequirement(possibleLocations, rPpl);
-                    }
+                    possibleLocations.AddRange(LocationManager.LocationsByName.Values);
+                }
+                if (rPeople != null && possibleLocations.Count > 0)
+                {
+                    possibleLocations = LocationManager.LocationsSatisfyingPeopleRequirement(possibleLocations, rPeople[0]).ToList();
                 }
 
                 if (possibleLocations.Count > 0)
                 {
-                    SimLocation? nearestLocation = LocationManager.FindNearestLocationFrom(possibleLocations, this);
-                    if (nearestLocation == null) continue;
-                    travelTime = LocationManager.FindManhattanDistance(nearestLocation, currentLoc);
+                    LocationNode nearestLocation = LocationManager.FindNearestLocationFrom(currentLoc, possibleLocations);
+                    /*if (nearestLocation == null) continue;*/
+                    travelTime = LocationManager.DistanceMatrix[currentLoc.ID * LocationManager.LocationCount + nearestLocation.ID];
                     float deltaUtility = ActionManager.GetEffectDeltaForAgentAction(this, action);
-/*                    actionSelectLog.Add("Action Utility: " + deltaUtility.ToString());*/
-                    deltaUtility /= (action.MinTime + travelTime);
-/*                    actionSelectLog.Add("Action Weighted Utility: " + deltaUtility.ToString());*/
+                    float denom = action.MinTime + travelTime;
+                    if (denom != 0)
+                        deltaUtility /= denom;
 
                     if (deltaUtility == maxDeltaUtility)
                     {
@@ -273,17 +240,12 @@ namespace Anthology.Models
                         currentChoice.Add(action);
                         currentDest.Add(nearestLocation);
                     }
-/*                    if (currentChoice.Count > 0)
-                    {
-                        actionSelectLog.Add("Current Choice: " + currentChoice.First().Name);
-                        actionSelectLog.Add("Current Destination: " + currentDest.First().Name);
-                    }*/
                 }
             }
             Random r = new();
             int idx = r.Next(0, currentChoice.Count);
             Action choice = currentChoice[idx];
-            SimLocation dest = currentDest[idx];
+            LocationNode dest = currentDest[idx];
             CurrentAction.AddLast(choice);
             
 
@@ -340,14 +302,9 @@ namespace Anthology.Models
         public Dictionary<string, float> Motives { get; set; } = new();
 
         /// <summary>
-        /// Starting x-coordinate.
+        /// Starting location of this agent.
         /// </summary>
-        public int XLocation { get; set; }
-
-        /// <summary>
-        /// Starting y-coordinate.
-        /// </summary>
-        public int YLocation { get; set; }
+        public string CurrentLocation { get; set; } = string.Empty;
 
         /// <summary>
         /// Describes whether the agent is currently occupied.
@@ -360,14 +317,9 @@ namespace Anthology.Models
         public string CurrentAction { get; set; } = string.Empty;
 
         /// <summary>
-        /// X-coordinate of location the agent is currently headed to.
+        /// Location this agent is currently heading towards.
         /// </summary>
-        public int XDestination { get; set; } = -1;
-
-        /// <summary>
-        /// Y-coordinate of location the agent is currently headed to.
-        /// </summary>
-        public int YDestination { get; set; } = -1;
+        public string Destination { get;set; } = string.Empty;
 
         /// <summary>
         /// List of targets for the agent's current action.
@@ -390,12 +342,10 @@ namespace Anthology.Models
             {
                 Name = agent.Name,
                 Motives = new(),
-                XLocation = agent.XLocation,
-                YLocation = agent.YLocation,
+                CurrentLocation = agent.CurrentLocation,
                 OccupiedCounter = agent.OccupiedCounter,
                 CurrentAction = string.Empty,
-                XDestination = agent.XDestination,
-                YDestination = agent.YDestination,
+                Destination = agent.Destination,
                 Relationships = new()
             };
 
@@ -431,11 +381,9 @@ namespace Anthology.Models
             Agent agent = new()
             {
                 Name = sAgent.Name,
-                XLocation = sAgent.XLocation,
-                YLocation = sAgent.YLocation,
+                CurrentLocation = sAgent.CurrentLocation,
                 OccupiedCounter = sAgent.OccupiedCounter,
-                XDestination = sAgent.XDestination,
-                YDestination = sAgent.YDestination,
+                Destination = sAgent.Destination
             };
 
             agent.CurrentAction.AddFirst(ActionManager.GetActionByName(sAgent.CurrentAction));

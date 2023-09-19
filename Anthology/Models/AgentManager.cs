@@ -8,7 +8,7 @@
         /// <summary>
         /// Agents in the simulation.
         /// </summary>
-        public static HashSet<Agent> Agents { get; set; } = new HashSet<Agent>();
+        public static List<Agent> Agents { get; set; } = new();
 
         /// <summary>
         /// Initializes/resets all agent manager variables.
@@ -18,6 +18,31 @@
         {
             Agents.Clear();
             World.ReadWrite.LoadAgentsFromFile(path);
+        }
+
+        /// <summary>
+        /// Removes all agents from the simulation.
+        /// </summary>
+        public static void Reset()
+        {
+            foreach (LocationNode loc in LocationManager.LocationsByName.Values)
+            {
+                loc.AgentsPresent.Clear();
+            }
+            Agents.Clear();
+        }
+
+        /// <summary>
+        /// Adds the given agent to the simulation and marks it as present in its current location
+        /// </summary>
+        /// <param name="agent">The agent to add to the simulation</param>
+        public static void AddAgent(Agent agent)
+        {
+            Agents.Add(agent);
+            if (LocationManager.LocationsByName.ContainsKey(agent.CurrentLocation))
+            {
+                LocationManager.LocationsByName[agent.CurrentLocation].AgentsPresent.AddLast(agent.Name);
+            }
         }
 
         /// <summary>
@@ -31,9 +56,8 @@
             {
                 return a.Name == name;
             }
-
-            Agent agent = Agents.First(MatchName);
-            return agent;
+            Agent? agent = Agents.Find(MatchName);
+            return agent ?? throw new ArgumentException("Agent with name: " + name + " does not exist.");
         }
 
         /// <summary>
@@ -42,50 +66,47 @@
         /// <param name="agent">The agent to check.</param>
         /// <param name="reqs">The requirements to check.</param>
         /// <returns>True if agent satisfies all requirements for an action.</returns>
-        public static bool AgentSatisfiesMotiveRequirement(Agent agent, HashSet<Requirement> reqs)
+        public static bool AgentSatisfiesMotiveRequirement(Agent agent, IEnumerable<RMotive> reqs)
         {
-            foreach (Requirement r in reqs)
+            foreach (RMotive r in reqs)
             {
-                if (r is RMotive rMotive)
+                string t = r.MotiveType;
+                float c = r.Threshold;
+                switch (r.Operation)
                 {
-                    string t = rMotive.MotiveType;
-                    float c = rMotive.Threshold;
-                    switch (rMotive.Operation)
-                    {
-                        case BinOps.EQUALS:
-                            if (!(agent.Motives[t] == c))
-                            {
-                                return false;
-                            }
-                            break;
-                        case BinOps.LESS:
-                            if (!(agent.Motives[t] < c))
-                            {
-                                return false;
-                            }
-                            break;
-                        case BinOps.GREATER:
-                            if (!(agent.Motives[t] > c))
-                            {
-                                return false;
-                            }
-                            break;
-                        case BinOps.LESS_EQUALS:
-                            if (!(agent.Motives[t] <= c))
-                            {
-                                return false;
-                            }
-                            break;
-                        case BinOps.GREATER_EQUALS:
-                            if (!(agent.Motives[t] >= c))
-                            {
-                                return false;
-                            }
-                            break;
-                        default:
-                            Console.WriteLine("ERROR - JSON BinOp specification mistake for Motive Requirement for action");
+                    case BinOps.EQUALS:
+                        if (!(agent.Motives[t] == c))
+                        {
                             return false;
-                    }
+                        }
+                        break;
+                    case BinOps.LESS:
+                        if (!(agent.Motives[t] < c))
+                        {
+                            return false;
+                        }
+                        break;
+                    case BinOps.GREATER:
+                        if (!(agent.Motives[t] > c))
+                        {
+                            return false;
+                        }
+                        break;
+                    case BinOps.LESS_EQUALS:
+                        if (!(agent.Motives[t] <= c))
+                        {
+                            return false;
+                        }
+                        break;
+                    case BinOps.GREATER_EQUALS:
+                        if (!(agent.Motives[t] >= c))
+                        {
+                            return false;
+                        }
+                        break;
+                    default:
+                        Console.WriteLine("ERROR - JSON BinOp specification mistake for Motive Requirement for action");
+                        return false;
                 }
             }
             return true;
@@ -110,10 +131,10 @@
         /// </summary>
         public static void DecrementMotives()
         {
-            foreach (Agent a in Agents)
+            Parallel.ForEach(Agents, a =>
             {
                 a.DecrementMotives();
-            }
+            });
         }
     }
 }

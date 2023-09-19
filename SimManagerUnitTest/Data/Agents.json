@@ -8,18 +8,16 @@
       "social": 1,
       "physical": 4
     },
-    "XLocation": 0,
-    "YLocation": 0,
+    "CurrentLocation": "Dining Hall",
     "OccupiedCounter": 0,
     "CurrentAction": "wait_action",
-    "XDestination": 5,
-    "YDestination": 4,
+    "Destination": "",
     "CurrentTargets": [],
     "Relationships": [
       {
         "Type": "friend",
         "With": "Quentin",
-        "Valence": 3 
+        "Valence": 3
       },
       {
         "Type": "student-of",
@@ -37,18 +35,16 @@
       "social": 4,
       "physical": 4
     },
-    "XLocation": 0,
-    "YLocation": 4,
+    "CurrentLocation": "Math Hall",
     "OccupiedCounter": 0,
     "CurrentAction": "wait_action",
-    "XDestination": 5,
-    "YDestination": 4,
+    "Destination": "",
     "CurrentTargets": [],
     "Relationships": [
       {
         "Type": "enemy",
         "With": "Quentin",
-        "Valence": 3 
+        "Valence": 3
       },
       {
         "Type": "student-of",
@@ -66,18 +62,16 @@
       "social": 2,
       "physical": 1
     },
-    "XLocation": 0,
-    "YLocation": 0,
+    "CurrentLocation": "Physics Hall",
     "OccupiedCounter": 0,
     "CurrentAction": "wait_action",
-    "XDestination": 5,
-    "YDestination": 5,
+    "Destination": "",
     "CurrentTargets": [],
     "Relationships": [
       {
         "Type": "friend",
         "With": "Norma",
-        "Valence": 3 
+        "Valence": 3
       },
       {
         "Type": "student-of",
@@ -95,12 +89,10 @@
       "social": 5,
       "physical": 5
     },
-    "XLocation": 1,
-    "YLocation": 1,
+    "CurrentLocation": "Math Hall",
     "OccupiedCounter": 0,
     "CurrentAction": "wait_action",
-    "XDestination": -1,
-    "YDestination": -1,
+    "Destination": "",
     "CurrentTargets": [],
     "Relationships": []
   },
@@ -113,12 +105,10 @@
       "social": 5,
       "physical": 5
     },
-    "XLocation": 1,
-    "YLocation": 3,
+    "CurrentLocation": "Physics Hall",
     "OccupiedCounter": 0,
     "CurrentAction": "wait_action",
-    "XDestination": -1,
-    "YDestination": -1,
+    "Destination": "",
     "CurrentTargets": [],
     "Relationships": []
   }

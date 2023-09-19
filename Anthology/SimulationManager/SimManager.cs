@@ -137,7 +137,7 @@ namespace Anthology.SimulationManager
         /// <param name="stateName">The name of the current state to save.</param>
         public static void SaveState(string stateName = "")
         {
-            History.SaveState(stateName);
+            History?.SaveState(stateName);
         }
 
         /// <summary>
@@ -147,15 +147,23 @@ namespace Anthology.SimulationManager
         /// <param name="stateName">Name of the state to load.</param>
         public static void LoadState(string stateName)
         {
-            SimState state = History?.LoadState(stateName);
-            foreach (Location newLoc in state.Locations)
-                Locations[newLoc.Coordinates] = newLoc;
-            Reality.LoadLocations(Locations);
-
-            foreach (NPC newNPC in state.NPCs)
+            SimState? state = History?.LoadState(stateName);
+            HashSet<Location>? locations = state?.Locations;
+            if (locations != null)
             {
-                NPCs[newNPC.Name] = newNPC;
-                Reality.PushUpdatedNpc(newNPC);              
+                foreach (Location newLoc in locations)
+                    Locations[newLoc.Coordinates] = newLoc;
+                Reality?.LoadLocations(Locations);
+            }
+            
+            HashSet<NPC>? npcs = state?.NPCs;
+            if (npcs != null)
+            {
+                foreach (NPC newNPC in npcs)
+                {
+                    NPCs[newNPC.Name] = newNPC;
+                    Reality?.PushUpdatedNpc(newNPC);
+                }
             }
         }
     }

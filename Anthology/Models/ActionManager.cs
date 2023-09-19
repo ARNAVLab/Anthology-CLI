@@ -11,6 +11,11 @@
         public static ActionContainer Actions { get; set; } = new();
 
         /// <summary>
+        /// Compiled list of all actions of both scheduled and primary actions.
+        /// </summary>
+        public static List<Action> AllActions { get; set; } = new();
+
+        /// <summary>
         /// Initializes/resets all action manager variables.
         /// </summary>
         /// <param name="path">Path of actions JSON file.</param>
@@ -18,7 +23,37 @@
         {
             Actions.ScheduleActions.Clear();
             Actions.PrimaryActions.Clear();
+            AllActions.Clear();
             World.ReadWrite.LoadActionsFromFile(path);
+
+            foreach (Action action in Actions.ScheduleActions)
+            {
+                AllActions.Add(action);
+            }
+            foreach (Action action in Actions.PrimaryActions)
+            {
+                AllActions.Add(action);
+            }
+        }
+
+        /// <summary>
+        /// Clears all actions from the system.
+        /// </summary>
+        public static void Reset()
+        {
+            Actions.ScheduleActions.Clear();
+            Actions.PrimaryActions.Clear();
+            AllActions.Clear();
+        }
+
+        /// <summary>
+        /// Adds the given action to both action structures.
+        /// </summary>
+        /// <param name="action">The action to add.</param>
+        public static void AddAction(Action action)
+        {
+            Actions.AddAction(action);
+            AllActions.Add(action);
         }
 
         /// <summary>
@@ -33,24 +68,8 @@
             {
                 return action.Name == actionName;
             }
-
-            Action action;
-            try
-            {
-                action = Actions.PrimaryActions.First(HasName);
-            }
-            catch (Exception)
-            {
-                try
-                {
-                    action = Actions.ScheduleActions.First(HasName);
-                }
-                catch (Exception)
-                {
-                    throw new Exception("Action with name: " + actionName + " cannot be found.");
-                }
-            }
-            return action;
+            Action? action = AllActions.Find(HasName);
+            return action ?? throw new Exception("Action with name: " + actionName + " cannot be found.");
         }
 
         /// <summary>
@@ -60,7 +79,7 @@
         /// <param name="agent">The agent relevant to retrieve motives from.</param>
         /// <param name="action">The action to calculate net effect.</param>
         /// <returns>How much to affect motive by.</returns>
-        public static float GetEffectDeltaForAgentAction(Agent agent, Action? action)
+        public static float GetEffectDeltaForAgentAction(Agent agent, Action action)
         {
             float deltaUtility = 0f;
 
