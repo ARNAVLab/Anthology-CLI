@@ -37,36 +37,25 @@ namespace Anthology.SimulationManager
         /// <summary>
         /// Data representing the knowledge/beliefs/opinions of the NPC.
         /// </summary>
-        private Dictionary<string, float> knowledge = new();
+        private Dictionary<string, IKnowledgeContainer> knowledge = new();
 
         /// <summary>
         /// Get and sets the knowledge dictionary.
         /// </summary>
-        public Dictionary<string, float> Knowledge
+        public Dictionary<string, IKnowledgeContainer> Knowledge
         {
             get { return knowledge; }
             set { Dirty = true; knowledge = value; }
         }
 
         /// <summary>
-        /// Add a subject to the NPC's knowledge with a given amount.
+        /// Set the NPC's specified knowledge container to the given object.
         /// </summary>
-        /// <param name="subject">New subject to add.</param>
-        /// <param name="amount">Amount of subject.</param>
-        public void SetKnowledgeSubject(string subject, float amount)
+        /// <param name="key">ID/Key of the knowledge container to set.</param>
+        /// <param name="knowledge">The value to set in the knowledge dictionary.</param>
+        public void SetKnowledgeSubject(string key, IKnowledgeContainer knowledge)
         {
-            knowledge[subject] = amount;
-            Dirty = true;
-        }
-
-        /// <summary>
-        /// Change an existing knowledge subject by the given amount.
-        /// </summary>
-        /// <param name="subject">Subject to change amount.</param>
-        /// <param name="delta">Amount to add to subject.</param>
-        public void ChangeKnowledgeSubject(string subject, float delta)
-        {
-            knowledge[subject] += delta;
+            Knowledge[key] = knowledge;
             Dirty = true;
         }
 

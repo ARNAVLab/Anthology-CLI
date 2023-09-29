@@ -3,6 +3,8 @@ using MongoDB.Bson.IO;
 using System.Text.Json;
 using System.Text;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 
 namespace Anthology.SimulationManager
 {
@@ -22,6 +24,10 @@ namespace Anthology.SimulationManager
         /// </summary>
         private const string URL = "http://127.0.0.1:8000/lyra/api/";
 
+        private static string? simId = "";
+
+        private static string simUrl = "";
+
         static StringContent Serialize<T>(T obj)
         {
             string serialized = JsonSerializer.Serialize(obj);
@@ -40,10 +46,14 @@ namespace Anthology.SimulationManager
             {
                 title = "Anthology",
                 version = "1.0.0",
-                notes = "AAAAAAAAA"
+                notes = "This is maintained by the SimManager C# project."
             };
-            client.PostAsync("simulation/", Serialize(sim)).Wait();
-            client.GetAsync("simulation/1/start/").Wait();
+            Task<HttpResponseMessage> postResponse = client.PostAsync("simulation/", Serialize(sim));
+            postResponse.Wait();
+            postResponse.Result.RequestMessage?.Options.TryGetValue<string>(new HttpRequestOptionsKey<string>("id"), out simId);
+            if (simId == null) throw new BadHttpRequestException("Unable to post a new LYRA simulation");
+            simUrl = URL + simId;
+            client.GetAsync(simUrl).Wait();
         }
 
         /// <summary>
@@ -74,7 +84,7 @@ namespace Anthology.SimulationManager
         /// <exception cref="NotImplementedException">Currently not implemented.</exception>
         public override void Run(int steps = 1)
         {
-
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -85,6 +95,42 @@ namespace Anthology.SimulationManager
         public override void UpdateNpc(NPC npc)
         {
             throw new NotImplementedException();
+        }
+
+        public struct ViewBody
+        {
+            [JsonPropertyName("ood")]
+            private int ood;
+            [JsonPropertyName("topic")]
+            private int topic;
+            [JsonPropertyName("attitude")]
+            private float attitude;
+            [JsonPropertyName("opinion")]
+            private float opinion;
+            [JsonPropertyName("uncertainty")]
+            private float uncertainty;
+        }
+
+        public struct AgentBody
+        {
+            [JsonPropertyName("name")]
+            private string name;
+            [JsonPropertyName("views")]
+            private List<ViewBody> views;
+        }
+
+        public struct PostBody
+        {
+            [JsonPropertyName("act_type")]
+            private string actType;
+            [JsonPropertyName("agents")]
+            private List<AgentBody> agents;
+
+            public PostBody(string actType, List<AgentBody> agents)
+            {
+                this.actType = actType;
+                this.agents = agents;
+            }
         }
     }
 }
