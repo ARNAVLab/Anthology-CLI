@@ -13,7 +13,7 @@
         /// The unique ID used to reference a particular knowledge 
         /// container in the NPC.Knowledge Dictionary.
         /// </summary>
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Modifies the fields of the knowledge container to match those of the new container.
