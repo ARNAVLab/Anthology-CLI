@@ -30,5 +30,15 @@ namespace Anthology.SimulationManager
         /// Any additional tags or information about this action.
         /// </summary>
         public string[]? Tags { get; set; }
+
+        /// <summary>
+        /// Whether or not to inform the knowledge sim implementation that this action is occurring.
+        /// </summary>
+        public bool NotifyKnowledgeSim { get; set; } = false;
+
+        /// <summary>
+        /// Whether or not to inform the reality sim implementation that this action is occurring.
+        /// </summary>
+        public bool NotifyRealitySim { get; set; } = false;
     }
 }

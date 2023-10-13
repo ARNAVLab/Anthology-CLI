@@ -1,0 +1,58 @@
+{
+  "notes": "",
+  "discussion_actions": [
+    {
+      "action_name": "eat_with_friend",
+      "discussion_probability": 0.25
+    }
+  ],
+  "topics": [
+    "gun control",
+    "abortion"
+  ],
+  "objects of discussion": [
+    {
+      "topic": "gun control",
+      "title": "article 1"
+    },
+    {
+      "topic": "gun control",
+      "title": "article 2"
+    },
+    {
+      "topic": "abortion",
+      "title": "article 1"
+    }
+  ],
+  "views": [
+    {
+      "agent": "Norma",
+      "views": [
+        {
+          "ood": "article 2",
+          "topic": "gun_control",
+          "attitude": 0.2,
+          "opinion": 0.2,
+          "uncertainty": 0.5,
+          "public_compliance_thresh": 0.6,
+          "private_acceptance_thresh": 0.7
+        }
+      ]
+    },
+    {
+      "agent": "Abnorma",
+      "views": [
+        {
+          "ood": "article 1",
+          "topic": "abortion"
+        },
+        {
+          "ood": "article 2",
+          "topic": "gun control",
+          "attitude": 0.5,
+          "uncertainty": 0.1
+        }
+      ]
+    }
+  ]
+}

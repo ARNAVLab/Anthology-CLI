@@ -30,10 +30,10 @@
         public int? Ood { get; set; }
 
         /// <summary>
-        /// A dictionray of string:float pairs representing the value system in Lyra,
+        /// A dictionary of string:float pairs representing the value system in Lyra,
         /// such as the attitude, opinion, and uncertainty of a view.
         /// </summary>
-        public Dictionary<string, float> BeliefValues { get; set; } = new();
+        public Dictionary<string, float> ViewValues { get; set; } = new();
 
         /// <summary>
         /// Updates the belief values dictionary to match those of the given container.
@@ -46,10 +46,10 @@
             {
                 if (newViews.Id != Id)
                     throw new ArgumentException("The ID of these containers do not match.");
-                Dictionary<string, float> newBeliefs = newViews.BeliefValues;
+                Dictionary<string, float> newBeliefs = newViews.ViewValues;
                 foreach (KeyValuePair<string, float> kvp in newBeliefs)
                 {
-                    BeliefValues[kvp.Key] = kvp.Value;
+                    ViewValues[kvp.Key] = kvp.Value;
                 }
             }
             else
