@@ -19,14 +19,21 @@ namespace Anthology.SimulationManager
         /// </summary>
         private static readonly HttpClient client = new HttpClient();
 
+        private static readonly JsonSerializerOptions jso = new()
+        {
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            WriteIndented = true
+        };
+
         /// <summary>
         /// Default URL to call Lyra from.
         /// </summary>
         private const string URL = "http://127.0.0.1:8000/lyra/api/";
 
-        private static string? simId = "";
+        private static short simId = -1;
 
         private static string simUrl = "";
+
 
         static StringContent Serialize<T>(T obj)
         {
@@ -38,20 +45,26 @@ namespace Anthology.SimulationManager
         /// Initializes the contents of Lyra given the path of the JSON file to init from.
         /// </summary>
         /// <param name="pathFile">Path of JSON file to init from.</param>
+        /// <exception cref="TimeoutException">Timeout waiting for Lyra setup response.</exception>
         public override void Init(string pathFile = "")
         {
+            using FileStream os = File.OpenRead(pathFile);
+            Dictionary<string, string>? simSetup = JsonSerializer.Deserialize<Dictionary<string, string>>(os, jso);
             client.BaseAddress = new Uri(URL);
+            Task<HttpResponseMessage> postTask = client.PostAsJsonAsync("simulation/", simSetup);
+            if (!postTask.Wait(3000))
+                throw new TimeoutException("Timed out waiting for Lyra setup response.");
 
-            var sim = new
-            {
-                title = "Anthology",
-                version = "1.0.0",
-                notes = "This is maintained by the SimManager C# project."
-            };
-            Task<HttpResponseMessage> postResponse = client.PostAsync("simulation/", Serialize(sim));
-            postResponse.Wait();
-            postResponse.Result.RequestMessage?.Options.TryGetValue<string>(new HttpRequestOptionsKey<string>("id"), out simId);
-            if (simId == null) throw new BadHttpRequestException("Unable to post a new LYRA simulation");
+            HttpResponseMessage postResponse = postTask.Result;
+            postResponse.EnsureSuccessStatusCode();
+
+            Task<List<Dictionary<string, string>>?> responseTask = 
+                HttpContentJsonExtensions.ReadFromJsonAsync<List<Dictionary<string, string>>>(postResponse.Content, jso);
+            responseTask.Wait();
+            List<Dictionary<string, string>>? responseBody = responseTask.Result;
+            if (responseBody == null || responseBody.Count == 0)
+                throw new BadHttpRequestException("Unexpected response format.");
+            simId = short.Parse(responseBody[0]["id"]);
             simUrl = URL + simId;
             client.GetAsync(simUrl).Wait();
         }

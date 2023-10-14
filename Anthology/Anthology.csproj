@@ -22,6 +22,10 @@
     <PackageReference Include="MongoDB.Driver" Version="2.19.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="SimulationManager\Data\" />
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="$(TargetDir)doxygen.exe $(ProjectDir)doc\$(ProjectName).doxygen" />
   </Target>
