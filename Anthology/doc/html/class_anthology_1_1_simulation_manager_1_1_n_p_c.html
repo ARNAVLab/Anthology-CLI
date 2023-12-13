@@ -86,12 +86,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac287921ffe91b0cb1f7333fa58a3a332"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_anthology_1_1_simulation_manager_1_1_n_p_c.html#ac287921ffe91b0cb1f7333fa58a3a332">SetKnowledgeSubject</a> (string subject, float amount)</td></tr>
-<tr class="memdesc:ac287921ffe91b0cb1f7333fa58a3a332"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a subject to the NPC's knowledge with a given amount.  <br /></td></tr>
-<tr class="separator:ac287921ffe91b0cb1f7333fa58a3a332"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abee1823c91f6c829219b2d72836c3df7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_anthology_1_1_simulation_manager_1_1_n_p_c.html#abee1823c91f6c829219b2d72836c3df7">ChangeKnowledgeSubject</a> (string subject, float delta)</td></tr>
-<tr class="memdesc:abee1823c91f6c829219b2d72836c3df7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Change an existing knowledge subject by the given amount.  <br /></td></tr>
-<tr class="separator:abee1823c91f6c829219b2d72836c3df7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55294183ba15034fcbeb7219ab7d2189"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_anthology_1_1_simulation_manager_1_1_n_p_c.html#a55294183ba15034fcbeb7219ab7d2189">SetKnowledgeSubject</a> (string key, <a class="el" href="interface_anthology_1_1_simulation_manager_1_1_i_knowledge_container.html">IKnowledgeContainer</a> knowledge)</td></tr>
+<tr class="memdesc:a55294183ba15034fcbeb7219ab7d2189"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the NPC's specified knowledge container to the given object.  <br /></td></tr>
+<tr class="separator:a55294183ba15034fcbeb7219ab7d2189"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a137a952f945086d2a11355333d57794b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_anthology_1_1_simulation_manager_1_1_n_p_c.html#a137a952f945086d2a11355333d57794b">SetMotivationStatus</a> (string motivation, float amount)</td></tr>
 <tr class="memdesc:a137a952f945086d2a11355333d57794b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the motivation to the given amount.  <br /></td></tr>
 <tr class="separator:a137a952f945086d2a11355333d57794b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -112,10 +109,10 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>Name</b><code> [get
 string&#160;</td><td class="memItemRight" valign="bottom"><b>Location</b><code> [get, set]</code></td></tr>
 <tr class="memdesc:ab5b818db67898725bf00b7fdaa0298b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The name of the current location of the NPC. <br /></td></tr>
 <tr class="separator:ab5b818db67898725bf00b7fdaa0298b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e331febfe1ef392ce110861f7649cce"><td class="memItemLeft" align="right" valign="top"><a id="a1e331febfe1ef392ce110861f7649cce" name="a1e331febfe1ef392ce110861f7649cce"></a>
-Dictionary&lt; string, float &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>Knowledge</b><code> [get, set]</code></td></tr>
-<tr class="memdesc:a1e331febfe1ef392ce110861f7649cce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get and sets the knowledge dictionary. <br /></td></tr>
-<tr class="separator:a1e331febfe1ef392ce110861f7649cce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a316e8d6ce18cc06d50c39540ef633aad"><td class="memItemLeft" align="right" valign="top"><a id="a316e8d6ce18cc06d50c39540ef633aad" name="a316e8d6ce18cc06d50c39540ef633aad"></a>
+Dictionary&lt; string, <a class="el" href="interface_anthology_1_1_simulation_manager_1_1_i_knowledge_container.html">IKnowledgeContainer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>Knowledge</b><code> [get, set]</code></td></tr>
+<tr class="memdesc:a316e8d6ce18cc06d50c39540ef633aad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get and sets the knowledge dictionary. <br /></td></tr>
+<tr class="separator:a316e8d6ce18cc06d50c39540ef633aad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21150dc966c4b04f65ddf594121be7c1"><td class="memItemLeft" align="right" valign="top"><a id="a21150dc966c4b04f65ddf594121be7c1" name="a21150dc966c4b04f65ddf594121be7c1"></a>
 Dictionary&lt; string, float &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>Motives</b><code> [get, set]</code></td></tr>
 <tr class="memdesc:a21150dc966c4b04f65ddf594121be7c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get and sets the dictionary of motives. <br /></td></tr>
@@ -140,51 +137,6 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>Dirty</b> = false<cod
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>An Agent/Actor/Individual/Unit/NPC to be maintained by the simulation manager. Contains data necessary for coordinating behavior across simulations and for displaying information on the frontend. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="abee1823c91f6c829219b2d72836c3df7" name="abee1823c91f6c829219b2d72836c3df7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abee1823c91f6c829219b2d72836c3df7">&#9670;&#160;</a></span>ChangeKnowledgeSubject()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Anthology.SimulationManager.NPC.ChangeKnowledgeSubject </td>
-          <td>(</td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>subject</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>delta</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Change an existing knowledge subject by the given amount. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">subject</td><td>Subject to change amount.</td></tr>
-    <tr><td class="paramname">delta</td><td>Amount to add to subject.</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a id="ad96df3a2aba4b4163d0284163e21f6e9" name="ad96df3a2aba4b4163d0284163e21f6e9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad96df3a2aba4b4163d0284163e21f6e9">&#9670;&#160;</a></span>ChangeMotivation()</h2>
 
@@ -230,8 +182,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>Dirty</b> = false<cod
 
 </div>
 </div>
-<a id="ac287921ffe91b0cb1f7333fa58a3a332" name="ac287921ffe91b0cb1f7333fa58a3a332"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac287921ffe91b0cb1f7333fa58a3a332">&#9670;&#160;</a></span>SetKnowledgeSubject()</h2>
+<a id="a55294183ba15034fcbeb7219ab7d2189" name="a55294183ba15034fcbeb7219ab7d2189"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55294183ba15034fcbeb7219ab7d2189">&#9670;&#160;</a></span>SetKnowledgeSubject()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -243,13 +195,13 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>Dirty</b> = false<cod
           <td class="memname">void Anthology.SimulationManager.NPC.SetKnowledgeSubject </td>
           <td>(</td>
           <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>subject</em>, </td>
+          <td class="paramname"><em>key</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>amount</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="interface_anthology_1_1_simulation_manager_1_1_i_knowledge_container.html">IKnowledgeContainer</a>&#160;</td>
+          <td class="paramname"><em>knowledge</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -264,11 +216,11 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>Dirty</b> = false<cod
 </table>
 </div><div class="memdoc">
 
-<p>Add a subject to the NPC's knowledge with a given amount. </p>
+<p>Set the NPC's specified knowledge container to the given object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">subject</td><td>New subject to add.</td></tr>
-    <tr><td class="paramname">amount</td><td>Amount of subject.</td></tr>
+    <tr><td class="paramname">key</td><td>ID/Key of the knowledge container to set.</td></tr>
+    <tr><td class="paramname">knowledge</td><td>The value to set in the knowledge dictionary.</td></tr>
   </table>
   </dd>
 </dl>

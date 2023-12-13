@@ -1,4 +1,9 @@
 {
+  "sim_setup": {
+    "simulation_name": "put name here",
+    "data_path": "Data/Lyra.json",
+    "notes": "notes here"
+  },
   "notes": "",
   "discussion_actions": [
     {
@@ -10,7 +15,7 @@
     "gun control",
     "abortion"
   ],
-  "objects of discussion": [
+  "objects_of_discussion": [
     {
       "topic": "gun control",
       "title": "article 1"
@@ -29,8 +34,10 @@
       "agent": "Norma",
       "views": [
         {
-          "ood": "article 2",
-          "topic": "gun_control",
+          "ood": {
+            "topic": "gun control",
+            "title": "article 2"
+          },
           "attitude": 0.2,
           "opinion": 0.2,
           "uncertainty": 0.5,
@@ -43,12 +50,16 @@
       "agent": "Abnorma",
       "views": [
         {
-          "ood": "article 1",
-          "topic": "abortion"
+          "ood": {
+            "topic": "abortion",
+            "title": "article 1"
+          }
         },
         {
-          "ood": "article 2",
-          "topic": "gun control",
+          "ood": {
+            "topic": "gun control",
+            "title": "article 2"
+          },
           "attitude": 0.5,
           "uncertainty": 0.1
         }

@@ -105,11 +105,14 @@ namespace Anthology.SimulationManager
             {
                 NumIterations++;
                 Reality?.Run();
-                Knowledge?.Run();
                 foreach (NPC npc in NPCs.Values)
                 {
                     Reality?.UpdateNpc(npc);
-                    //Knowledge?.UpdateNpc(npc);
+                }
+                Knowledge?.Run();
+                foreach (NPC npc in NPCs.Values)
+                {
+                    Knowledge?.UpdateNpc(npc);
                 }
                 History?.LogNpcStates(LOG_PATH);
             }

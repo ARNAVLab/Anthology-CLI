@@ -74,7 +74,9 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="class_anthology_1_1_simulation_manager_1_1_lyra_k_s-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">Anthology.SimulationManager.LyraKS Class Reference</div></div>
 </div><!--header-->
@@ -92,6 +94,19 @@ Inheritance diagram for Anthology.SimulationManager.LyraKS:</div>
   </map>
 </div></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_anthology_1_1_simulation_manager_1_1_lyra_k_s_1_1_post_new_sim_response_body.html">PostNewSimResponseBody</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_anthology_1_1_simulation_manager_1_1_lyra_k_s_1_1_startup_discussion_action.html">StartupDiscussionAction</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_anthology_1_1_simulation_manager_1_1_lyra_k_s_1_1_startup_json.html">StartupJson</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_anthology_1_1_simulation_manager_1_1_lyra_k_s_1_1_startup_ood.html">StartupOod</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_anthology_1_1_simulation_manager_1_1_lyra_k_s_1_1_startup_view.html">StartupView</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a0573618af9390fe5527c9fa8d479fc2f"><td class="memItemLeft" align="right" valign="top">override void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_anthology_1_1_simulation_manager_1_1_lyra_k_s.html#a0573618af9390fe5527c9fa8d479fc2f">Init</a> (string pathFile=&quot;&quot;)</td></tr>
@@ -124,6 +139,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a09a116442785f2d6ff21d0c1c3d77da9"><td class="memItemLeft" align="right" valign="top">abstract void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_anthology_1_1_simulation_manager_1_1_knowledge_sim.html#a09a116442785f2d6ff21d0c1c3d77da9">Run</a> (int steps=1)</td></tr>
 <tr class="memdesc:a09a116442785f2d6ff21d0c1c3d77da9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the knowledge sim as many times as specified (or once, if unspecified).  <br /></td></tr>
 <tr class="separator:a09a116442785f2d6ff21d0c1c3d77da9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a25801dc2eb1a4e8b58dfd735d278428b"><td class="memItemLeft" align="right" valign="top">static readonly JsonSerializerOptions&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_anthology_1_1_simulation_manager_1_1_lyra_k_s.html#a25801dc2eb1a4e8b58dfd735d278428b">jso</a></td></tr>
+<tr class="separator:a25801dc2eb1a4e8b58dfd735d278428b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab35c6f44d398046a5602a50bf3c21781"><td class="memItemLeft" align="right" valign="top"><a id="ab35c6f44d398046a5602a50bf3c21781" name="ab35c6f44d398046a5602a50bf3c21781"></a>
+static string&#160;</td><td class="memItemRight" valign="bottom"><b>simUrl</b> = &quot;&quot;</td></tr>
+<tr class="separator:ab35c6f44d398046a5602a50bf3c21781"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Concrete example implementation of KnowledgeSim using the Lyra API. Currently unimplemented until the Lyra API is complete. </p>
@@ -161,7 +184,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">NotImplementedException</td><td>Currently not implemented.</td></tr>
+    <tr><td class="paramname">TimeoutException</td><td>Timeout waiting for Lyra setup response.</td></tr>
   </table>
   </dd>
 </dl>
@@ -336,6 +359,34 @@ Public Member Functions</h2></td></tr>
 
 <p>Implements <a class="el" href="class_anthology_1_1_simulation_manager_1_1_knowledge_sim.html#a1a2348380479e1c96c35d3b350903365">Anthology.SimulationManager.KnowledgeSim</a>.</p>
 
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a25801dc2eb1a4e8b58dfd735d278428b" name="a25801dc2eb1a4e8b58dfd735d278428b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a25801dc2eb1a4e8b58dfd735d278428b">&#9670;&#160;</a></span>jso</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">readonly JsonSerializerOptions Anthology.SimulationManager.LyraKS.jso</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= <span class="keyword">new</span>()</div>
+<div class="line">        {</div>
+<div class="line">            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,</div>
+<div class="line">            WriteIndented = <span class="keyword">true</span></div>
+<div class="line">        }</div>
+</div><!-- fragment -->
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>

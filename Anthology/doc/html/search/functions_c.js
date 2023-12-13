@@ -49,8 +49,9 @@ var searchData=
   ['testinitanthologylyra_46',['TestInitAnthologyLyra',['../class_sim_manager_unit_test_1_1_sim_manager_unit_test.html#add47d8e30a2910fc751f2781bb6b1e55',1,'SimManagerUnitTest::SimManagerUnitTest']]],
   ['testinitialize_47',['TestInitialize',['../class_sim_manager_unit_test_1_1_history_manager_unit_test.html#a963bc21b2d72773d92a19fc4ce55bae1',1,'SimManagerUnitTest.HistoryManagerUnitTest.TestInitialize()'],['../class_sim_manager_unit_test_1_1_sim_manager_unit_test.html#ab1528300fdcf21d16f158738f5302c18',1,'SimManagerUnitTest.SimManagerUnitTest.TestInitialize()']]],
   ['testiterations_48',['TestIterations',['../class_sim_manager_unit_test_1_1_sim_manager_unit_test.html#ad74618e89eeee99c70bf76c8fa560e62',1,'SimManagerUnitTest::SimManagerUnitTest']]],
-  ['testlocationgraphfunctionality_49',['TestLocationGraphFunctionality',['../class_sim_manager_unit_test_1_1_anthology_location_test.html#a384961506fad92b9f7fde1aaddbac4a6',1,'SimManagerUnitTest::AnthologyLocationTest']]],
-  ['testlocationmanager_50',['TestLocationManager',['../class_sim_manager_unit_test_1_1_anthology_location_test.html#a3c8ef5ba1aa47d71c068c3607c88c6c7',1,'SimManagerUnitTest::AnthologyLocationTest']]],
-  ['testreality_51',['TestReality',['../class_sim_manager_unit_test_1_1_sim_manager_unit_test.html#ad3dc0b7f3f957b93b37665ce69dbc8f9',1,'SimManagerUnitTest::SimManagerUnitTest']]],
-  ['tostring_52',['ToString',['../class_anthology_1_1_simulation_manager_1_1_n_p_c.html#a05229c84c35ff0730417ec933a6aba21',1,'Anthology::SimulationManager::NPC']]]
+  ['testknowledge_49',['TestKnowledge',['../class_sim_manager_unit_test_1_1_sim_manager_unit_test.html#a032ba1aea34c427f6d4f8c5a1523a890',1,'SimManagerUnitTest::SimManagerUnitTest']]],
+  ['testlocationgraphfunctionality_50',['TestLocationGraphFunctionality',['../class_sim_manager_unit_test_1_1_anthology_location_test.html#a384961506fad92b9f7fde1aaddbac4a6',1,'SimManagerUnitTest::AnthologyLocationTest']]],
+  ['testlocationmanager_51',['TestLocationManager',['../class_sim_manager_unit_test_1_1_anthology_location_test.html#a3c8ef5ba1aa47d71c068c3607c88c6c7',1,'SimManagerUnitTest::AnthologyLocationTest']]],
+  ['testreality_52',['TestReality',['../class_sim_manager_unit_test_1_1_sim_manager_unit_test.html#ad3dc0b7f3f957b93b37665ce69dbc8f9',1,'SimManagerUnitTest::SimManagerUnitTest']]],
+  ['tostring_53',['ToString',['../class_anthology_1_1_simulation_manager_1_1_n_p_c.html#a05229c84c35ff0730417ec933a6aba21',1,'Anthology::SimulationManager::NPC']]]
 ];

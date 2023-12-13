@@ -1,12 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Anthology.SimulationManager;
+using System.Text.Json;
 
 namespace SimManagerUnitTest
 {
-    internal class LyraKSTest
+    [TestClass]
+    public class LyraKSTest
     {
+
+        public LyraKS lyra = new();
+
+        [TestMethod]
+        public void TestSetup()
+        {
+            lyra.Init("Data\\Lyra\\Lyra.json");
+            Assert.IsTrue(LyraKS.simUrl.Contains("simulation/"));
+        }
     }
 }

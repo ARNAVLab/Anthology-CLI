@@ -5,6 +5,8 @@ using System.Text;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Driver;
+using System.Net;
 
 namespace Anthology.SimulationManager
 {
@@ -19,7 +21,7 @@ namespace Anthology.SimulationManager
         /// </summary>
         private static readonly HttpClient client = new HttpClient();
 
-        private static readonly JsonSerializerOptions jso = new()
+        public static readonly JsonSerializerOptions jso = new()
         {
             Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             WriteIndented = true
@@ -32,8 +34,7 @@ namespace Anthology.SimulationManager
 
         private static short simId = -1;
 
-        private static string simUrl = "";
-
+        public static string simUrl = "";
 
         static StringContent Serialize<T>(T obj)
         {
@@ -48,25 +49,39 @@ namespace Anthology.SimulationManager
         /// <exception cref="TimeoutException">Timeout waiting for Lyra setup response.</exception>
         public override void Init(string pathFile = "")
         {
-            using FileStream os = File.OpenRead(pathFile);
-            Dictionary<string, string>? simSetup = JsonSerializer.Deserialize<Dictionary<string, string>>(os, jso);
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             client.BaseAddress = new Uri(URL);
-            Task<HttpResponseMessage> postTask = client.PostAsJsonAsync("simulation/", simSetup);
+            client.DefaultRequestHeaders.ExpectContinue = false;
+
+            string fileText = File.ReadAllText(pathFile);
+            StartupJson? simSetup = JsonSerializer.Deserialize<StartupJson>(fileText, jso) 
+                ?? throw new JsonException("Setup file could not be read correctly.");
+            Dictionary<string, string> simPostBody = new()
+            {
+                ["title"] = simSetup.SimSetup["simulation_name"],
+                ["version"] = simSetup.SimSetup["version"],
+                ["notes"] = simSetup.SimSetup["notes"]
+            };
+
+            HttpContent postBody = new StringContent(JsonSerializer.Serialize(simPostBody));
+
+            Task<HttpResponseMessage> postTask = client.PostAsync("simulation/", postBody);
             if (!postTask.Wait(3000))
                 throw new TimeoutException("Timed out waiting for Lyra setup response.");
 
             HttpResponseMessage postResponse = postTask.Result;
             postResponse.EnsureSuccessStatusCode();
 
-            Task<List<Dictionary<string, string>>?> responseTask = 
-                HttpContentJsonExtensions.ReadFromJsonAsync<List<Dictionary<string, string>>>(postResponse.Content, jso);
-            responseTask.Wait();
-            List<Dictionary<string, string>>? responseBody = responseTask.Result;
-            if (responseBody == null || responseBody.Count == 0)
-                throw new BadHttpRequestException("Unexpected response format.");
-            simId = short.Parse(responseBody[0]["id"]);
-            simUrl = URL + simId;
-            client.GetAsync(simUrl).Wait();
+            Task<string> responseContent = postResponse.Content.ReadAsStringAsync();
+            responseContent.Wait();
+            PostNewSimResponseBody responseParsed = JsonSerializer.Deserialize<PostNewSimResponseBody>(responseContent.Result, jso)
+                ?? throw new JsonException("Unable to read post response content as JSON:\n" + responseContent.Result);
+
+            simId = responseParsed.Id;
+            simUrl = "simulation/" + simId;
+            Task<HttpResponseMessage> getResponse = client.GetAsync(simUrl);
+            getResponse.Wait();
+            getResponse.Result.EnsureSuccessStatusCode();
         }
 
         /// <summary>
@@ -110,40 +125,87 @@ namespace Anthology.SimulationManager
             throw new NotImplementedException();
         }
 
-        public struct ViewBody
+        public class PostNewSimResponseBody
         {
-            [JsonPropertyName("ood")]
-            private int ood;
+            [JsonPropertyName("id")]
+            [JsonInclude]
+            public short Id;
+            [JsonPropertyName("title")]
+            [JsonInclude]
+            public string Title;
+            [JsonPropertyName("version")]
+            [JsonInclude]
+            public string Version;
+            [JsonPropertyName("notes")]
+            [JsonInclude]
+            public string Notes;
+        }
+
+        public class StartupDiscussionAction
+        {
+            [JsonPropertyName("action_name")]
+            [JsonInclude]
+            public string ActionName;
+            [JsonPropertyName("discussion_probability")]
+            [JsonInclude]
+            public float DiscussionProbability;
+        }
+
+        public class StartupOod
+        {
             [JsonPropertyName("topic")]
-            private int topic;
+            [JsonInclude]
+            public string Topic;
+            [JsonPropertyName("title")]
+            [JsonInclude]
+            public string Title;
+        }
+
+        public class StartupView
+        {
+            [JsonPropertyName("agent")]
+            [JsonInclude]
+            public string Agent;
+            [JsonPropertyName("ood")]
+            [JsonInclude]
+            public Dictionary<string, string> Ood;
             [JsonPropertyName("attitude")]
-            private float attitude;
+            [JsonInclude]
+            public float Attitude;
             [JsonPropertyName("opinion")]
-            private float opinion;
+            [JsonInclude]
+            public float Opinion;
             [JsonPropertyName("uncertainty")]
-            private float uncertainty;
+            [JsonInclude]
+            public float Uncertainty;
+            [JsonPropertyName("public_compliance_thresh")]
+            [JsonInclude]
+            public float PublicComplianceThresh;
+            [JsonPropertyName("private_acceptance_thresh")]
+            [JsonInclude]
+            public float PrivateAcceptanceThresh;
         }
-
-        public struct AgentBody
+        
+        public class StartupJson
         {
-            [JsonPropertyName("name")]
-            private string name;
+            [JsonPropertyName("sim_setup")]
+            [JsonInclude]
+            public Dictionary<string, string> SimSetup;
+            [JsonPropertyName("notes")]
+            [JsonInclude]
+            public string Notes;
+            [JsonPropertyName("discussion_actions")]
+            [JsonInclude]
+            public List<StartupDiscussionAction> DiscussionActions;
+            [JsonPropertyName("topics")]
+            [JsonInclude]
+            public List<string> Topics;
+            [JsonPropertyName("objects_of_discussion")]
+            [JsonInclude]
+            public List<StartupOod> Oods;
             [JsonPropertyName("views")]
-            private List<ViewBody> views;
-        }
-
-        public struct PostBody
-        {
-            [JsonPropertyName("act_type")]
-            private string actType;
-            [JsonPropertyName("agents")]
-            private List<AgentBody> agents;
-
-            public PostBody(string actType, List<AgentBody> agents)
-            {
-                this.actType = actType;
-                this.agents = agents;
-            }
+            [JsonInclude]
+            public List<StartupView> Views;
         }
     }
 }

@@ -39,8 +39,6 @@ namespace Anthology.Models
                     Console.WriteLine("Simulation ended.");
                 }
             }
-
-            UI.Update();
         }
 
         /// <summary>

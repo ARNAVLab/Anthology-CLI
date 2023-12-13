@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['knowledgesim_0',['KnowledgeSim',['../class_anthology_1_1_simulation_manager_1_1_knowledge_sim.html',1,'Anthology::SimulationManager']]]
+  ['jsonrw_0',['JsonRW',['../class_anthology_1_1_models_1_1_json_r_w.html',1,'Anthology::Models']]]
 ];
