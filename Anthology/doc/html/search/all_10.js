@@ -60,7 +60,7 @@ var searchData=
   ['the_20mit_20license_20_28mit_29_57',['The MIT License (MIT)',['../md_wwwroot_lib_jquery_validation__l_i_c_e_n_s_e.html',1,'']]],
   ['threshold_58',['Threshold',['../class_anthology_1_1_models_1_1_r_motive.html#a66565f6333d65ef103c72b88892f41ef',1,'Anthology::Models::RMotive']]],
   ['timestep_59',['TimeStep',['../class_anthology_1_1_simulation_manager_1_1_history_manager_1_1_event_log.html#aef542bd2f68646c1f78ae7be53a80a77',1,'Anthology::SimulationManager::HistoryManager::EventLog']]],
-  ['topic_60',['Topic',['../class_anthology_1_1_simulation_manager_1_1_lyra_k_s_1_1_post_topic_body_1_1_topic.html',1,'Anthology.SimulationManager.LyraKS.PostTopicBody.Topic'],['../class_anthology_1_1_simulation_manager_1_1_lyra_knowledge_container.html#a319fe1428ce6ddea66a817ee157ce45d',1,'Anthology.SimulationManager.LyraKnowledgeContainer.Topic()']]],
+  ['topic_60',['Topic',['../class_anthology_1_1_simulation_manager_1_1_lyra_k_s_1_1_post_topic_1_1_topic.html',1,'Anthology.SimulationManager.LyraKS.PostTopic.Topic'],['../class_anthology_1_1_simulation_manager_1_1_lyra_knowledge_container.html#a319fe1428ce6ddea66a817ee157ce45d',1,'Anthology.SimulationManager.LyraKnowledgeContainer.Topic()']]],
   ['tostring_61',['ToString',['../class_anthology_1_1_simulation_manager_1_1_n_p_c.html#a05229c84c35ff0730417ec933a6aba21',1,'Anthology::SimulationManager::NPC']]],
   ['type_62',['Type',['../class_anthology_1_1_models_1_1_effect.html#ac08a606b08c1b59680b27868eb66cd15',1,'Anthology.Models.Effect.Type()'],['../class_anthology_1_1_models_1_1_relationship.html#a41b42455257886ba6608af287e1cd405',1,'Anthology.Models.Relationship.Type()']]]
 ];

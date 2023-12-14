@@ -134,6 +134,18 @@ namespace Anthology.SimulationManager
             throw new NotImplementedException();
         }
 
+        private static void StartDiscussion(int duration, ICollection<NPC> npcs)
+        {
+            if (npcs.Count < 2) return;
+            PostDiscussionRequest postDiscussion = new(duration, npcs);
+            Task<HttpResponseMessage> discussionResponseMessage = client.PostAsync(runUrl + "action/", Serialize(postDiscussion));
+            Task<string> discussionResponseString = discussionResponseMessage.Result.Content.ReadAsStringAsync();
+            PostDiscussionResponse discussionReponse = Deserialize<PostDiscussionResponse>(discussionResponseString.Result);
+
+            // Update NPCs from discussion response
+
+        }
+
         // Posts topics, oods, a run, and agents from the 
         private static void SetupSimState(StartupJson simSetup)
         {
@@ -382,9 +394,7 @@ namespace Anthology.SimulationManager
 
             public class OutputBody
             {
-                [JsonPropertyName("message")]
-                [JsonInclude]
-                public string Message = "";
+
                 [JsonPropertyName("run")]
                 [JsonInclude]
                 public SimRun Run = new();
@@ -399,15 +409,62 @@ namespace Anthology.SimulationManager
             [JsonPropertyName("act_type")]
             [JsonInclude]
             public string ActType = "run";
-            [JsonPropertyName("data")]
+            /*[JsonPropertyName("data")]
             [JsonInclude]
-            public DataBody Data = new();
+            public DataBody Data = new();*/
             [JsonPropertyName("output")]
             [JsonInclude]
             public OutputBody Output = new();
             [JsonPropertyName("simulation")]
             [JsonInclude]
             public short SimulationId;
+        }
+
+        private class PostDiscussionRequest
+        {
+            public class DataBody
+            {
+                [JsonPropertyName("time_duration")]
+                [JsonInclude]
+                public int TimeDuration;
+                [JsonPropertyName("participants")]
+                [JsonInclude]
+                public List<int> ParticipantIds = new();
+                [JsonPropertyName("ood")]
+                [JsonInclude]
+                public int OodId;
+            }
+
+            [JsonPropertyName("act_type")]
+            [JsonInclude]
+            public string ActType = "start_discussion";
+            [JsonPropertyName("data")]
+            [JsonInclude]
+            public DataBody Data = new();
+
+            public PostDiscussionRequest(int duration, ICollection<NPC> npcs)
+            {
+                Data.TimeDuration = duration;
+                foreach (NPC npc in npcs)
+                    Data.ParticipantIds.Add(npc.Id);
+            }
+        }
+
+        private class PostDiscussionResponse
+        {
+            public class OutputBody
+            {
+                [JsonPropertyName("views")]
+                [JsonInclude]
+                public List<View> Views = new();
+                [JsonPropertyName("journal")]
+                [JsonInclude]
+                public List<string> Journal = new();
+            }
+
+            [JsonPropertyName("output")]
+            [JsonInclude]
+            public OutputBody Output = new();
         }
     }
 }

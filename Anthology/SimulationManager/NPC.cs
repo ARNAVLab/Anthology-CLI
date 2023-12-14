@@ -24,6 +24,20 @@ namespace Anthology.SimulationManager
             set { Dirty = true; name = value; }
         }
 
+        /// <summary>
+        /// The ID of the NPC.
+        /// </summary>
+        private int id;
+
+        /// <summary>
+        /// Get and sets the ID of the NPC.
+        /// </summary>
+        public int Id
+        {
+            get { return id; }
+            set { id = value; }
+        }
+
         private string location = string.Empty;
         /// <summary>
         /// The name of the current location of the NPC
