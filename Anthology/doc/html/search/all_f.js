@@ -22,9 +22,5 @@ var searchData=
   ['specificpeoplepresent_19',['SpecificPeoplePresent',['../class_anthology_1_1_models_1_1_r_people.html#a326017d95b086a0c133fd3be772b36f8',1,'Anthology::Models::RPeople']]],
   ['startaction_20',['StartAction',['../class_anthology_1_1_models_1_1_agent.html#a4a5e6914e113f3ef3459bded90052e77',1,'Anthology::Models::Agent']]],
   ['starttraveltolocation_21',['StartTravelToLocation',['../class_anthology_1_1_models_1_1_agent.html#a2e4655d15419eb3ffb1d0d94a5e19c4f',1,'Anthology::Models::Agent']]],
-  ['startupdiscussionaction_22',['StartupDiscussionAction',['../class_anthology_1_1_simulation_manager_1_1_lyra_k_s_1_1_startup_discussion_action.html',1,'Anthology::SimulationManager::LyraKS']]],
-  ['startupjson_23',['StartupJson',['../class_anthology_1_1_simulation_manager_1_1_lyra_k_s_1_1_startup_json.html',1,'Anthology::SimulationManager::LyraKS']]],
-  ['startupood_24',['StartupOod',['../class_anthology_1_1_simulation_manager_1_1_lyra_k_s_1_1_startup_ood.html',1,'Anthology::SimulationManager::LyraKS']]],
-  ['startupview_25',['StartupView',['../class_anthology_1_1_simulation_manager_1_1_lyra_k_s_1_1_startup_view.html',1,'Anthology::SimulationManager::LyraKS']]],
-  ['step_26',['Step',['../class_anthology_1_1_controllers_1_1_temp_sim_controller.html#a86cdcc843382882e7e264880d039da66',1,'Anthology::Controllers::TempSimController']]]
+  ['step_22',['Step',['../class_anthology_1_1_controllers_1_1_temp_sim_controller.html#a86cdcc843382882e7e264880d039da66',1,'Anthology::Controllers::TempSimController']]]
 ];

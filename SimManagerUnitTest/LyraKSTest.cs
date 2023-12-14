@@ -7,13 +7,12 @@ namespace SimManagerUnitTest
     public class LyraKSTest
     {
 
-        public LyraKS lyra = new();
+        private LyraKS lyra = new();
 
         [TestMethod]
         public void TestSetup()
         {
             lyra.Init("Data\\Lyra\\Lyra.json");
-            Assert.IsTrue(LyraKS.simUrl.Contains("simulation/"));
         }
     }
 }

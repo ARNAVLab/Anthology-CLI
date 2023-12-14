@@ -1,6 +1,6 @@
 {
   "sim_setup": {
-    "simulation_name": "put name here222222",
+    "simulation_name": "put name here2332",
     "data_path": "Data\\Lyra.json",
     "version": "1.0.1",
     "notes": "notes here"
@@ -30,9 +30,9 @@
       "title": "article 1"
     }
   ],
-  "views": [
+  "agents": [
     {
-      "agent": "Norma",
+      "name": "Norma",
       "views": [
         {
           "ood": {
@@ -48,7 +48,7 @@
       ]
     },
     {
-      "agent": "Abnorma",
+      "name": "Abnorma",
       "views": [
         {
           "ood": {
