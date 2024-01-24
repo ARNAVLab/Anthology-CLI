@@ -1,7 +1,7 @@
 {
   "sim_setup": {
     "simulation_name": "put name here",
-    "data_path": "Data\\Lyra.json",
+    "data_path": "Data/Lyra.json",
     "version": "1.0.1",
     "notes": "notes here"
   },

@@ -14,7 +14,7 @@ namespace SimManagerUnitTest
         /// <summary>
         /// Path of test JSON file.
         /// </summary>
-        private const string DATA_JSON = "Data\\Paths.json";
+        private const string DATA_JSON = "Data/Paths.json";
 
         /// <summary>
         /// Tests initialization of SimManager using concrete types AnthologyRS, LyraKS, and MongoHM.

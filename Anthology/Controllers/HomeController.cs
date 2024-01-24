@@ -31,7 +31,7 @@ namespace Anthology.Controllers
         /// <returns>View of Index.</returns>
         public IActionResult Index()
         {
-            SimManager.Init("Data\\Paths.json", typeof(AnthologyRS), typeof(LyraKS), typeof(MongoHM));
+            SimManager.Init("Data/Paths.json", typeof(AnthologyRS), typeof(LyraKS), typeof(MongoHM));
             return View();
         }
 

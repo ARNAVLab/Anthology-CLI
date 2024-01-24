@@ -13,7 +13,7 @@ namespace SimManagerUnitTest
         /// <summary>
         /// Path of test JSON file.
         /// </summary>
-        private const string DATA_JSON = "Data\\Paths.json";
+        private const string DATA_JSON = "Data/Paths.json";
 
         /// <summary>
         /// MongoDB test database.
