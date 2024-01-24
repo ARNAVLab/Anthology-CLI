@@ -364,3 +364,6 @@ FodyWeavers.xsd
 
 # Generated HTML documentation
 doc/html/
+
+# Mac finder files 
+.DS_Store
