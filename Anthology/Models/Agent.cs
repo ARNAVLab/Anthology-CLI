@@ -1,4 +1,13 @@
+<<<<<<< Updated upstream
 ﻿namespace Anthology.Models
+=======
+﻿using System.Collections;
+using System.Text.Json;
+
+using Anthology.SimulationManager;
+
+namespace Anthology.Models
+>>>>>>> Stashed changes
 {
     /// <summary>
     /// Relationships are composed by agents, so the owning agent will always be the source of the relationship,
@@ -49,10 +58,21 @@
         /// </summary>
         public List<Relationship> Relationships { get; set; } = new();
 
+<<<<<<< Updated upstream
         /// <summary>
         /// Name of the current location of this agent.
         /// </summary>
         public string CurrentLocation { get; set; } = string.Empty;
+=======
+        /** Current location of the agent */
+		/// <summary>
+        /// Name of the current location of this agent.
+        /// </summary>
+        public string CurrentLocation { get; set; } = string.Empty;
+
+        public int XLocation { get; set; }
+        public int YLocation { get; set; }
+>>>>>>> Stashed changes
 
         /// <summary>
         /// How long the agent will be occupied with the current action they are executing.
@@ -71,10 +91,22 @@
         /// </summary>
         public string Destination { get; set; } = string.Empty;
 
+<<<<<<< Updated upstream
         /// <summary>
         /// List of targets for the agent's current action.
         /// </summary>
         public List<Agent> CurrentTargets { get; set; } = new();
+=======
+		/// <summary>
+        /// The name of the destination that this agent is heading towards. 
+        /// Can be the empty string if the agent has reached their previous
+        /// destination and is executing an action.
+        /// </summary>
+        public string Destination { get; set; } = string.Empty;
+
+        /** List of targets for the agent's current action */
+        public HashSet<Agent> CurrentTargets { get; set; } = new HashSet<Agent>();
+>>>>>>> Stashed changes
 
         /// <summary>
         /// Starts travel to the agent's destination.
@@ -83,9 +115,18 @@
         /// <param name="time">The time in which the agent started traveling.</param>
         public void StartTravelToLocation(LocationNode destination, float time)
         {
+<<<<<<< Updated upstream
             Destination = destination.Name;
             LocationNode currentLoc = LocationManager.LocationsByName[CurrentLocation];
             OccupiedCounter = (int)Math.Ceiling(LocationManager.DistanceMatrix[currentLoc.ID * LocationManager.LocationCount + destination.ID]);
+=======
+            XDestination = destination.X;
+            YDestination = destination.Y;
+
+			// Sasha add this back? 
+            SimLocation currentLoc = LocationManager.LocationGrid[XLocation][YLocation];
+            OccupiedCounter = LocationManager.FindManhattanDistance(currentLoc, destination);
+>>>>>>> Stashed changes
             Console.WriteLine("time: " + time.ToString() + " | " + Name + ": Started " + CurrentAction.First().Name + "; Destination: " + destination.Name);
         }
 

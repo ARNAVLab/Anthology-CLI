@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace Anthology.SimulationManager
 {
@@ -81,6 +82,7 @@ namespace Anthology.SimulationManager
                 Knowledge?.Init(JSONfile);
                 Knowledge?.LoadNpcs(NPCs);
             }
+<<<<<<< Updated upstream
             //else
                 // throw new InvalidCastException("Failed to recognize knowledge sim type"); ignored until LyraKS is implemented
             if (history.IsSubclassOf(typeof(HistoryLogger)))
@@ -92,6 +94,12 @@ namespace Anthology.SimulationManager
             }
             else 
                 throw new InvalidCastException("Failed to recognize history logger");
+=======
+            else{
+                // throw new InvalidCastException("Failed to recognize knowledge sim type"); ignored until LyraKS is implemented
+                // return;
+			}
+>>>>>>> Stashed changes
         }
 
         /// <summary>

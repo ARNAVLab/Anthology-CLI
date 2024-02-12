@@ -15,16 +15,25 @@
         /// </summary>
         public static List<Action> AllActions { get; set; } = new();
 
+<<<<<<< Updated upstream
         /// <summary>
         /// Initializes/resets all action manager variables.
         /// </summary>
         /// <param name="path">Path of actions JSON file.</param>
+=======
+		
+		/** Initialize/reset all action manager variables */
+>>>>>>> Stashed changes
         public static void Init(string path)
         {
             Actions.ScheduleActions.Clear();
             Actions.PrimaryActions.Clear();
             AllActions.Clear();
+<<<<<<< Updated upstream
             World.ReadWrite.LoadActionsFromFile(path);
+=======
+            LoadActionsFromFile(path);
+>>>>>>> Stashed changes
 
             foreach (Action action in Actions.ScheduleActions)
             {
@@ -34,6 +43,29 @@
             {
                 AllActions.Add(action);
             }
+<<<<<<< Updated upstream
+=======
+        }
+
+		/// <summary>
+        /// Adds the given action to both action structures.
+        /// </summary>
+        /// <param name="action">The action to add.</param>
+        public static void AddAction(Action action)
+        {
+            Actions.AddAction(action);
+            AllActions.Add(action);
+        }
+
+		/// <summary>
+        /// Clears all actions from the system.
+        /// </summary>
+        public static void Reset()
+        {
+            Actions.ScheduleActions.Clear();
+            Actions.PrimaryActions.Clear();
+            AllActions.Clear();
+>>>>>>> Stashed changes
         }
 
         /// <summary>
