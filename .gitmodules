@@ -1,0 +1,3 @@
+[submodule "Anthology/Anthology-Framework"]
+	path = Anthology/Anthology-Framework
+	url = https://github.com/ARNAVLab/Anthology-Framework.git

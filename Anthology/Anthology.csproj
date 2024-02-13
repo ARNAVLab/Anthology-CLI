@@ -15,15 +15,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="doxygen-1.9.6.windows.x64" Version="1.9.6">
+    <!-- <PackageReference Include="doxygen-1.9.6.windows.x64" Version="1.9.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    </PackageReference> -->
     <PackageReference Include="MongoDB.Driver" Version="2.19.2" />
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="$(TargetDir)doxygen.exe $(ProjectDir)doc\$(ProjectName).doxygen" />
-  </Target>
+  <!-- <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+     <Exec Command="$(TargetDir)doxygen.exe $(ProjectDir)doc\$(ProjectName).doxygen" /> 
+  </Target> -->
 
 </Project>
